@@ -6,7 +6,10 @@ import {
 } from '@abandonware/noble'
 
 export default class FakePeripheral implements SimplePeripheral {
-    public numCallsToDiscoverAllCharacteristicsAndServicesAsync = 0
+    public callsToConstructor: PeripheralOptions[] = []
+    public didCallConnect = false
+    public didCallConnectAsync = false
+    public numCallsToDiscoverAllServicesAndCharacteristicsAsync = 0
 
     public uuid: string
     public advertisement: {
@@ -15,10 +18,6 @@ export default class FakePeripheral implements SimplePeripheral {
     }
     public rssi = Math.random() * 100
     public connectable = true
-
-    public callsToConstructor: PeripheralOptions[] = []
-    public didCallConnect = false
-    public didCallConnectAsync = false
 
     public constructor(options?: PeripheralOptions) {
         this.callsToConstructor.push(options ?? {})
@@ -41,8 +40,8 @@ export default class FakePeripheral implements SimplePeripheral {
         this.didCallConnectAsync = true
     }
 
-    public async discoverAllCharacteristicsAndServicesAsync() {
-        this.numCallsToDiscoverAllCharacteristicsAndServicesAsync++
+    public async discoverAllServicesAndCharacteristicsAsync() {
+        this.numCallsToDiscoverAllServicesAndCharacteristicsAsync++
         return this.fakeServicesAndCharacteristics
     }
 
@@ -76,7 +75,7 @@ export interface SimplePeripheral {
     connectable: boolean
     connect(): void
     connectAsync(): Promise<void>
-    discoverAllCharacteristicsAndServicesAsync(): Promise<ServicesAndCharacteristics>
+    discoverAllServicesAndCharacteristicsAsync(): Promise<ServicesAndCharacteristics>
 }
 
 export interface PeripheralOptions {

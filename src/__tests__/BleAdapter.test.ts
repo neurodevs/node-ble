@@ -47,6 +47,20 @@ export default class BleAdapterTest extends AbstractSpruceTest {
         )
     }
 
+    @test()
+    protected static async callsPeripheralDiscoverAllCharacteristicsAndServicesAsync() {
+        assert.isEqual(
+            this.numCallsToDiscoverAllServicesAndCharacteristicsAsync,
+            1,
+            'Should have called discoverAllCharacteristicsAndServicesAsync on peripheral!'
+        )
+    }
+
+    private static get numCallsToDiscoverAllServicesAndCharacteristicsAsync() {
+        return this.peripheral
+            .numCallsToDiscoverAllServicesAndCharacteristicsAsync
+    }
+
     private static get peripheral() {
         return this.instance.getPeripheral() as unknown as FakePeripheral
     }

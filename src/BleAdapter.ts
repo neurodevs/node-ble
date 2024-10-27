@@ -14,6 +14,8 @@ export default class BleAdapterImpl implements BleAdapter {
         assertOptions({ peripheral }, ['peripheral'])
         await peripheral.connectAsync()
 
+        await peripheral.discoverAllServicesAndCharacteristicsAsync()
+
         return new (this.Class ?? this)(peripheral)
     }
 }
