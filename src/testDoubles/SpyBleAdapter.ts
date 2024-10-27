@@ -1,9 +1,8 @@
-import { Peripheral } from '@abandonware/noble'
-import BleAdapterImpl from '../BleAdapter'
+import BleAdapterImpl, { BleAdapterOptions } from '../BleAdapter'
 
 export default class SpyBleAdapter extends BleAdapterImpl {
-    public constructor(peripheral: Peripheral) {
-        super(peripheral)
+    public constructor(options: BleAdapterOptions) {
+        super(options)
     }
 
     public getPeripheral() {
