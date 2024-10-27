@@ -3,11 +3,11 @@ import BleScannerImpl from './BleScanner'
 
 async function main() {
     const scanner = BleScannerImpl.Create({
-        defaultDurationMs: 1000,
-        defaultTimeoutMs: 1000,
+        defaultDurationMs: 5000,
+        defaultTimeoutMs: 5000,
     })
 
-    const result = await scanner.scanAll()
+    const result = await scanner.scanForName('CGX Quick-Series Headset')
     console.log('Result:\n\n', result)
 
     exit(0)
