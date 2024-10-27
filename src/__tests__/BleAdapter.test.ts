@@ -5,9 +5,9 @@ import AbstractSpruceTest, {
     generateId,
 } from '@sprucelabs/test-utils'
 import { Peripheral } from '@abandonware/noble'
-import BleAdapterImpl from '../../BleAdapter'
-import FakePeripheral from '../../testDoubles/FakePeripheral'
-import SpyBleAdapter from '../../testDoubles/SpyBleAdapter'
+import BleAdapterImpl from '../BleAdapter'
+import FakePeripheral from '../testDoubles/FakePeripheral'
+import SpyBleAdapter from '../testDoubles/SpyBleAdapter'
 
 export default class BleAdapterTest extends AbstractSpruceTest {
     private static instance: SpyBleAdapter
@@ -52,7 +52,7 @@ export default class BleAdapterTest extends AbstractSpruceTest {
     }
 
     private static FakePeripheral(uuid: string) {
-        return new FakePeripheral(uuid) as unknown as Peripheral
+        return new FakePeripheral({ uuid }) as unknown as Peripheral
     }
 
     private static async BleAdapter(uuid: string) {
