@@ -1,6 +1,6 @@
 import noble, { Peripheral } from '@abandonware/noble'
-import SpruceError from '../errors/SpruceError'
 import BleAdapterImpl, { BleAdapter } from './BleAdapter'
+import SpruceError from './errors/SpruceError'
 
 export default class BleScannerImpl implements BleScanner {
     public static Class?: BleScannerConstructor
