@@ -9,7 +9,7 @@ export default class BleAdapterImpl implements BleAdapter {
     protected peripheral: Peripheral
     protected services!: Service[]
     protected characteristics!: Characteristic[]
-    private log = buildLog('BleAdapter')
+    protected log = buildLog('BleAdapter')
 
     protected constructor(peripheral: Peripheral) {
         this.peripheral = peripheral
@@ -72,11 +72,12 @@ export default class BleAdapterImpl implements BleAdapter {
     }
 
     private setupRssi() {
-        this.peripheral.on('rssiUpdate', this.handleRssiUpdate)
+        this.peripheral.on('rssiUpdate', this.handleRssiUpdate.bind(this))
     }
 
-    private handleRssiUpdate() {
-        this.log.info('RSSI: 10')
+    private handleRssiUpdate(rssi: number) {
+        this.peripheral.rssi = rssi
+        this.log.info('RSSI')
     }
 }
 

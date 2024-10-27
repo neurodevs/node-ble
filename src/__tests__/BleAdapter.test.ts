@@ -138,6 +138,20 @@ export default class BleAdapterTest extends AbstractSpruceTest {
         )
     }
 
+    @test()
+    protected static async rssiListenerSetsRssiValueOnPeripheral() {
+        const { listener } = this.peripheral.callsToOn[0]
+
+        const rssi = Math.random() * 100
+        listener(rssi)
+
+        assert.isEqual(
+            this.instance.getPeripheralRssi(),
+            rssi,
+            'Should have set rssi value on peripheral!'
+        )
+    }
+
     private static get expectedRssiOptions() {
         return { event: 'rssiUpdate', listener: this.fakedListener } as CallToOn
     }

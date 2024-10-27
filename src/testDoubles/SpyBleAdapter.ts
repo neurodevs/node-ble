@@ -17,4 +17,16 @@ export default class SpyBleAdapter extends BleAdapterImpl {
     public getCharacteristics() {
         return this.characteristics
     }
+
+    public getLocalName() {
+        return this.advertisement.localName
+    }
+
+    public getPeripheralRssi() {
+        return this.peripheral.rssi
+    }
+
+    public get advertisement() {
+        return this.peripheral.advertisement
+    }
 }
