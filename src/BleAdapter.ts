@@ -29,10 +29,10 @@ export default class BleAdapterImpl implements BleAdapter {
         this.services = services
         this.characteristics = characteristics
 
-        await this.subscribeToAllCharacteristics()
+        await this.subscribeToNotifiableCharacteristics()
     }
 
-    private async subscribeToAllCharacteristics() {
+    private async subscribeToNotifiableCharacteristics() {
         this.characteristics.forEach(async (characteristic) => {
             if (characteristic.properties.includes('notify')) {
                 await characteristic.subscribeAsync()
