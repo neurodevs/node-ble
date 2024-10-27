@@ -1,5 +1,5 @@
 {
-  "name": "node-ble",
+  "name": "@neurodevs/node-ble",
   "version": "0.0.1",
   "main": "build/index.js",
   "repository": "https://github.com/neurodevs/node-ble.git",
@@ -65,6 +65,9 @@
   },
   "dependencies": {
     "@abandonware/noble": "^1.9.2-25",
-    "@sprucelabs/schema": "^30.0.531"
+    "@sprucelabs/error": "^6.0.520",
+    "@sprucelabs/schema": "^30.0.531",
+    "@sprucelabs/spruce-core-schemas": "^40.1.516",
+    "@sprucelabs/spruce-skill-utils": "^31.0.590"
   }
 }
