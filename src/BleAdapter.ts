@@ -1,5 +1,6 @@
 import { assertOptions } from '@sprucelabs/schema'
 import { Characteristic, Peripheral, Service } from '@abandonware/noble'
+import SpruceError from './errors/SpruceError'
 
 export default class BleAdapterImpl implements BleAdapter {
     public static Class?: BleAdapterConstructor
@@ -33,10 +34,26 @@ export default class BleAdapterImpl implements BleAdapter {
     }
 
     private async subscribeToNotifiableCharacteristics() {
-        this.characteristics.forEach(async (characteristic) => {
+        for (const characteristic of this.characteristics) {
             if (characteristic.properties.includes('notify')) {
-                await characteristic.subscribeAsync()
+                await this.tryToSubscribe(characteristic)
             }
+        }
+    }
+
+    private async tryToSubscribe(characteristic: Characteristic) {
+        try {
+            await characteristic.subscribeAsync()
+        } catch {
+            const { uuid } = characteristic
+            this.throwCharacteristicSubscribeFailed(uuid)
+        }
+    }
+
+    protected throwCharacteristicSubscribeFailed(uuid: string) {
+        throw new SpruceError({
+            code: 'CHARACTERISTIC_SUBSCRIBE_FAILED',
+            characteristicUuid: uuid,
         })
     }
 

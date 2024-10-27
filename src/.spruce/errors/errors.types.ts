@@ -5,6 +5,7 @@ import * as SpruceSchema from '@sprucelabs/schema'
 
 
 
+
 export declare namespace SpruceErrors.NodeBle {
 
 	
@@ -45,6 +46,34 @@ export declare namespace SpruceErrors.NodeBle {
 	}
 
 	export type ScanTimedOutEntity = SchemaEntity<SpruceErrors.NodeBle.ScanTimedOutSchema>
+
+}
+
+
+export declare namespace SpruceErrors.NodeBle {
+
+	
+	export interface CharacteristicSubscribeFailed {
+		
+			
+			'characteristicUuid': string
+	}
+
+	export interface CharacteristicSubscribeFailedSchema extends SpruceSchema.Schema {
+		id: 'characteristicSubscribeFailed',
+		namespace: 'NodeBle',
+		name: 'CHARACTERISTIC_SUBSCRIBE_FAILED',
+		    fields: {
+		            /** . */
+		            'characteristicUuid': {
+		                type: 'text',
+		                isRequired: true,
+		                options: undefined
+		            },
+		    }
+	}
+
+	export type CharacteristicSubscribeFailedEntity = SchemaEntity<SpruceErrors.NodeBle.CharacteristicSubscribeFailedSchema>
 
 }
 

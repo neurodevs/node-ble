@@ -1,6 +1,7 @@
 import BaseSpruceError from '@sprucelabs/error'
 import ErrorOptions, {
     ScanTimedOutErrorOptions,
+    CharacteristicSubscribeFailedErrorOptions,
 } from '#spruce/errors/options.types'
 
 export default class SpruceError extends BaseSpruceError<ErrorOptions> {
@@ -12,6 +13,11 @@ export default class SpruceError extends BaseSpruceError<ErrorOptions> {
             case 'SCAN_TIMED_OUT':
                 message = this.generateTimedOutMessage(options)
                 break
+
+            case 'CHARACTERISTIC_SUBSCRIBE_FAILED':
+                message = this.generateSubscribeFailedMessage(options)
+                break
+
             default:
                 message = super.friendlyMessage()
         }
@@ -21,6 +27,13 @@ export default class SpruceError extends BaseSpruceError<ErrorOptions> {
             : message
 
         return fullMessage
+    }
+
+    private generateSubscribeFailedMessage(
+        options: CharacteristicSubscribeFailedErrorOptions
+    ) {
+        const { characteristicUuid } = options ?? {}
+        return `Failed to subscribe to peripheral characteristic: ${characteristicUuid}!`
     }
 
     private generateTimedOutMessage(options: ScanTimedOutErrorOptions) {

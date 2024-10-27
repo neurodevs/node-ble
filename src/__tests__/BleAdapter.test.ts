@@ -107,6 +107,33 @@ export default class BleAdapterTest extends AbstractSpruceTest {
         )
     }
 
+    @test()
+    protected static async throwsIfFailsToSubscribeToCharacteristic() {
+        const uuid = generateId()
+
+        this.createAndFakeCharacteristic(uuid)
+
+        const err = await assert.doesThrowAsync(async () => {
+            await this.instance.connect()
+        })
+
+        errorAssert.assertError(err, 'CHARACTERISTIC_SUBSCRIBE_FAILED', {
+            characteristicUuid: uuid,
+        })
+    }
+
+    private static createAndFakeCharacteristic(uuid: string) {
+        const characteristic = this.FakeCharacteristic(uuid)
+
+        characteristic.subscribeAsync = async () => {
+            throw new Error('Failed to subscribe!')
+        }
+
+        this.peripheral.setFakeCharacteristics([characteristic])
+
+        return characteristic
+    }
+
     private static get numCallsToDiscoverAllServicesAndCharacteristicsAsync() {
         return this.peripheral
             .numCallsToDiscoverAllServicesAndCharacteristicsAsync
@@ -114,6 +141,10 @@ export default class BleAdapterTest extends AbstractSpruceTest {
 
     private static get peripheral() {
         return this.instance.getPeripheral() as unknown as FakePeripheral
+    }
+
+    private static FakeCharacteristic(uuid: string) {
+        return new FakeCharacteristic({ uuid })
     }
 
     private static FakePeripheral(uuid: string) {
