@@ -20,7 +20,7 @@ export default class FakeCharacteristic implements SimpleCharacteristic {
     public constructor(options?: CharacteristicOptions) {
         this.callsToConstructor.push(options ?? {})
 
-        const { uuid = generateId(), properties = [] } = options ?? {}
+        const { uuid = generateId(), properties = ['notify'] } = options ?? {}
 
         this.uuid = uuid
         this.properties = properties

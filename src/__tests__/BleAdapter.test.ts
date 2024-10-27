@@ -6,6 +6,7 @@ import AbstractSpruceTest, {
 } from '@sprucelabs/test-utils'
 import { Peripheral } from '@abandonware/noble'
 import BleAdapterImpl from '../BleAdapter'
+import FakeCharacteristic from '../testDoubles/noble/FakeCharacteristic'
 import FakePeripheral from '../testDoubles/noble/FakePeripheral'
 import SpyBleAdapter from '../testDoubles/SpyBleAdapter'
 
@@ -53,6 +54,36 @@ export default class BleAdapterTest extends AbstractSpruceTest {
             this.numCallsToDiscoverAllServicesAndCharacteristicsAsync,
             1,
             'Should have called discoverAllCharacteristicsAndServicesAsync on peripheral!'
+        )
+    }
+
+    @test()
+    protected static async automaticallySubscribesToCharacteristics() {
+        assert.isEqual(
+            this.instance.getCharacteristics().length,
+            0,
+            'Should not have any characteristics yet!'
+        )
+
+        const uuid1 = generateId()
+        const uuid2 = generateId()
+
+        const c1 = new FakeCharacteristic({ uuid: uuid1 })
+        const c2 = new FakeCharacteristic({ uuid: uuid2 })
+        this.peripheral.setFakeCharacteristics([c1, c2])
+
+        await this.instance.connect()
+
+        assert.isEqual(
+            c1.numCallsToSubscribeAsync,
+            1,
+            'Should have subscribed to first characteristic!'
+        )
+
+        assert.isEqual(
+            c2.numCallsToSubscribeAsync,
+            1,
+            'Should have subscribed to second characteristic!'
         )
     }
 

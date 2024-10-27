@@ -4,6 +4,7 @@ import {
     Service,
     ServicesAndCharacteristics,
 } from '@abandonware/noble'
+import FakeCharacteristic from './FakeCharacteristic'
 
 export default class FakePeripheral implements SimplePeripheral {
     public callsToConstructor: PeripheralOptions[] = []
@@ -54,8 +55,9 @@ export default class FakePeripheral implements SimplePeripheral {
         this.fakeServicesAndCharacteristics.services = services
     }
 
-    public setFakeCharacteristics(characteristics: Characteristic[]) {
-        this.fakeServicesAndCharacteristics.characteristics = characteristics
+    public setFakeCharacteristics(characteristics: FakeCharacteristic[]) {
+        this.fakeServicesAndCharacteristics.characteristics =
+            characteristics as unknown as Characteristic[]
     }
 
     public resetTestDouble() {
