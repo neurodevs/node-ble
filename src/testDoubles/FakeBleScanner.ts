@@ -1,5 +1,6 @@
 import { generateId } from '@sprucelabs/test-utils'
 import { Peripheral } from '@abandonware/noble'
+import BleAdapterImpl from '../BleAdapter'
 import { BleScanner, ScanOptions } from '../BleScanner'
 import FakePeripheral from './noble/FakePeripheral'
 
@@ -16,47 +17,6 @@ export default class FakeBleScanner implements BleScanner {
 
     public constructor() {
         FakeBleScanner.numCallsToConstructor++
-    }
-
-    public async scanAll() {
-        FakeBleScanner.numCallsToScanAll++
-        return this.fakedPeripherals as unknown as Peripheral[]
-    }
-
-    public async scanForUuid(uuid: string, options?: ScanOptions) {
-        this.callsToScanForPeripheral.push({ uuid, options })
-
-        return this.fakedPeripherals.find(
-            (peripheral) => peripheral.uuid === uuid
-        ) as unknown as Peripheral
-    }
-
-    public async scanForUuids(uuids: string[], options?: ScanOptions) {
-        this.callsToScanForPeripherals.push({ uuids, options })
-
-        return this.fakedPeripherals.filter((peripheral) =>
-            uuids.includes(peripheral.uuid)
-        ) as unknown as Peripheral[]
-    }
-
-    public async scanForName(name: string) {
-        this.callsToScanForName.push(name)
-
-        return this.fakedPeripherals.find(
-            (peripheral) => peripheral.advertisement.localName === name
-        ) as unknown as Peripheral
-    }
-
-    public async scanForNames(names: string[]) {
-        this.callsToScanForNames.push(names)
-
-        return this.fakedPeripherals.filter((peripheral) =>
-            names.includes(peripheral.advertisement.localName)
-        ) as unknown as Peripheral[]
-    }
-
-    public async stopScanning() {
-        FakeBleScanner.numCallsToStopScanning++
     }
 
     public static setFakedPeripherals(uuids = this.generateRandomUuids()) {
@@ -77,6 +37,85 @@ export default class FakeBleScanner implements BleScanner {
         return Array.from({ length: num }, () => generateId())
     }
 
+    public async scanAll() {
+        FakeBleScanner.numCallsToScanAll++
+        return this.fakedPeripherals as unknown as Peripheral[]
+    }
+
+    public async scanForUuid(uuid: string, options?: ScanOptions) {
+        this.callsToScanForPeripheral.push({ uuid, options })
+
+        const peripheral = this.findByUuid(uuid)
+        return this.BleAdapter(peripheral)
+    }
+
+    public async scanForUuids(uuids: string[], options?: ScanOptions) {
+        this.callsToScanForPeripherals.push({ uuids, options })
+
+        const peripherals = this.findByUuids(uuids)
+        return await this.createAdapters(peripherals)
+    }
+
+    public async scanForName(name: string) {
+        this.callsToScanForName.push(name)
+
+        const peripheral = this.findByName(name)
+        return this.BleAdapter(peripheral)
+    }
+
+    public async scanForNames(names: string[]) {
+        this.callsToScanForNames.push(names)
+
+        const peripherals = this.findByNames(names)
+        return await this.createAdapters(peripherals)
+    }
+
+    public async stopScanning() {
+        FakeBleScanner.numCallsToStopScanning++
+    }
+
+    private findByUuid(uuid: string) {
+        return this.findPeripheral(
+            (peripheral: FakePeripheral) => peripheral.uuid === uuid
+        )
+    }
+
+    private findByName(name: string) {
+        return this.findPeripheral((peripheral: FakePeripheral) => {
+            const localName = this.getLocalName(peripheral)
+            return localName === name
+        })
+    }
+
+    private findPeripheral(cb: (peripheral: FakePeripheral) => boolean) {
+        return this.fakedPeripherals.find(cb) as unknown as Peripheral
+    }
+
+    private findByUuids(uuids: string[]) {
+        return this.findPeripherals((peripheral: FakePeripheral) =>
+            uuids.includes(peripheral.uuid)
+        )
+    }
+
+    private findByNames(names: string[]) {
+        return this.findPeripherals((peripheral: FakePeripheral) => {
+            const localName = this.getLocalName(peripheral)
+            return names.includes(localName)
+        })
+    }
+
+    private findPeripherals(cb: (peripheral: FakePeripheral) => boolean) {
+        return this.fakedPeripherals.filter(cb) as unknown as Peripheral[]
+    }
+
+    private async createAdapters(peripherals: Peripheral[]) {
+        return Promise.all(peripherals.map((p) => BleAdapterImpl.Create(p)))
+    }
+
+    private getLocalName(peripheral: FakePeripheral) {
+        return peripheral.advertisement.localName
+    }
+
     private get callsToScanForPeripheral() {
         return FakeBleScanner.callsToScanForPeripheral
     }
@@ -95,6 +134,10 @@ export default class FakeBleScanner implements BleScanner {
 
     private get fakedPeripherals() {
         return FakeBleScanner.fakedPeripherals
+    }
+
+    private BleAdapter(peripheral: Peripheral) {
+        return BleAdapterImpl.Create(peripheral)
     }
 
     public static resetTestDouble() {
