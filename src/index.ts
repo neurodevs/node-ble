@@ -16,11 +16,11 @@ export * from './testDoubles/SpyBleAdapter'
 export { default as FakeBleAdapter } from './testDoubles/FakeBleAdapter'
 export * from './testDoubles/FakeBleAdapter'
 
-export { default as FakeNoble } from './testDoubles/FakeNoble'
-export * from './testDoubles/FakeNoble'
+export { default as FakeNoble } from './testDoubles/noble/FakeNoble'
+export * from './testDoubles/noble/FakeNoble'
 
-export { default as FakePeripheral } from './testDoubles/FakePeripheral'
-export * from './testDoubles/FakePeripheral'
+export { default as FakePeripheral } from './testDoubles/noble/FakePeripheral'
+export * from './testDoubles/noble/FakePeripheral'
 
-export { default as FakeCharacteristic } from './testDoubles/FakeCharacteristic'
-export * from './testDoubles/FakeCharacteristic'
+export { default as FakeCharacteristic } from './testDoubles/noble/FakeCharacteristic'
+export * from './testDoubles/noble/FakeCharacteristic'

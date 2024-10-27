@@ -6,7 +6,7 @@ import AbstractSpruceTest, {
 } from '@sprucelabs/test-utils'
 import { Peripheral } from '@abandonware/noble'
 import BleAdapterImpl from '../BleAdapter'
-import FakePeripheral from '../testDoubles/FakePeripheral'
+import FakePeripheral from '../testDoubles/noble/FakePeripheral'
 import SpyBleAdapter from '../testDoubles/SpyBleAdapter'
 
 export default class BleAdapterTest extends AbstractSpruceTest {

@@ -7,8 +7,8 @@ import AbstractSpruceTest, {
 import noble, { Peripheral } from '@abandonware/noble'
 import BleAdapterImpl from '../BleAdapter'
 import BleScannerImpl, { BleScannerOptions, ScanOptions } from '../BleScanner'
-import FakeNoble, { CreateFakePeripheral } from '../testDoubles/FakeNoble'
-import FakePeripheral from '../testDoubles/FakePeripheral'
+import FakeNoble, { CreateFakePeripheral } from '../testDoubles/noble/FakeNoble'
+import FakePeripheral from '../testDoubles/noble/FakePeripheral'
 import SpyBleScanner from '../testDoubles/SpyBleScanner'
 
 export default class BleScannerTest extends AbstractSpruceTest {
