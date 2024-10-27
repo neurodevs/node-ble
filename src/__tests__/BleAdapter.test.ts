@@ -94,7 +94,9 @@ export default class BleAdapterTest extends AbstractSpruceTest {
         const characteristic = new FakeCharacteristic({ uuid, properties: [] })
         this.peripheral.setFakeCharacteristics([characteristic])
 
-        this.fakeSubscribeAsync(characteristic)
+        characteristic.subscribeAsync = async () => {
+            characteristic.numCallsToSubscribeAsync++
+        }
 
         await this.instance.connect()
 
@@ -112,12 +114,6 @@ export default class BleAdapterTest extends AbstractSpruceTest {
 
     private static get peripheral() {
         return this.instance.getPeripheral() as unknown as FakePeripheral
-    }
-
-    private static fakeSubscribeAsync(characteristic: FakeCharacteristic) {
-        characteristic.subscribeAsync = async () => {
-            characteristic.numCallsToSubscribeAsync++
-        }
     }
 
     private static FakePeripheral(uuid: string) {
