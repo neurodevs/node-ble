@@ -1,4 +1,5 @@
 import { assertOptions } from '@sprucelabs/schema'
+import { buildLog } from '@sprucelabs/spruce-skill-utils'
 import { Characteristic, Peripheral, Service } from '@abandonware/noble'
 import SpruceError from './errors/SpruceError'
 
@@ -8,6 +9,7 @@ export default class BleAdapterImpl implements BleAdapter {
     protected peripheral: Peripheral
     protected services!: Service[]
     protected characteristics!: Characteristic[]
+    protected log = buildLog('BleAdapter')
 
     protected constructor(peripheral: Peripheral) {
         this.peripheral = peripheral
@@ -23,14 +25,27 @@ export default class BleAdapterImpl implements BleAdapter {
     }
 
     public async connect() {
-        await this.peripheral.connectAsync()
+        await this.connectToPeripheral()
+        await this.discoverAllServicesAndCharacteristics()
+        await this.subscribeToNotifiableCharacteristics()
 
+        this.setupRssi()
+        this.setupDisconnect()
+    }
+
+    private async connectToPeripheral() {
+        await this.peripheral.connectAsync()
+    }
+
+    private async discoverAllServicesAndCharacteristics() {
         const { services, characteristics } = await this.discoverAll()
 
         this.services = services
         this.characteristics = characteristics
+    }
 
-        await this.subscribeToNotifiableCharacteristics()
+    private async discoverAll() {
+        return await this.peripheral.discoverAllServicesAndCharacteristicsAsync()
     }
 
     private async subscribeToNotifiableCharacteristics() {
@@ -57,8 +72,26 @@ export default class BleAdapterImpl implements BleAdapter {
         })
     }
 
-    private async discoverAll() {
-        return await this.peripheral.discoverAllServicesAndCharacteristicsAsync()
+    private setupRssi() {
+        this.peripheral.on('rssiUpdate', this.handleRssiUpdate.bind(this))
+    }
+
+    private handleRssiUpdate(rssi: number) {
+        this.log.info(`RSSI (${this.localName}): ${rssi}`)
+    }
+
+    private setupDisconnect() {
+        this.peripheral.on('disconnect', this.handleDisconnect)
+    }
+
+    private handleDisconnect() {}
+
+    protected get advertisement() {
+        return this.peripheral.advertisement
+    }
+
+    protected get localName() {
+        return this.advertisement.localName
     }
 }
 

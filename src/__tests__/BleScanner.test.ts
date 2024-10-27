@@ -5,7 +5,7 @@ import AbstractSpruceTest, {
     errorAssert,
 } from '@sprucelabs/test-utils'
 import noble, { Peripheral } from '@abandonware/noble'
-import BleAdapterImpl from '../BleAdapter'
+import BleAdapterImpl, { BleAdapter } from '../BleAdapter'
 import BleScannerImpl, { BleScannerOptions, ScanOptions } from '../BleScanner'
 import FakeNoble, { CreateFakePeripheral } from '../testDoubles/noble/FakeNoble'
 import FakePeripheral from '../testDoubles/noble/FakePeripheral'
@@ -102,8 +102,8 @@ export default class BleScannerTest extends AbstractSpruceTest {
         const mapped = await this.mapPeripheralsToAdapters()
 
         assert.isEqualDeep(
-            adapters,
-            mapped,
+            this.removeLogFromEachAdapter(adapters),
+            this.removeLogFromEachAdapter(mapped),
             'scan should return the faked peripherals!\n'
         )
     }
@@ -448,6 +448,10 @@ export default class BleScannerTest extends AbstractSpruceTest {
 
     private static async stopScanning() {
         await this.instance.stopScanning()
+    }
+
+    private static removeLogFromEachAdapter(adapters: BleAdapter[]) {
+        return adapters.map((adapter: any) => delete adapter.log)
     }
 
     private static get peripherals() {

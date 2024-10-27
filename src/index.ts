@@ -24,3 +24,6 @@ export * from './testDoubles/noble/FakePeripheral'
 
 export { default as FakeCharacteristic } from './testDoubles/noble/FakeCharacteristic'
 export * from './testDoubles/noble/FakeCharacteristic'
+
+export { default as SpyCharacteristic } from './testDoubles/noble/SpyCharacteristic'
+export * from './testDoubles/noble/SpyCharacteristic'

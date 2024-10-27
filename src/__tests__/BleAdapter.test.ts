@@ -7,7 +7,7 @@ import AbstractSpruceTest, {
 import { Peripheral } from '@abandonware/noble'
 import BleAdapterImpl from '../BleAdapter'
 import FakeCharacteristic from '../testDoubles/noble/FakeCharacteristic'
-import FakePeripheral from '../testDoubles/noble/FakePeripheral'
+import FakePeripheral, { CallToOn } from '../testDoubles/noble/FakePeripheral'
 import SpyBleAdapter from '../testDoubles/SpyBleAdapter'
 
 export default class BleAdapterTest extends AbstractSpruceTest {
@@ -43,7 +43,7 @@ export default class BleAdapterTest extends AbstractSpruceTest {
     @test()
     protected static async connectsToPeripheralDuringCreate() {
         assert.isTruthy(
-            this.peripheral.didCallConnectAsync,
+            this.didCallConnectAsync,
             'Should connect to peripheral during Create!'
         )
     }
@@ -60,7 +60,7 @@ export default class BleAdapterTest extends AbstractSpruceTest {
     @test()
     protected static async automaticallySubscribesToCharacteristics() {
         assert.isEqual(
-            this.instance.getCharacteristics().length,
+            this.characteristics.length,
             0,
             'Should not have any characteristics yet!'
         )
@@ -68,11 +68,11 @@ export default class BleAdapterTest extends AbstractSpruceTest {
         const uuid1 = generateId()
         const uuid2 = generateId()
 
-        const c1 = new FakeCharacteristic({ uuid: uuid1 })
-        const c2 = new FakeCharacteristic({ uuid: uuid2 })
-        this.peripheral.setFakeCharacteristics([c1, c2])
+        const c1 = this.FakeCharacteristic(uuid1)
+        const c2 = this.FakeCharacteristic(uuid2)
+        this.setFakeCharacteristics([c1, c2])
 
-        await this.instance.connect()
+        await this.connect()
 
         assert.isEqual(
             c1.numCallsToSubscribeAsync,
@@ -91,14 +91,14 @@ export default class BleAdapterTest extends AbstractSpruceTest {
     protected static async doesNotSubscribeToCharacteristicWithoutNotifyProperty() {
         const uuid = generateId()
 
-        const characteristic = new FakeCharacteristic({ uuid, properties: [] })
-        this.peripheral.setFakeCharacteristics([characteristic])
+        const characteristic = this.FakeCharacteristic(uuid, [])
+        this.setFakeCharacteristics([characteristic])
 
         characteristic.subscribeAsync = async () => {
             characteristic.numCallsToSubscribeAsync++
         }
 
-        await this.instance.connect()
+        await this.connect()
 
         assert.isEqual(
             characteristic.numCallsToSubscribeAsync,
@@ -114,12 +114,72 @@ export default class BleAdapterTest extends AbstractSpruceTest {
         this.createAndFakeThrowCharacteristic(uuid)
 
         const err = await assert.doesThrowAsync(async () => {
-            await this.instance.connect()
+            await this.connect()
         })
 
         errorAssert.assertError(err, 'CHARACTERISTIC_SUBSCRIBE_FAILED', {
             characteristicUuid: uuid,
         })
+    }
+
+    @test()
+    protected static async setsUpRssiUpdateHandlerWithOn() {
+        const { event, listener } = this.peripheral.callsToOn[0]
+
+        assert.isEqual(
+            event,
+            this.expectedRssiEvent,
+            'Should have called peripheral.on("rssiUpdate", ...)!'
+        )
+
+        assert.isFunction(
+            listener,
+            'Should have passed a listener to peripheral.on(...)!'
+        )
+    }
+
+    @test()
+    protected static async rssiListenerCallsLogWithRssiValueAndLocalName() {
+        this.instance.setLogInfoSpy()
+
+        const { listener } = this.peripheral.callsToOn[0]
+        const rssi = Math.random() * 100
+        listener(rssi)
+
+        const localName = this.instance.localName
+
+        assert.isEqual(
+            this.instance.infoLogs[0],
+            `RSSI (${localName}): ${rssi}`,
+            'Should have called log.info once!'
+        )
+    }
+
+    @test()
+    protected static async setsUpDisconnectHandlerWithOn() {
+        const { event, listener } = this.peripheral.callsToOn[1]
+
+        assert.isEqual(
+            event,
+            'disconnect',
+            'Should have passed an event to peripheral.on(...)!'
+        )
+
+        assert.isFunction(
+            listener,
+            'Should have passed a listener to peripheral.on(...)!'
+        )
+    }
+
+    private static get expectedRssiOptions() {
+        return {
+            event: this.rssiUpdateEvent,
+            listener: this.fakedListener,
+        } as CallToOn
+    }
+
+    private static get expectedRssiEvent() {
+        return this.expectedRssiOptions.event
     }
 
     private static createAndFakeThrowCharacteristic(uuid: string) {
@@ -129,9 +189,17 @@ export default class BleAdapterTest extends AbstractSpruceTest {
             throw new Error('Failed to subscribe!')
         }
 
-        this.peripheral.setFakeCharacteristics([characteristic])
+        this.setFakeCharacteristics([characteristic])
 
         return characteristic
+    }
+
+    private static async connect() {
+        await this.instance.connect()
+    }
+
+    private static get peripheral() {
+        return this.instance.getPeripheral() as unknown as FakePeripheral
     }
 
     private static get numCallsToDiscoverAllServicesAndCharacteristicsAsync() {
@@ -139,12 +207,24 @@ export default class BleAdapterTest extends AbstractSpruceTest {
             .numCallsToDiscoverAllServicesAndCharacteristicsAsync
     }
 
-    private static get peripheral() {
-        return this.instance.getPeripheral() as unknown as FakePeripheral
+    private static get characteristics() {
+        return this.instance.getCharacteristics()
     }
 
-    private static FakeCharacteristic(uuid: string) {
-        return new FakeCharacteristic({ uuid })
+    private static get didCallConnectAsync() {
+        return this.peripheral.didCallConnectAsync
+    }
+
+    private static readonly fakedListener = () => {}
+
+    private static readonly rssiUpdateEvent = 'rssiUpdate'
+
+    private static setFakeCharacteristics(fakes: FakeCharacteristic[]) {
+        this.peripheral.setFakeCharacteristics(fakes)
+    }
+
+    private static FakeCharacteristic(uuid: string, properties?: string[]) {
+        return new FakeCharacteristic({ uuid, properties })
     }
 
     private static FakePeripheral(uuid: string) {
@@ -154,7 +234,6 @@ export default class BleAdapterTest extends AbstractSpruceTest {
     private static async BleAdapter(uuid: string) {
         const peripheral = this.FakePeripheral(uuid)
         const instance = await BleAdapterImpl.Create(peripheral)
-
         return instance as SpyBleAdapter
     }
 }
