@@ -111,7 +111,7 @@ export default class BleAdapterTest extends AbstractSpruceTest {
     protected static async throwsIfFailsToSubscribeToCharacteristic() {
         const uuid = generateId()
 
-        this.createAndFakeCharacteristic(uuid)
+        this.createAndFakeThrowCharacteristic(uuid)
 
         const err = await assert.doesThrowAsync(async () => {
             await this.instance.connect()
@@ -122,7 +122,7 @@ export default class BleAdapterTest extends AbstractSpruceTest {
         })
     }
 
-    private static createAndFakeCharacteristic(uuid: string) {
+    private static createAndFakeThrowCharacteristic(uuid: string) {
         const characteristic = this.FakeCharacteristic(uuid)
 
         characteristic.subscribeAsync = async () => {
