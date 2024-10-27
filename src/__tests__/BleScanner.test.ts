@@ -55,13 +55,15 @@ export default class BleScannerTest extends AbstractSpruceTest {
             'noble.isScanning should be false before calling scan!'
         )
 
-        void this.scanForUuids(['invalid-uuid'])
+        const promise = this.scanForUuids(['invalid-uuid'])
         await this.wait(1)
 
         assert.isTrue(
             this.instance.getIsScanning(),
             'scan should set noble.isScanning to true!'
         )
+
+        await promise.catch(() => {})
     }
 
     @test()
@@ -132,10 +134,7 @@ export default class BleScannerTest extends AbstractSpruceTest {
         const invalidUuid = generateId()
 
         const err = await assert.doesThrowAsync(
-            async () =>
-                await this.scanForUuid(invalidUuid, {
-                    timeoutMs: this.timeoutMs,
-                })
+            async () => await this.scanForUuid(invalidUuid)
         )
 
         errorAssert.assertError(err, 'SCAN_TIMED_OUT', {
@@ -147,8 +146,6 @@ export default class BleScannerTest extends AbstractSpruceTest {
     @test()
     protected static async throwsIfScanTimesOutWithName() {
         const invalidName = generateId()
-
-        debugger
 
         const err = await assert.doesThrowAsync(
             async () => await this.scanForName(invalidName)
@@ -485,6 +482,7 @@ export default class BleScannerTest extends AbstractSpruceTest {
     private static BleScanner(options?: BleScannerOptions) {
         return BleScannerImpl.Create({
             defaultDurationMs: this.durationMs,
+            defaultTimeoutMs: this.timeoutMs,
             ...options,
         }) as SpyBleScanner
     }
