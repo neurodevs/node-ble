@@ -1,6 +1,13 @@
 import { generateId } from '@sprucelabs/test-utils'
+import {
+    Characteristic,
+    Service,
+    ServicesAndCharacteristics,
+} from '@abandonware/noble'
 
 export default class FakePeripheral implements SimplePeripheral {
+    public numCallsToDiscoverAllCharacteristicsAndServicesAsync = 0
+
     public uuid: string
     public advertisement: {
         localName: string
@@ -34,6 +41,24 @@ export default class FakePeripheral implements SimplePeripheral {
         this.didCallConnectAsync = true
     }
 
+    public async discoverAllCharacteristicsAndServicesAsync() {
+        this.numCallsToDiscoverAllCharacteristicsAndServicesAsync++
+        return this.fakeServicesAndCharacteristics
+    }
+
+    public fakeServicesAndCharacteristics: ServicesAndCharacteristics = {
+        services: [],
+        characteristics: [],
+    }
+
+    public setFakeServices(services: Service[]) {
+        this.fakeServicesAndCharacteristics.services = services
+    }
+
+    public setFakeCharacteristics(characteristics: Characteristic[]) {
+        this.fakeServicesAndCharacteristics.characteristics = characteristics
+    }
+
     public resetTestDouble() {
         this.callsToConstructor = []
         this.didCallConnect = false
@@ -51,6 +76,7 @@ export interface SimplePeripheral {
     connectable: boolean
     connect(): void
     connectAsync(): Promise<void>
+    discoverAllCharacteristicsAndServicesAsync(): Promise<ServicesAndCharacteristics>
 }
 
 export interface PeripheralOptions {
