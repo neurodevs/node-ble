@@ -1,5 +1,5 @@
 {
-  "name": "node-ble",
+  "name": "@neurodevs/node-ble",
   "version": "0.0.1",
   "main": "build/index.js",
   "repository": "https://github.com/neurodevs/node-ble.git",
