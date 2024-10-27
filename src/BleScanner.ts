@@ -179,9 +179,9 @@ export default class BleScannerImpl implements BleScanner {
     private throwScanTimedOut() {
         return new SpruceError({
             code: 'SCAN_TIMED_OUT',
+            timeoutMs: this.timeoutMs!,
             uuids: this.uuids,
             names: this.names,
-            timeoutMs: this.timeoutMs!,
         })
     }
 
