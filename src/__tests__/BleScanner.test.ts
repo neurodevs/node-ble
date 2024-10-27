@@ -151,8 +151,6 @@ export default class BleScannerTest extends AbstractSpruceTest {
             async () => await this.scanForName(invalidName)
         )
 
-        debugger
-
         errorAssert.assertError(err, 'SCAN_TIMED_OUT', {
             names: [invalidName],
         })

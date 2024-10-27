@@ -33,10 +33,6 @@ export default class FakePeripheral implements SimplePeripheral {
         }
     }
 
-    public connect() {
-        this.didCallConnect = true
-    }
-
     public async connectAsync() {
         this.didCallConnectAsync = true
     }
@@ -60,10 +56,27 @@ export default class FakePeripheral implements SimplePeripheral {
             characteristics as unknown as Characteristic[]
     }
 
+    public get fakeServices() {
+        return this.fakeServicesAndCharacteristics.services
+    }
+
+    public get fakeCharacteristics() {
+        return this.fakeServicesAndCharacteristics.characteristics
+    }
+
+    public resetFakeServicesAndCharacteristics() {
+        this.fakeServicesAndCharacteristics = {
+            services: [],
+            characteristics: [],
+        }
+    }
+
     public resetTestDouble() {
         this.callsToConstructor = []
         this.didCallConnect = false
         this.didCallConnectAsync = false
+        this.numCallsToDiscoverAllServicesAndCharacteristicsAsync = 0
+        this.resetFakeServicesAndCharacteristics()
     }
 }
 
@@ -75,7 +88,6 @@ export interface SimplePeripheral {
     }
     rssi: number
     connectable: boolean
-    connect(): void
     connectAsync(): Promise<void>
     discoverAllServicesAndCharacteristicsAsync(): Promise<ServicesAndCharacteristics>
 }

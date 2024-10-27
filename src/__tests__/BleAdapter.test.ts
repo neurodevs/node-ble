@@ -87,6 +87,24 @@ export default class BleAdapterTest extends AbstractSpruceTest {
         )
     }
 
+    @test()
+    protected static async doesNotSubscribeToCharacteristicWithoutNotifyProperty() {
+        const uuid = generateId()
+
+        const characteristic = new FakeCharacteristic({ uuid, properties: [] })
+        this.peripheral.setFakeCharacteristics([characteristic])
+
+        this.fakeSubscribeAsync(characteristic)
+
+        await this.instance.connect()
+
+        assert.isEqual(
+            characteristic.numCallsToSubscribeAsync,
+            0,
+            'Should not have subscribed to characteristic!'
+        )
+    }
+
     private static get numCallsToDiscoverAllServicesAndCharacteristicsAsync() {
         return this.peripheral
             .numCallsToDiscoverAllServicesAndCharacteristicsAsync
@@ -94,6 +112,12 @@ export default class BleAdapterTest extends AbstractSpruceTest {
 
     private static get peripheral() {
         return this.instance.getPeripheral() as unknown as FakePeripheral
+    }
+
+    private static fakeSubscribeAsync(characteristic: FakeCharacteristic) {
+        characteristic.subscribeAsync = async () => {
+            characteristic.numCallsToSubscribeAsync++
+        }
     }
 
     private static FakePeripheral(uuid: string) {
