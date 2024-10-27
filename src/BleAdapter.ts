@@ -1,4 +1,5 @@
 import { assertOptions } from '@sprucelabs/schema'
+import { buildLog } from '@sprucelabs/spruce-skill-utils'
 import { Characteristic, Peripheral, Service } from '@abandonware/noble'
 import SpruceError from './errors/SpruceError'
 
@@ -8,6 +9,7 @@ export default class BleAdapterImpl implements BleAdapter {
     protected peripheral: Peripheral
     protected services!: Service[]
     protected characteristics!: Characteristic[]
+    private log = buildLog('BleAdapter')
 
     protected constructor(peripheral: Peripheral) {
         this.peripheral = peripheral
@@ -70,7 +72,11 @@ export default class BleAdapterImpl implements BleAdapter {
     }
 
     private setupRssi() {
-        this.peripheral.on('rssiUpdate', () => {})
+        this.peripheral.on('rssiUpdate', this.handleRssiUpdate)
+    }
+
+    private handleRssiUpdate() {
+        this.log.info('RSSI: 10')
     }
 }
 
