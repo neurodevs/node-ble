@@ -7,7 +7,7 @@ import AbstractSpruceTest, {
 import { Peripheral } from '@abandonware/noble'
 import BleAdapterImpl from '../BleAdapter'
 import FakeCharacteristic from '../testDoubles/noble/FakeCharacteristic'
-import FakePeripheral from '../testDoubles/noble/FakePeripheral'
+import FakePeripheral, { CallToOn } from '../testDoubles/noble/FakePeripheral'
 import SpyBleAdapter from '../testDoubles/SpyBleAdapter'
 
 export default class BleAdapterTest extends AbstractSpruceTest {
@@ -122,6 +122,30 @@ export default class BleAdapterTest extends AbstractSpruceTest {
         })
     }
 
+    @test()
+    protected static async callsOnRssiUpdate() {
+        const { event, listener } = this.peripheral.callsToOn[0]
+
+        assert.isEqual(
+            event,
+            this.expectedRssiEvent,
+            'Should have passed an event to peripheral.on(...)!'
+        )
+
+        assert.isFunction(
+            listener,
+            'Should have passed a listener to peripheral.on(...)!'
+        )
+    }
+
+    private static get expectedRssiOptions() {
+        return { event: 'rssiUpdate', listener: this.fakedListener } as CallToOn
+    }
+
+    private static get expectedRssiEvent() {
+        return this.expectedRssiOptions.event
+    }
+
     private static createAndFakeThrowCharacteristic(uuid: string) {
         const characteristic = this.FakeCharacteristic(uuid)
 
@@ -154,6 +178,8 @@ export default class BleAdapterTest extends AbstractSpruceTest {
     private static get didCallConnectAsync() {
         return this.peripheral.didCallConnectAsync
     }
+
+    private static readonly fakedListener = () => {}
 
     private static setFakeCharacteristics(fakes: FakeCharacteristic[]) {
         this.peripheral.setFakeCharacteristics(fakes)

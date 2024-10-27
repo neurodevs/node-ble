@@ -31,6 +31,8 @@ export default class BleAdapterImpl implements BleAdapter {
         this.characteristics = characteristics
 
         await this.subscribeToNotifiableCharacteristics()
+
+        this.peripheral.on('rssiUpdate', () => {})
     }
 
     private async subscribeToNotifiableCharacteristics() {
