@@ -21,3 +21,6 @@ export * from './testDoubles/FakeNoble'
 
 export { default as FakePeripheral } from './testDoubles/FakePeripheral'
 export * from './testDoubles/FakePeripheral'
+
+export { default as FakeCharacteristic } from './testDoubles/FakeCharacteristic'
+export * from './testDoubles/FakeCharacteristic'
