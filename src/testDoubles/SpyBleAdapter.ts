@@ -8,4 +8,12 @@ export default class SpyBleAdapter extends BleAdapterImpl {
     public getPeripheral() {
         return this.peripheral
     }
+
+    public getServices() {
+        return this.services
+    }
+
+    public getCharacteristics() {
+        return this.characteristics
+    }
 }

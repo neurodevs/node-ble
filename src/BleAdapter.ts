@@ -5,10 +5,15 @@ export default class BleAdapterImpl implements BleAdapter {
     public static Class?: BleAdapterConstructor
 
     protected peripheral: Peripheral
+    protected services: Service[]
+    protected characteristics: Characteristic[]
 
     protected constructor(options: BleAdapterOptions) {
-        const { peripheral } = options
+        const { peripheral, services, characteristics } = options
+
         this.peripheral = peripheral
+        this.services = services
+        this.characteristics = characteristics
     }
 
     public static async Create(peripheral: Peripheral) {
