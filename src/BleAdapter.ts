@@ -23,16 +23,26 @@ export default class BleAdapterImpl implements BleAdapter {
     }
 
     public async connect() {
-        await this.peripheral.connectAsync()
+        await this.connectToPeripheral()
+        await this.discoverAllServicesAndCharacteristics()
+        await this.subscribeToNotifiableCharacteristics()
 
+        this.setupRssi()
+    }
+
+    private async connectToPeripheral() {
+        await this.peripheral.connectAsync()
+    }
+
+    private async discoverAllServicesAndCharacteristics() {
         const { services, characteristics } = await this.discoverAll()
 
         this.services = services
         this.characteristics = characteristics
+    }
 
-        await this.subscribeToNotifiableCharacteristics()
-
-        this.peripheral.on('rssiUpdate', () => {})
+    private async discoverAll() {
+        return await this.peripheral.discoverAllServicesAndCharacteristicsAsync()
     }
 
     private async subscribeToNotifiableCharacteristics() {
@@ -59,8 +69,8 @@ export default class BleAdapterImpl implements BleAdapter {
         })
     }
 
-    private async discoverAll() {
-        return await this.peripheral.discoverAllServicesAndCharacteristicsAsync()
+    private setupRssi() {
+        this.peripheral.on('rssiUpdate', () => {})
     }
 }
 
