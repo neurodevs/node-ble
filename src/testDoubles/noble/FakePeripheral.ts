@@ -11,6 +11,7 @@ export default class FakePeripheral implements SimplePeripheral {
     public didCallConnect = false
     public didCallConnectAsync = false
     public numCallsToDiscoverAllServicesAndCharacteristicsAsync = 0
+    public callsToOn: CallToOn[] = []
 
     public uuid: string
     public advertisement: {
@@ -40,6 +41,10 @@ export default class FakePeripheral implements SimplePeripheral {
     public async discoverAllServicesAndCharacteristicsAsync() {
         this.numCallsToDiscoverAllServicesAndCharacteristicsAsync++
         return this.fakeServicesAndCharacteristics
+    }
+
+    public on(event: 'rssiUpdate', listener: (rssi: number) => void) {
+        this.callsToOn.push({ event, listener })
     }
 
     public fakeServicesAndCharacteristics: ServicesAndCharacteristics = {
@@ -90,9 +95,15 @@ export interface SimplePeripheral {
     connectable: boolean
     connectAsync(): Promise<void>
     discoverAllServicesAndCharacteristicsAsync(): Promise<ServicesAndCharacteristics>
+    on(event: 'rssiUpdate', listener: (rssi: number) => void): void
 }
 
 export interface PeripheralOptions {
     uuid?: string
     localName?: string
+}
+
+export interface CallToOn {
+    event: 'rssiUpdate'
+    listener: (rssi: number) => void
 }
