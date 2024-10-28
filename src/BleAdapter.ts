@@ -33,8 +33,6 @@ export default class BleAdapterImpl implements BleAdapter {
     }
 
     public async connect() {
-        this.log.info(this.connectingMessage)
-
         this.resetIsIntentionalDisconnectFlag()
 
         await this.connectToPeripheral()
@@ -43,8 +41,6 @@ export default class BleAdapterImpl implements BleAdapter {
 
         this.setupRssiUpdateHandler()
         this.setupDisconnectHandler()
-
-        this.log.info(this.connectedMessage)
     }
 
     private resetIsIntentionalDisconnectFlag() {
@@ -113,9 +109,7 @@ export default class BleAdapterImpl implements BleAdapter {
     }
 
     private async handleIntentionForDisconnect() {
-        if (this.isIntentionalDisconnect) {
-            this.log.info(this.intentionalDisconnectMessage)
-        } else {
+        if (!this.isIntentionalDisconnect) {
             this.log.warn(this.unintentionalDisconnectMessage)
             await this.reconnect()
         }
@@ -134,13 +128,13 @@ export default class BleAdapterImpl implements BleAdapter {
     public async disconnect() {
         this.isIntentionalDisconnect = true
 
-        if (!this.isDisconnected) {
+        if (this.isConnected) {
             await this.tryToDisconnect()
         }
     }
 
-    private get isDisconnected() {
-        return this.disconnectStates.includes(this.peripheral.state)
+    private get isConnected() {
+        return !this.disconnectStates.includes(this.peripheral.state)
     }
 
     private async tryToDisconnect() {
@@ -156,18 +150,6 @@ export default class BleAdapterImpl implements BleAdapter {
     }
 
     private readonly disconnectStates = ['disconnected', 'disconnecting']
-
-    private get connectingMessage() {
-        return `Connecting to ${this.localName}...`
-    }
-
-    private get connectedMessage() {
-        return `Connected to ${this.localName}!`
-    }
-
-    private get intentionalDisconnectMessage() {
-        return `Disconnected from ${this.localName}!`
-    }
 
     private get unintentionalDisconnectMessage() {
         return `Unexpectedly disconnected from ${this.localName}!`
