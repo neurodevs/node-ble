@@ -32,8 +32,8 @@ export default class BleAdapterImpl implements BleAdapter {
         await this.discoverAllServicesAndCharacteristics()
         await this.subscribeToNotifiableCharacteristics()
 
-        this.setupRssi()
-        this.setupDisconnect()
+        this.setupRssiUpdateHandler()
+        this.setupDisconnectHandler()
     }
 
     private resetIntentionalDisconnectFlag() {
@@ -79,7 +79,7 @@ export default class BleAdapterImpl implements BleAdapter {
         })
     }
 
-    private setupRssi() {
+    private setupRssiUpdateHandler() {
         this.peripheral.on('rssiUpdate', this.handleRssiUpdate.bind(this))
     }
 
@@ -87,7 +87,11 @@ export default class BleAdapterImpl implements BleAdapter {
         this.log.info(`RSSI (${this.localName}): ${rssi}`)
     }
 
-    private setupDisconnect() {
+    private teardownRssiUpdateHandler() {
+        this.peripheral.off('rssiUpdate', this.handleRssiUpdate.bind(this))
+    }
+
+    private setupDisconnectHandler() {
         this.peripheral.on('disconnect', this.handleDisconnect.bind(this))
     }
 
@@ -95,6 +99,7 @@ export default class BleAdapterImpl implements BleAdapter {
         if (!this.isIntentionalDisconnect) {
             this.log.warn(`BLE disconnected from ${this.localName}!`)
         }
+        this.teardownRssiUpdateHandler()
     }
 
     public async disconnect() {
