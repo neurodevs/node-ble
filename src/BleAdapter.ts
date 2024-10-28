@@ -33,6 +33,8 @@ export default class BleAdapterImpl implements BleAdapter {
     }
 
     public async connect() {
+        this.log.info(this.connectingMessage)
+
         this.resetIsIntentionalDisconnectFlag()
 
         await this.connectToPeripheral()
@@ -75,12 +77,15 @@ export default class BleAdapterImpl implements BleAdapter {
             await characteristic.subscribeAsync()
         } catch {
             const { uuid } = characteristic
-
-            throw new SpruceError({
-                code: 'CHARACTERISTIC_SUBSCRIBE_FAILED',
-                characteristicUuid: uuid,
-            })
+            this.throwCharacteristicSubscribeFailed(uuid)
         }
+    }
+
+    private throwCharacteristicSubscribeFailed(uuid: string) {
+        throw new SpruceError({
+            code: 'CHARACTERISTIC_SUBSCRIBE_FAILED',
+            characteristicUuid: uuid,
+        })
     }
 
     private setupRssiUpdateHandler() {
@@ -115,6 +120,7 @@ export default class BleAdapterImpl implements BleAdapter {
     private async reconnect() {
         this.log.info(this.reconnectingMessage)
         await this.connect()
+        this.log.info(this.reconnectedMessage)
     }
 
     public async disconnect() {
@@ -143,12 +149,20 @@ export default class BleAdapterImpl implements BleAdapter {
 
     private readonly disconnectStates = ['disconnected', 'disconnecting']
 
+    private get connectingMessage() {
+        return `Connecting to ${this.localName}...`
+    }
+
     private get unintentionalDisconnectMessage() {
         return `Unexpectedly disconnected from ${this.localName}!`
     }
 
     private get reconnectingMessage() {
         return `Reconnecting to ${this.localName}...`
+    }
+
+    private get reconnectedMessage() {
+        return `Reconnected to ${this.localName}!`
     }
 
     protected get advertisement() {
