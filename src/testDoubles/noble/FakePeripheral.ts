@@ -95,7 +95,7 @@ export interface SimplePeripheral {
     connectable: boolean
     connectAsync(): Promise<void>
     discoverAllServicesAndCharacteristicsAsync(): Promise<ServicesAndCharacteristics>
-    on(event: 'rssiUpdate', listener: (rssi: number) => void): void
+    on(event: string, listener: (arg?: any) => void): void
 }
 
 export interface PeripheralOptions {
@@ -105,5 +105,5 @@ export interface PeripheralOptions {
 
 export interface CallToOn {
     event: 'rssiUpdate'
-    listener: (rssi: number) => void
+    listener: (arg?: any) => void
 }
