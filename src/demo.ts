@@ -10,8 +10,6 @@ async function main() {
     const result = await scanner.scanForName('CGX Quick-Series Headset')
     console.log('Result:\n\n', result)
 
-    await new Promise((resolve) => setTimeout(resolve, 1000000)).then(() => {})
-
     exit(0)
 }
 
