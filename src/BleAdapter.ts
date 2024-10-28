@@ -105,10 +105,10 @@ export default class BleAdapterImpl implements BleAdapter {
     }
 
     private async handleDisconnect() {
-        await this.handleIntentionForDisconnect()
-
         this.teardownRssiUpdateHandler()
         this.teardownDisconnectHandler()
+
+        await this.handleIntentionForDisconnect()
     }
 
     private async handleIntentionForDisconnect() {
