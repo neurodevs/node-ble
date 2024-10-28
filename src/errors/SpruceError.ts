@@ -37,10 +37,10 @@ export default class SpruceError extends BaseSpruceError<ErrorOptions> {
     private generateSubscribeFailedMessage(
         options: CharacteristicSubscribeFailedErrorOptions
     ) {
-        const { characteristicUuid, originalError } = options ?? {}
+        const { characteristicUuid } = options ?? {}
         return `
-            \n Failed to subscribe to peripheral characteristic: ${characteristicUuid}!
-            \n Original error: ${originalError}
+            \n Failed to subscribe to characteristicUuid: ${characteristicUuid}!
+            \n Original error: ${this.originalError}
         `
     }
 
