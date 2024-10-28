@@ -123,13 +123,13 @@ export default class BleAdapterTest extends AbstractSpruceTest {
     }
 
     @test()
-    protected static async callsOnRssiUpdate() {
+    protected static async setsUpRssiUpdateHandlerWithOn() {
         const { event, listener } = this.peripheral.callsToOn[0]
 
         assert.isEqual(
             event,
             this.expectedRssiEvent,
-            'Should have passed an event to peripheral.on(...)!'
+            'Should have called peripheral.on("rssiUpdate", ...)!'
         )
 
         assert.isFunction(
@@ -155,8 +155,27 @@ export default class BleAdapterTest extends AbstractSpruceTest {
         )
     }
 
+    @test()
+    protected static async setsUpDisconnectHandlerWithOn() {
+        const { event, listener } = this.peripheral.callsToOn[1]
+
+        assert.isEqual(
+            event,
+            'disconnect',
+            'Should have passed an event to peripheral.on(...)!'
+        )
+
+        assert.isFunction(
+            listener,
+            'Should have passed a listener to peripheral.on(...)!'
+        )
+    }
+
     private static get expectedRssiOptions() {
-        return { event: 'rssiUpdate', listener: this.fakedListener } as CallToOn
+        return {
+            event: this.rssiUpdateEvent,
+            listener: this.fakedListener,
+        } as CallToOn
     }
 
     private static get expectedRssiEvent() {
@@ -197,6 +216,8 @@ export default class BleAdapterTest extends AbstractSpruceTest {
     }
 
     private static readonly fakedListener = () => {}
+
+    private static readonly rssiUpdateEvent = 'rssiUpdate'
 
     private static setFakeCharacteristics(fakes: FakeCharacteristic[]) {
         this.peripheral.setFakeCharacteristics(fakes)

@@ -30,6 +30,7 @@ export default class BleAdapterImpl implements BleAdapter {
         await this.subscribeToNotifiableCharacteristics()
 
         this.setupRssi()
+        this.setupDisconnect()
     }
 
     private async connectToPeripheral() {
@@ -75,16 +76,22 @@ export default class BleAdapterImpl implements BleAdapter {
         this.peripheral.on('rssiUpdate', this.handleRssiUpdate.bind(this))
     }
 
+    private handleRssiUpdate(rssi: number) {
+        this.log.info(`RSSI (${this.localName}): ${rssi}`)
+    }
+
+    private setupDisconnect() {
+        this.peripheral.on('disconnect', this.handleDisconnect)
+    }
+
+    private handleDisconnect() {}
+
     private get advertisement() {
         return this.peripheral.advertisement
     }
 
     private get localName() {
         return this.advertisement.localName
-    }
-
-    private handleRssiUpdate(rssi: number) {
-        this.log.info(`RSSI (${this.localName}): ${rssi}`)
     }
 }
 
