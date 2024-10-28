@@ -40,6 +40,7 @@ export default class FakePeripheral implements SimplePeripheral {
 
     public async disconnectAsync() {
         this.numCallsToDisconnectAsync++
+        this.emit('disconnect')
     }
 
     public async discoverAllServicesAndCharacteristicsAsync() {
@@ -78,6 +79,12 @@ export default class FakePeripheral implements SimplePeripheral {
             services: [],
             characteristics: [],
         }
+    }
+
+    private emit(event: string, ...args: any[]) {
+        this.callsToOn
+            .filter((call) => call.event === event)
+            .forEach((call) => call.listener(...args))
     }
 
     public resetTestDouble() {
