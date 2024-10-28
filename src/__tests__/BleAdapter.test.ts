@@ -186,13 +186,26 @@ export default class BleAdapterTest extends AbstractSpruceTest {
     }
 
     @test()
-    protected static async disconnectsFromPeripheral() {
+    protected static async disconnectMethodDisconnectsFromPeripheral() {
         await this.instance.disconnect()
 
         assert.isEqual(
             this.peripheral.numCallsToDisconnectAsync,
             1,
             'Should have called disconnectAsync on peripheral!'
+        )
+    }
+
+    @test()
+    protected static async doesNotLogIfDisconnectIsCalled() {
+        this.instance.setLogWarnSpy()
+
+        await this.instance.disconnect()
+
+        assert.isLength(
+            this.instance.warnLogs,
+            0,
+            'Should not have called log.warn!'
         )
     }
 

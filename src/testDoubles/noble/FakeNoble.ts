@@ -1,4 +1,4 @@
-import { EventEmitter } from 'stream'
+import { EventEmitter } from 'events'
 import { generateId } from '@sprucelabs/test-utils'
 import FakePeripheral from './FakePeripheral'
 

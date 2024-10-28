@@ -10,6 +10,7 @@ export default class BleAdapterImpl implements BleAdapter {
     protected services!: Service[]
     protected characteristics!: Characteristic[]
     protected log = buildLog('BleAdapter')
+    private isIntentionalDisconnect = false
 
     protected constructor(peripheral: Peripheral) {
         this.peripheral = peripheral
@@ -85,10 +86,13 @@ export default class BleAdapterImpl implements BleAdapter {
     }
 
     private async handleDisconnect() {
-        this.log.warn(`BLE disconnected from ${this.localName}!`)
+        if (!this.isIntentionalDisconnect) {
+            this.log.warn(`BLE disconnected from ${this.localName}!`)
+        }
     }
 
     public async disconnect() {
+        this.isIntentionalDisconnect = true
         await this.peripheral.disconnectAsync()
     }
 
