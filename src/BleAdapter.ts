@@ -100,7 +100,8 @@ export default class BleAdapterImpl implements BleAdapter {
 
     private async handleDisconnect() {
         if (!this.isIntentionalDisconnect) {
-            this.log.warn(`BLE disconnected from ${this.localName}!`)
+            this.log.warn(this.unintentionalDisconnectMessage)
+            await this.connect()
         }
         this.teardownRssiUpdateHandler()
         this.teardownDisconnectHandler()
@@ -135,6 +136,10 @@ export default class BleAdapterImpl implements BleAdapter {
     }
 
     private readonly disconnectStates = ['disconnected', 'disconnecting']
+
+    private get unintentionalDisconnectMessage() {
+        return `BLE unexpectedly disconnected from ${this.localName}!`
+    }
 
     protected get advertisement() {
         return this.peripheral.advertisement

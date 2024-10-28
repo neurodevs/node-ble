@@ -182,7 +182,7 @@ export default class BleAdapterTest extends AbstractSpruceTest {
 
         assert.isEqual(
             this.instance.warnLogs[0],
-            `BLE disconnected from ${this.localName}!`,
+            `BLE unexpectedly disconnected from ${this.localName}!`,
             'Should have called log.warn once!'
         )
     }
@@ -306,6 +306,17 @@ export default class BleAdapterTest extends AbstractSpruceTest {
             peripheral.numCallsToConnectAsync,
             0,
             'Should not have connected to peripheral!'
+        )
+    }
+
+    @test()
+    protected static async automaticallyReconnectsFromUnintentionalDisconnect() {
+        this.peripheral.emit('disconnect')
+
+        assert.isEqual(
+            this.didCallConnectAsync,
+            2,
+            'Should have called connectAsync twice!'
         )
     }
 

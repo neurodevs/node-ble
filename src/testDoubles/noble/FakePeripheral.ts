@@ -86,7 +86,7 @@ export default class FakePeripheral implements SimplePeripheral {
         }
     }
 
-    private emit(event: string, ...args: any[]) {
+    public emit(event: string, ...args: any[]) {
         this.callsToOn
             .filter((call) => call.event === event)
             .forEach((call) => call.listener(...args))
