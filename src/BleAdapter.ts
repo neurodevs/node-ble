@@ -117,13 +117,13 @@ export default class BleAdapterImpl implements BleAdapter {
     public async disconnect() {
         this.isIntentionalDisconnect = true
 
-        if (this.isNotDisconnected) {
+        if (!this.isDisconnected) {
             await this.tryToDisconnect()
         }
     }
 
-    private get isNotDisconnected() {
-        return !this.disconnectStates.includes(this.peripheral.state)
+    private get isDisconnected() {
+        return this.disconnectStates.includes(this.peripheral.state)
     }
 
     private async tryToDisconnect() {
