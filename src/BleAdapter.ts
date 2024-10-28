@@ -16,11 +16,18 @@ export default class BleAdapterImpl implements BleAdapter {
         this.peripheral = peripheral
     }
 
-    public static async Create(peripheral: Peripheral) {
+    public static async Create(
+        peripheral: Peripheral,
+        options?: BleAdapterOptions
+    ) {
         assertOptions({ peripheral }, ['peripheral'])
+        const { shouldConnect = true } = options ?? {}
 
         const adapter = new (this.Class ?? this)(peripheral)
-        await adapter.connect()
+
+        if (shouldConnect) {
+            await adapter.connect()
+        }
 
         return adapter
     }
@@ -145,6 +152,10 @@ export default class BleAdapterImpl implements BleAdapter {
 export interface BleAdapter {
     connect(): Promise<void>
     disconnect(): Promise<void>
+}
+
+export interface BleAdapterOptions {
+    shouldConnect?: boolean
 }
 
 export type BleAdapterConstructor = new (peripheral: Peripheral) => BleAdapter

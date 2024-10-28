@@ -5,7 +5,7 @@ import AbstractSpruceTest, {
     generateId,
 } from '@sprucelabs/test-utils'
 import { Peripheral } from '@abandonware/noble'
-import BleAdapterImpl from '../BleAdapter'
+import BleAdapterImpl, { BleAdapterOptions } from '../BleAdapter'
 import FakeCharacteristic from '../testDoubles/noble/FakeCharacteristic'
 import FakePeripheral, {
     EventAndListener,
@@ -294,6 +294,21 @@ export default class BleAdapterTest extends AbstractSpruceTest {
         )
     }
 
+    @test()
+    protected static async providesOptionToDisableAutoConnect() {
+        const instance = await this.BleAdapter(this.uuid, {
+            shouldConnect: false,
+        })
+
+        const peripheral = instance.getPeripheral() as unknown as FakePeripheral
+
+        assert.isEqual(
+            peripheral.numCallsToConnectAsync,
+            0,
+            'Should not have connected to peripheral!'
+        )
+    }
+
     private static get expectedRssiOptions() {
         return {
             event: this.rssiUpdateEvent,
@@ -362,9 +377,9 @@ export default class BleAdapterTest extends AbstractSpruceTest {
         return new FakePeripheral({ uuid }) as unknown as Peripheral
     }
 
-    private static async BleAdapter(uuid: string) {
+    private static async BleAdapter(uuid: string, options?: BleAdapterOptions) {
         const peripheral = this.FakePeripheral(uuid)
-        const instance = await BleAdapterImpl.Create(peripheral)
+        const instance = await BleAdapterImpl.Create(peripheral, options)
         return instance as SpyBleAdapter
     }
 }
