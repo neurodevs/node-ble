@@ -84,7 +84,6 @@ export default class BleAdapterImpl implements BleAdapter {
     }
 
     private handleRssiUpdate(rssi: number) {
-        this.peripheral.rssi = rssi
         this.log.info(`RSSI (${this.localName}): ${rssi}`)
     }
 }
