@@ -100,6 +100,11 @@ export default class BleAdapterImpl implements BleAdapter {
             this.log.warn(`BLE disconnected from ${this.localName}!`)
         }
         this.teardownRssiUpdateHandler()
+        this.teardownDisconnectHandler()
+    }
+
+    private teardownDisconnectHandler() {
+        this.peripheral.off('disconnect', this.handleDisconnect.bind(this))
     }
 
     public async disconnect() {
