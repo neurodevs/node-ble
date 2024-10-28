@@ -105,12 +105,19 @@ export default class BleAdapterImpl implements BleAdapter {
     }
 
     private async handleDisconnect() {
-        if (!this.isIntentionalDisconnect) {
+        await this.handleIntentionForDisconnect()
+
+        this.teardownRssiUpdateHandler()
+        this.teardownDisconnectHandler()
+    }
+
+    private async handleIntentionForDisconnect() {
+        if (this.isIntentionalDisconnect) {
+            this.log.info(this.intentionalDisconnectMessage)
+        } else {
             this.log.warn(this.unintentionalDisconnectMessage)
             await this.reconnect()
         }
-        this.teardownRssiUpdateHandler()
-        this.teardownDisconnectHandler()
     }
 
     private teardownDisconnectHandler() {
@@ -151,6 +158,10 @@ export default class BleAdapterImpl implements BleAdapter {
 
     private get connectingMessage() {
         return `Connecting to ${this.localName}...`
+    }
+
+    private get intentionalDisconnectMessage() {
+        return `Disconnected from ${this.localName}!`
     }
 
     private get unintentionalDisconnectMessage() {
