@@ -75,6 +75,7 @@ export default class BleAdapterImpl implements BleAdapter {
             await characteristic.subscribeAsync()
         } catch {
             const { uuid } = characteristic
+
             throw new SpruceError({
                 code: 'CHARACTERISTIC_SUBSCRIBE_FAILED',
                 characteristicUuid: uuid,
@@ -101,6 +102,7 @@ export default class BleAdapterImpl implements BleAdapter {
     private async handleDisconnect() {
         if (!this.isIntentionalDisconnect) {
             this.log.warn(this.unintentionalDisconnectMessage)
+            this.log.info(this.reconnectingMessage)
             await this.connect()
         }
         this.teardownRssiUpdateHandler()
@@ -138,7 +140,11 @@ export default class BleAdapterImpl implements BleAdapter {
     private readonly disconnectStates = ['disconnected', 'disconnecting']
 
     private get unintentionalDisconnectMessage() {
-        return `BLE unexpectedly disconnected from ${this.localName}!`
+        return `Unexpectedly disconnected from ${this.localName}!`
+    }
+
+    private get reconnectingMessage() {
+        return `Reconnecting to ${this.localName}...`
     }
 
     protected get advertisement() {
