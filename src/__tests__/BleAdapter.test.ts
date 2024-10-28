@@ -126,7 +126,7 @@ export default class BleAdapterTest extends AbstractSpruceTest {
 
     @test()
     protected static async setsUpRssiUpdateHandlerWithOn() {
-        const { event, listener } = this.peripheral.callsToOn[0]
+        const { event, listener } = this.callsToOn[0]
 
         assert.isEqual(
             event,
@@ -144,7 +144,7 @@ export default class BleAdapterTest extends AbstractSpruceTest {
     protected static async rssiListenerCallsLogWithExpectedMessage() {
         this.instance.setLogInfoSpy()
 
-        const { listener } = this.peripheral.callsToOn[0]
+        const { listener } = this.callsToOn[0]
         const rssi = Math.random() * 100
         listener(rssi)
 
@@ -159,7 +159,7 @@ export default class BleAdapterTest extends AbstractSpruceTest {
 
     @test()
     protected static async setsUpDisconnectHandlerWithOn() {
-        const { event, listener } = this.peripheral.callsToOn[1]
+        const { event, listener } = this.callsToOn[1]
 
         assert.isEqual(
             event,
@@ -177,7 +177,7 @@ export default class BleAdapterTest extends AbstractSpruceTest {
     protected static async disconnectListenerCallsLogWithExpectedMessage() {
         this.instance.setLogWarnSpy()
 
-        const { listener } = this.peripheral.callsToOn[1]
+        const { listener } = this.callsToOn[1]
         listener()
 
         assert.isEqual(
@@ -333,6 +333,17 @@ export default class BleAdapterTest extends AbstractSpruceTest {
         )
     }
 
+    @test()
+    protected static async shouldTeardownInitialHandlersOnReconnect() {
+        this.peripheral.emit('disconnect')
+
+        assert.isEqual(
+            BleAdapterTest.callsToOff.length,
+            2,
+            'Should have called peripheral.off(...) twice!'
+        )
+    }
+
     private static get expectedRssiOptions() {
         return {
             event: this.rssiUpdateEvent,
@@ -375,6 +386,14 @@ export default class BleAdapterTest extends AbstractSpruceTest {
 
     private static get didCallConnectAsync() {
         return this.peripheral.numCallsToConnectAsync
+    }
+
+    private static get callsToOn() {
+        return this.peripheral.callsToOn
+    }
+
+    private static get callsToOff() {
+        return this.peripheral.callsToOff
     }
 
     private static get advertisement() {
