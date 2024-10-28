@@ -209,6 +209,23 @@ export default class BleAdapterTest extends AbstractSpruceTest {
         )
     }
 
+    @test()
+    protected static async connectResetsIntentionalDisconnectFlag() {
+        await this.instance.disconnect()
+
+        assert.isTrue(
+            this.instance.getIsIntentionalDisconnect(),
+            'Should have set isIntentionalDisconnect to true!'
+        )
+
+        await this.connect()
+
+        assert.isFalse(
+            this.instance.getIsIntentionalDisconnect(),
+            'Should have set isIntentionalDisconnect to false!'
+        )
+    }
+
     private static get expectedRssiOptions() {
         return {
             event: this.rssiUpdateEvent,

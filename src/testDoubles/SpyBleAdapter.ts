@@ -35,6 +35,10 @@ export default class SpyBleAdapter extends BleAdapterImpl {
         return this.peripheral.advertisement
     }
 
+    public getIsIntentionalDisconnect() {
+        return this.isIntentionalDisconnect
+    }
+
     public setLogInfoSpy() {
         this.infoLogs = []
 
