@@ -86,11 +86,11 @@ export default class BleAdapterImpl implements BleAdapter {
 
     private handleDisconnect() {}
 
-    private get advertisement() {
+    protected get advertisement() {
         return this.peripheral.advertisement
     }
 
-    private get localName() {
+    protected get localName() {
         return this.advertisement.localName
     }
 }

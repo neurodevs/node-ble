@@ -146,7 +146,7 @@ export default class BleAdapterTest extends AbstractSpruceTest {
         const rssi = Math.random() * 100
         listener(rssi)
 
-        const localName = this.instance.getLocalName()
+        const localName = this.instance.localName
 
         assert.isEqual(
             this.instance.infoLogs[0],
