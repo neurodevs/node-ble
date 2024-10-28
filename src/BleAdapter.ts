@@ -99,7 +99,14 @@ export default class BleAdapterImpl implements BleAdapter {
 
     public async disconnect() {
         this.isIntentionalDisconnect = true
-        await this.peripheral.disconnectAsync()
+
+        if (this.isNotDisconnected) {
+            await this.peripheral.disconnectAsync()
+        }
+    }
+
+    private get isNotDisconnected() {
+        return !this.disconnectStates.includes(this.peripheral.state)
     }
 
     protected get advertisement() {
@@ -109,6 +116,8 @@ export default class BleAdapterImpl implements BleAdapter {
     protected get localName() {
         return this.advertisement.localName
     }
+
+    private readonly disconnectStates = ['disconnected', 'disconnecting']
 }
 
 export interface BleAdapter {

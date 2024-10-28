@@ -69,6 +69,17 @@ export default class SpyBleAdapter extends BleAdapterImpl {
         }
     }
 
+    public setState(
+        state:
+            | 'error'
+            | 'connecting'
+            | 'connected'
+            | 'disconnecting'
+            | 'disconnected'
+    ) {
+        this.peripheral.state = state
+    }
+
     public resetTestDouble() {
         this.infoLogs = []
     }
