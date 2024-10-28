@@ -226,6 +226,22 @@ export default class BleAdapterTest extends AbstractSpruceTest {
         )
     }
 
+    @test('does not call disconnectAsync when disconnecting', 'disconnecting')
+    @test('does not call disconnectAsync when disconnected', 'disconnected')
+    protected static async doesNotCallDisconnectInState(
+        state: 'disconnected' | 'disconnecting'
+    ) {
+        this.instance.setState(state)
+
+        await this.instance.disconnect()
+
+        assert.isEqual(
+            this.peripheral.numCallsToDisconnectAsync,
+            0,
+            'Should not have called disconnectAsync on peripheral!'
+        )
+    }
+
     private static get expectedRssiOptions() {
         return {
             event: this.rssiUpdateEvent,
