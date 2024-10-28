@@ -4,6 +4,8 @@ import BleAdapterImpl from '../BleAdapter'
 
 export default class SpyBleAdapter extends BleAdapterImpl {
     public infoLogs: string[] = []
+    public warnLogs: string[] = []
+    public errorLogs: string[] = []
 
     public constructor(peripheral: Peripheral) {
         super(peripheral)
@@ -34,9 +36,31 @@ export default class SpyBleAdapter extends BleAdapterImpl {
     }
 
     public setLogInfoSpy() {
+        this.infoLogs = []
+
         this.log.info = (...args: LoggableType[]) => {
             const message = args.join(' ')
             this.infoLogs.push(message)
+            return message
+        }
+    }
+
+    public setLogWarnSpy() {
+        this.warnLogs = []
+
+        this.log.warn = (...args: LoggableType[]) => {
+            const message = args.join(' ')
+            this.warnLogs.push(message)
+            return message
+        }
+    }
+
+    public setLogErrorSpy() {
+        this.errorLogs = []
+
+        this.log.error = (...args: LoggableType[]) => {
+            const message = args.join(' ')
+            this.errorLogs.push(message)
             return message
         }
     }

@@ -81,10 +81,12 @@ export default class BleAdapterImpl implements BleAdapter {
     }
 
     private setupDisconnect() {
-        this.peripheral.on('disconnect', this.handleDisconnect)
+        this.peripheral.on('disconnect', this.handleDisconnect.bind(this))
     }
 
-    private handleDisconnect() {}
+    private handleDisconnect() {
+        this.log.warn(`BLE disconnected from ${this.localName}!`)
+    }
 
     protected get advertisement() {
         return this.peripheral.advertisement

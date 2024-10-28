@@ -139,7 +139,7 @@ export default class BleAdapterTest extends AbstractSpruceTest {
     }
 
     @test()
-    protected static async rssiListenerCallsLogWithRssiValueAndLocalName() {
+    protected static async rssiListenerCallsLogWithExpectedMessage() {
         this.instance.setLogInfoSpy()
 
         const { listener } = this.peripheral.callsToOn[0]
@@ -168,6 +168,20 @@ export default class BleAdapterTest extends AbstractSpruceTest {
         assert.isFunction(
             listener,
             'Should have passed a listener to peripheral.on(...)!'
+        )
+    }
+
+    @test()
+    protected static async disconnectListenerCallsLogWithExpectedMessage() {
+        this.instance.setLogWarnSpy()
+
+        const { listener } = this.peripheral.callsToOn[1]
+        listener()
+
+        assert.isEqual(
+            this.instance.warnLogs[0],
+            `BLE disconnected from ${this.localName}!`,
+            'Should have called log.warn once!'
         )
     }
 
@@ -213,6 +227,14 @@ export default class BleAdapterTest extends AbstractSpruceTest {
 
     private static get didCallConnectAsync() {
         return this.peripheral.didCallConnectAsync
+    }
+
+    private static get advertisement() {
+        return this.peripheral.advertisement
+    }
+
+    private static get localName() {
+        return this.advertisement.localName
     }
 
     private static readonly fakedListener = () => {}
