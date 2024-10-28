@@ -1,7 +1,10 @@
+import { LoggableType } from '@sprucelabs/spruce-skill-utils'
 import { Peripheral } from '@abandonware/noble'
 import BleAdapterImpl from '../BleAdapter'
 
 export default class SpyBleAdapter extends BleAdapterImpl {
+    public infoLogs: string[] = []
+
     public constructor(peripheral: Peripheral) {
         super(peripheral)
     }
@@ -19,14 +22,26 @@ export default class SpyBleAdapter extends BleAdapterImpl {
     }
 
     public getLocalName() {
-        return this.advertisement.localName
+        return this.getAdvertisement().localName
     }
 
     public getPeripheralRssi() {
         return this.peripheral.rssi
     }
 
-    public get advertisement() {
+    public getAdvertisement() {
         return this.peripheral.advertisement
+    }
+
+    public setLogInfoSpy() {
+        this.log.info = (...args: LoggableType[]) => {
+            const message = args.join(' ')
+            this.infoLogs.push(message)
+            return message
+        }
+    }
+
+    public resetTestDouble() {
+        this.infoLogs = []
     }
 }

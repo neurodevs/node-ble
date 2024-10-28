@@ -152,6 +152,23 @@ export default class BleAdapterTest extends AbstractSpruceTest {
         )
     }
 
+    @test()
+    protected static async rssiListenerCallsLogWithRssiValueAndLocalName() {
+        this.instance.setLogInfoSpy()
+
+        const { listener } = this.peripheral.callsToOn[0]
+        const rssi = Math.random() * 100
+        listener(rssi)
+
+        const localName = this.instance.getLocalName()
+
+        assert.isEqual(
+            this.instance.infoLogs[0],
+            `RSSI (${localName}): ${rssi}`,
+            'Should have called log.info once!'
+        )
+    }
+
     private static get expectedRssiOptions() {
         return { event: 'rssiUpdate', listener: this.fakedListener } as CallToOn
     }

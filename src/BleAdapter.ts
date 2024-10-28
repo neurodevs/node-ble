@@ -75,9 +75,17 @@ export default class BleAdapterImpl implements BleAdapter {
         this.peripheral.on('rssiUpdate', this.handleRssiUpdate.bind(this))
     }
 
+    private get advertisement() {
+        return this.peripheral.advertisement
+    }
+
+    private get localName() {
+        return this.advertisement.localName
+    }
+
     private handleRssiUpdate(rssi: number) {
         this.peripheral.rssi = rssi
-        this.log.info('RSSI')
+        this.log.info(`RSSI (${this.localName}): ${rssi}`)
     }
 }
 
