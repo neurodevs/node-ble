@@ -2,6 +2,7 @@ import BaseSpruceError from '@sprucelabs/error'
 import ErrorOptions, {
     ScanTimedOutErrorOptions,
     CharacteristicSubscribeFailedErrorOptions,
+    DeviceDisconnectFailedErrorOptions,
 } from '#spruce/errors/options.types'
 
 export default class SpruceError extends BaseSpruceError<ErrorOptions> {
@@ -18,6 +19,10 @@ export default class SpruceError extends BaseSpruceError<ErrorOptions> {
                 message = this.generateSubscribeFailedMessage(options)
                 break
 
+            case 'DEVICE_DISCONNECT_FAILED':
+                message = this.generateDisconnectFailedMessage(options)
+                break
+
             default:
                 message = super.friendlyMessage()
         }
@@ -32,8 +37,22 @@ export default class SpruceError extends BaseSpruceError<ErrorOptions> {
     private generateSubscribeFailedMessage(
         options: CharacteristicSubscribeFailedErrorOptions
     ) {
-        const { characteristicUuid } = options ?? {}
-        return `Failed to subscribe to peripheral characteristic: ${characteristicUuid}!`
+        const { characteristicUuid, originalError } = options ?? {}
+        return `
+            \n Failed to subscribe to peripheral characteristic: ${characteristicUuid}!
+            \n Original error: ${originalError}
+        `
+    }
+
+    private generateDisconnectFailedMessage(
+        options: DeviceDisconnectFailedErrorOptions
+    ) {
+        const { localName } = options ?? {}
+
+        return `
+            \n Failed to disconnect from peripheral: ${localName}!
+            \n Original error: ${this.originalError}
+        `
     }
 
     private generateTimedOutMessage(options: ScanTimedOutErrorOptions) {

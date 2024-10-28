@@ -101,13 +101,27 @@ export default class BleAdapterImpl implements BleAdapter {
         this.isIntentionalDisconnect = true
 
         if (this.isNotDisconnected) {
-            await this.peripheral.disconnectAsync()
+            await this.tryToDisconnect()
         }
     }
 
     private get isNotDisconnected() {
         return !this.disconnectStates.includes(this.peripheral.state)
     }
+
+    private async tryToDisconnect() {
+        try {
+            await this.peripheral.disconnectAsync()
+        } catch (err: any) {
+            throw new SpruceError({
+                code: 'DEVICE_DISCONNECT_FAILED',
+                localName: this.localName,
+                originalError: err.message,
+            })
+        }
+    }
+
+    private readonly disconnectStates = ['disconnected', 'disconnecting']
 
     protected get advertisement() {
         return this.peripheral.advertisement
@@ -116,8 +130,6 @@ export default class BleAdapterImpl implements BleAdapter {
     protected get localName() {
         return this.advertisement.localName
     }
-
-    private readonly disconnectStates = ['disconnected', 'disconnecting']
 }
 
 export interface BleAdapter {
