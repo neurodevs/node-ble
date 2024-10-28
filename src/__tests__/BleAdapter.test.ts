@@ -185,6 +185,17 @@ export default class BleAdapterTest extends AbstractSpruceTest {
         )
     }
 
+    @test()
+    protected static async disconnectsFromPeripheral() {
+        await this.instance.disconnect()
+
+        assert.isEqual(
+            this.peripheral.numCallsToDisconnectAsync,
+            1,
+            'Should have called disconnectAsync on peripheral!'
+        )
+    }
+
     private static get expectedRssiOptions() {
         return {
             event: this.rssiUpdateEvent,
@@ -226,7 +237,7 @@ export default class BleAdapterTest extends AbstractSpruceTest {
     }
 
     private static get didCallConnectAsync() {
-        return this.peripheral.didCallConnectAsync
+        return this.peripheral.numCallsToConnectAsync
     }
 
     private static get advertisement() {

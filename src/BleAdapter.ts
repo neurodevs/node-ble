@@ -84,8 +84,12 @@ export default class BleAdapterImpl implements BleAdapter {
         this.peripheral.on('disconnect', this.handleDisconnect.bind(this))
     }
 
-    private handleDisconnect() {
+    private async handleDisconnect() {
         this.log.warn(`BLE disconnected from ${this.localName}!`)
+    }
+
+    public async disconnect() {
+        await this.peripheral.disconnectAsync()
     }
 
     protected get advertisement() {
@@ -99,6 +103,7 @@ export default class BleAdapterImpl implements BleAdapter {
 
 export interface BleAdapter {
     connect(): Promise<void>
+    disconnect(): Promise<void>
 }
 
 export type BleAdapterConstructor = new (peripheral: Peripheral) => BleAdapter
