@@ -102,8 +102,7 @@ export default class BleAdapterImpl implements BleAdapter {
     private async handleDisconnect() {
         if (!this.isIntentionalDisconnect) {
             this.log.warn(this.unintentionalDisconnectMessage)
-            this.log.info(this.reconnectingMessage)
-            await this.connect()
+            await this.reconnect()
         }
         this.teardownRssiUpdateHandler()
         this.teardownDisconnectHandler()
@@ -111,6 +110,11 @@ export default class BleAdapterImpl implements BleAdapter {
 
     private teardownDisconnectHandler() {
         this.peripheral.off('disconnect', this.handleDisconnect.bind(this))
+    }
+
+    private async reconnect() {
+        this.log.info(this.reconnectingMessage)
+        await this.connect()
     }
 
     public async disconnect() {
