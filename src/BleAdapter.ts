@@ -89,25 +89,24 @@ export default class BleAdapterImpl implements BleAdapter {
     }
 
     private setupRssiUpdateHandler() {
-        this.peripheral.on('rssiUpdate', this.handleRssiUpdate.bind(this))
+        this.peripheral.on('rssiUpdate', this.handleRssiUpdate)
     }
 
-    private handleRssiUpdate(rssi: number) {
+    private handleRssiUpdate = (rssi: number) => {
         this.log.info(`RSSI (${this.localName}): ${rssi}`)
     }
 
     private teardownRssiUpdateHandler() {
-        this.peripheral.off('rssiUpdate', this.handleRssiUpdate.bind(this))
+        this.peripheral.off('rssiUpdate', this.handleRssiUpdate)
     }
 
     private setupDisconnectHandler() {
-        this.peripheral.on('disconnect', this.handleDisconnect.bind(this))
+        this.peripheral.on('disconnect', this.handleDisconnect)
     }
 
-    private async handleDisconnect() {
+    private handleDisconnect = async () => {
         this.teardownRssiUpdateHandler()
         this.teardownDisconnectHandler()
-
         await this.handleIntentionForDisconnect()
     }
 
@@ -121,7 +120,7 @@ export default class BleAdapterImpl implements BleAdapter {
     }
 
     private teardownDisconnectHandler() {
-        this.peripheral.off('disconnect', this.handleDisconnect.bind(this))
+        this.peripheral.off('disconnect', this.handleDisconnect)
     }
 
     private async reconnect() {
