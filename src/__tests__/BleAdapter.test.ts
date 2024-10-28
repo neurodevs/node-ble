@@ -242,6 +242,24 @@ export default class BleAdapterTest extends AbstractSpruceTest {
         )
     }
 
+    @test()
+    protected static async throwsIfDisconnectAsyncFails() {
+        const originalError = 'Failed to disconnect!'
+
+        this.peripheral.disconnectAsync = async () => {
+            throw new Error(originalError)
+        }
+
+        const err = await assert.doesThrowAsync(async () => {
+            await this.instance.disconnect()
+        })
+
+        errorAssert.assertError(err, 'DEVICE_DISCONNECT_FAILED', {
+            localName: this.localName,
+            originalError,
+        })
+    }
+
     private static get expectedRssiOptions() {
         return {
             event: this.rssiUpdateEvent,

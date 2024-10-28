@@ -82,5 +82,7 @@ export default class SpyBleAdapter extends BleAdapterImpl {
 
     public resetTestDouble() {
         this.infoLogs = []
+        this.warnLogs = []
+        this.errorLogs = []
     }
 }

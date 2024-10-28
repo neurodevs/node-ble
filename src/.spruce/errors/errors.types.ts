@@ -6,6 +6,7 @@ import * as SpruceSchema from '@sprucelabs/schema'
 
 
 
+
 export declare namespace SpruceErrors.NodeBle {
 
 	
@@ -46,6 +47,34 @@ export declare namespace SpruceErrors.NodeBle {
 	}
 
 	export type ScanTimedOutEntity = SchemaEntity<SpruceErrors.NodeBle.ScanTimedOutSchema>
+
+}
+
+
+export declare namespace SpruceErrors.NodeBle {
+
+	
+	export interface DeviceDisconnectFailed {
+		
+			
+			'localName': string
+	}
+
+	export interface DeviceDisconnectFailedSchema extends SpruceSchema.Schema {
+		id: 'deviceDisconnectFailed',
+		namespace: 'NodeBle',
+		name: 'DEVICE_DISCONNECT_FAILED',
+		    fields: {
+		            /** . */
+		            'localName': {
+		                type: 'text',
+		                isRequired: true,
+		                options: undefined
+		            },
+		    }
+	}
+
+	export type DeviceDisconnectFailedEntity = SchemaEntity<SpruceErrors.NodeBle.DeviceDisconnectFailedSchema>
 
 }
 
