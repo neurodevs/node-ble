@@ -75,15 +75,11 @@ export default class BleAdapterImpl implements BleAdapter {
             await characteristic.subscribeAsync()
         } catch {
             const { uuid } = characteristic
-            this.throwCharacteristicSubscribeFailed(uuid)
+            throw new SpruceError({
+                code: 'CHARACTERISTIC_SUBSCRIBE_FAILED',
+                characteristicUuid: uuid,
+            })
         }
-    }
-
-    protected throwCharacteristicSubscribeFailed(uuid: string) {
-        throw new SpruceError({
-            code: 'CHARACTERISTIC_SUBSCRIBE_FAILED',
-            characteristicUuid: uuid,
-        })
     }
 
     private setupRssiUpdateHandler() {
