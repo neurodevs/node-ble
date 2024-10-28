@@ -278,6 +278,22 @@ export default class BleAdapterTest extends AbstractSpruceTest {
         )
     }
 
+    @test()
+    protected static async disconnectTurnsOffDisconnectHandler() {
+        await this.instance.disconnect()
+
+        assert.isEqual(
+            this.peripheral.callsToOff[1].event,
+            'disconnect',
+            'Should have turned off disconnect handler!'
+        )
+
+        assert.isFunction(
+            this.peripheral.callsToOff[1].listener,
+            'Should have passed the listener to peripheral.off(...)!'
+        )
+    }
+
     private static get expectedRssiOptions() {
         return {
             event: this.rssiUpdateEvent,
