@@ -79,10 +79,10 @@ export default class BleAdapterImpl implements BleAdapter {
         }
     }
 
-    private throwCharacteristicSubscribeFailed(uuid: string) {
+    private throwCharacteristicSubscribeFailed(characteristicUuid: string) {
         throw new SpruceError({
             code: 'CHARACTERISTIC_SUBSCRIBE_FAILED',
-            characteristicUuid: uuid,
+            characteristicUuid,
         })
     }
 
