@@ -8,8 +8,8 @@ import FakeCharacteristic from './FakeCharacteristic'
 
 export default class FakePeripheral implements SimplePeripheral {
     public callsToConstructor: PeripheralOptions[] = []
-    public didCallConnect = false
-    public didCallConnectAsync = false
+    public numCallsToConnectAsync = 0
+    public numCallsToDisconnectAsync = 0
     public numCallsToDiscoverAllServicesAndCharacteristicsAsync = 0
     public callsToOn: CallToOn[] = []
 
@@ -35,7 +35,11 @@ export default class FakePeripheral implements SimplePeripheral {
     }
 
     public async connectAsync() {
-        this.didCallConnectAsync = true
+        this.numCallsToConnectAsync++
+    }
+
+    public async disconnectAsync() {
+        this.numCallsToDisconnectAsync++
     }
 
     public async discoverAllServicesAndCharacteristicsAsync() {
@@ -78,8 +82,7 @@ export default class FakePeripheral implements SimplePeripheral {
 
     public resetTestDouble() {
         this.callsToConstructor = []
-        this.didCallConnect = false
-        this.didCallConnectAsync = false
+        this.numCallsToConnectAsync = 0
         this.numCallsToDiscoverAllServicesAndCharacteristicsAsync = 0
         this.resetFakeServicesAndCharacteristics()
     }
