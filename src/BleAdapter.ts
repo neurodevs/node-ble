@@ -33,7 +33,7 @@ export default class BleAdapterImpl implements BleAdapter {
     }
 
     public async connect() {
-        this.resetIntentionalDisconnectFlag()
+        this.resetIsIntentionalDisconnectFlag()
 
         await this.connectToPeripheral()
         await this.discoverAllServicesAndCharacteristics()
@@ -43,7 +43,7 @@ export default class BleAdapterImpl implements BleAdapter {
         this.setupDisconnectHandler()
     }
 
-    private resetIntentionalDisconnectFlag() {
+    private resetIsIntentionalDisconnectFlag() {
         this.isIntentionalDisconnect = false
     }
 
