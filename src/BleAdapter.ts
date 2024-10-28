@@ -9,8 +9,8 @@ export default class BleAdapterImpl implements BleAdapter {
     protected peripheral: Peripheral
     protected services!: Service[]
     protected characteristics!: Characteristic[]
+    protected isIntentionalDisconnect = false
     protected log = buildLog('BleAdapter')
-    private isIntentionalDisconnect = false
 
     protected constructor(peripheral: Peripheral) {
         this.peripheral = peripheral
@@ -26,12 +26,18 @@ export default class BleAdapterImpl implements BleAdapter {
     }
 
     public async connect() {
+        this.resetIntentionalDisconnectFlag()
+
         await this.connectToPeripheral()
         await this.discoverAllServicesAndCharacteristics()
         await this.subscribeToNotifiableCharacteristics()
 
         this.setupRssi()
         this.setupDisconnect()
+    }
+
+    private resetIntentionalDisconnectFlag() {
+        this.isIntentionalDisconnect = false
     }
 
     private async connectToPeripheral() {
