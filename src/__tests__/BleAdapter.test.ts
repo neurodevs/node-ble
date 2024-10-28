@@ -7,7 +7,9 @@ import AbstractSpruceTest, {
 import { Peripheral } from '@abandonware/noble'
 import BleAdapterImpl from '../BleAdapter'
 import FakeCharacteristic from '../testDoubles/noble/FakeCharacteristic'
-import FakePeripheral, { CallToOn } from '../testDoubles/noble/FakePeripheral'
+import FakePeripheral, {
+    EventAndListener,
+} from '../testDoubles/noble/FakePeripheral'
 import SpyBleAdapter from '../testDoubles/SpyBleAdapter'
 
 export default class BleAdapterTest extends AbstractSpruceTest {
@@ -260,11 +262,27 @@ export default class BleAdapterTest extends AbstractSpruceTest {
         })
     }
 
+    @test()
+    protected static async disconnectTurnsOffRssiUpdateHandler() {
+        await this.instance.disconnect()
+
+        assert.isEqual(
+            this.peripheral.callsToOff[0].event,
+            this.expectedRssiEvent,
+            'Should have turned off rssiUpdate handler!'
+        )
+
+        assert.isFunction(
+            this.peripheral.callsToOff[0].listener,
+            'Should have passed the listener to peripheral.off(...)!'
+        )
+    }
+
     private static get expectedRssiOptions() {
         return {
             event: this.rssiUpdateEvent,
             listener: this.fakedListener,
-        } as CallToOn
+        } as EventAndListener
     }
 
     private static get expectedRssiEvent() {
