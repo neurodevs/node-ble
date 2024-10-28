@@ -43,6 +43,8 @@ export default class BleAdapterImpl implements BleAdapter {
 
         this.setupRssiUpdateHandler()
         this.setupDisconnectHandler()
+
+        this.log.info(this.connectedMessage)
     }
 
     private resetIsIntentionalDisconnectFlag() {
@@ -157,6 +159,10 @@ export default class BleAdapterImpl implements BleAdapter {
 
     private get connectingMessage() {
         return `Connecting to ${this.localName}...`
+    }
+
+    private get connectedMessage() {
+        return `Connected to ${this.localName}!`
     }
 
     private get intentionalDisconnectMessage() {
