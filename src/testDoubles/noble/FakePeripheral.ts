@@ -11,6 +11,7 @@ export default class FakePeripheral implements SimplePeripheral {
     public numCallsToConnectAsync = 0
     public numCallsToDisconnectAsync = 0
     public numCallsToDiscoverAllServicesAndCharacteristicsAsync = 0
+    public numCallsToUpdateRssiAsync = 0
     public callsToOn: EventAndListener[] = []
     public callsToOff: EventAndListener[] = []
 
@@ -42,6 +43,10 @@ export default class FakePeripheral implements SimplePeripheral {
     public async disconnectAsync() {
         this.numCallsToDisconnectAsync++
         this.emit('disconnect')
+    }
+
+    public async updateRssiAsync() {
+        this.numCallsToUpdateRssiAsync++
     }
 
     public async discoverAllServicesAndCharacteristicsAsync() {
