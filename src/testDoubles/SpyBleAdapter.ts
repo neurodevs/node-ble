@@ -7,8 +7,8 @@ export default class SpyBleAdapter extends BleAdapterImpl {
     public warnLogs: string[] = []
     public errorLogs: string[] = []
 
-    public constructor(peripheral: Peripheral) {
-        super(peripheral)
+    public constructor(peripheral: Peripheral, rssiIntervalMs: number) {
+        super(peripheral, rssiIntervalMs)
     }
 
     public getPeripheral() {
@@ -37,6 +37,10 @@ export default class SpyBleAdapter extends BleAdapterImpl {
 
     public getIsIntentionalDisconnect() {
         return this.isIntentionalDisconnect
+    }
+
+    public getRssiIntervalMs() {
+        return this.rssiIntervalMs
     }
 
     public setLogInfoSpy() {

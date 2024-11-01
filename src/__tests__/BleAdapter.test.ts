@@ -344,6 +344,15 @@ export default class BleAdapterTest extends AbstractSpruceTest {
         )
     }
 
+    @test()
+    protected static async setsTenSecondIntervalDefaultForRssiUpdate() {
+        assert.isEqual(
+            this.instance.getRssiIntervalMs(),
+            10000,
+            'Should set an interval for 10 seconds!'
+        )
+    }
+
     private static get expectedRssiOptions() {
         return {
             event: this.rssiUpdateEvent,

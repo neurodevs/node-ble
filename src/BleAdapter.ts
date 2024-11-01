@@ -9,11 +9,13 @@ export default class BleAdapterImpl implements BleAdapter {
     protected peripheral: Peripheral
     protected services!: Service[]
     protected characteristics!: Characteristic[]
+    protected rssiIntervalMs: number
     protected isIntentionalDisconnect = false
     protected log = buildLog('BleAdapter')
 
-    protected constructor(peripheral: Peripheral) {
+    protected constructor(peripheral: Peripheral, rssiIntervalMs: number) {
         this.peripheral = peripheral
+        this.rssiIntervalMs = rssiIntervalMs
     }
 
     public static async Create(
@@ -21,9 +23,9 @@ export default class BleAdapterImpl implements BleAdapter {
         options?: BleAdapterOptions
     ) {
         assertOptions({ peripheral }, ['peripheral'])
-        const { shouldConnect = true } = options ?? {}
+        const { shouldConnect = true, rssiIntervalMs = 10000 } = options ?? {}
 
-        const adapter = new (this.Class ?? this)(peripheral)
+        const adapter = new (this.Class ?? this)(peripheral, rssiIntervalMs)
 
         if (shouldConnect) {
             await adapter.connect()
@@ -179,6 +181,10 @@ export interface BleAdapter {
 
 export interface BleAdapterOptions {
     shouldConnect?: boolean
+    rssiIntervalMs?: number
 }
 
-export type BleAdapterConstructor = new (peripheral: Peripheral) => BleAdapter
+export type BleAdapterConstructor = new (
+    peripheral: Peripheral,
+    rssiIntervalMs: number
+) => BleAdapter
