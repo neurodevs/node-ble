@@ -3,6 +3,8 @@ import { Descriptor } from '@abandonware/noble'
 
 export default class FakeCharacteristic implements SimpleCharacteristic {
     public callsToConstructor: CharacteristicOptions[] = []
+    public callsToOn: CharacteristicEventAndListener[] = []
+    public callsToOff: CharacteristicEventAndListener[] = []
     public numCallsToReadAsync = 0
     public callsToWriteAsync: CallToWriteAsync[] = []
     public callsToBroadcastAsync: boolean[] = []
@@ -24,6 +26,14 @@ export default class FakeCharacteristic implements SimpleCharacteristic {
 
         this.uuid = uuid
         this.properties = properties
+    }
+
+    public on(event: string, listener: () => void) {
+        this.callsToOn.push({ event, listener })
+    }
+
+    public off(event: string, listener: () => void) {
+        this.callsToOff.push({ event, listener })
     }
 
     public async readAsync() {
@@ -127,4 +137,9 @@ export interface CharacteristicOptions {
 export interface CallToWriteAsync {
     data: Buffer
     withoutResponse: boolean
+}
+
+export interface CharacteristicEventAndListener {
+    event: string
+    listener: () => void
 }

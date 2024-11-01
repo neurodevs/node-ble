@@ -12,8 +12,8 @@ export default class FakePeripheral implements SimplePeripheral {
     public numCallsToDisconnectAsync = 0
     public numCallsToDiscoverAllServicesAndCharacteristicsAsync = 0
     public numCallsToUpdateRssiAsync = 0
-    public callsToOn: EventAndListener[] = []
-    public callsToOff: EventAndListener[] = []
+    public callsToOn: PeripheralEventAndListener[] = []
+    public callsToOff: PeripheralEventAndListener[] = []
 
     public uuid: string
     public advertisement: {
@@ -124,7 +124,7 @@ export interface PeripheralOptions {
     localName?: string
 }
 
-export interface EventAndListener {
+export interface PeripheralEventAndListener {
     event: PeripheralEvent
     listener: (arg?: any) => void
 }
