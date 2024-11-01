@@ -3,12 +3,15 @@ import { Peripheral } from '@abandonware/noble'
 import BleAdapterImpl from '../BleAdapter'
 
 export default class SpyBleAdapter extends BleAdapterImpl {
+    public callsToConstructor: CallToConstructor[] = []
+    public callsToSetInterval: CallToSetInterval[] = []
     public infoLogs: string[] = []
     public warnLogs: string[] = []
     public errorLogs: string[] = []
 
     public constructor(peripheral: Peripheral, rssiIntervalMs: number) {
         super(peripheral, rssiIntervalMs)
+        this.callsToConstructor.push({ peripheral, rssiIntervalMs })
     }
 
     public getPeripheral() {
@@ -84,9 +87,24 @@ export default class SpyBleAdapter extends BleAdapterImpl {
         this.peripheral.state = state
     }
 
+    public setInterval(callback: () => void, intervalMs: number) {
+        this.callsToSetInterval.push({ callback, intervalMs })
+        super.setInterval(callback, intervalMs)
+    }
+
     public resetTestDouble() {
         this.infoLogs = []
         this.warnLogs = []
         this.errorLogs = []
     }
+}
+
+export interface CallToConstructor {
+    peripheral: Peripheral
+    rssiIntervalMs: number
+}
+
+interface CallToSetInterval {
+    callback: () => void
+    intervalMs: number
 }
