@@ -4,7 +4,6 @@ import BleAdapterImpl from '../BleAdapter'
 
 export default class SpyBleAdapter extends BleAdapterImpl {
     public callsToConstructor: CallToConstructor[] = []
-    public callsToSetInterval: CallToSetInterval[] = []
     public infoLogs: string[] = []
     public warnLogs: string[] = []
     public errorLogs: string[] = []
@@ -87,11 +86,6 @@ export default class SpyBleAdapter extends BleAdapterImpl {
         this.peripheral.state = state
     }
 
-    public setInterval(callback: () => void, intervalMs: number) {
-        this.callsToSetInterval.push({ callback, intervalMs })
-        super.setInterval(callback, intervalMs)
-    }
-
     public resetTestDouble() {
         this.infoLogs = []
         this.warnLogs = []
@@ -102,9 +96,4 @@ export default class SpyBleAdapter extends BleAdapterImpl {
 export interface CallToConstructor {
     peripheral: Peripheral
     rssiIntervalMs: number
-}
-
-interface CallToSetInterval {
-    callback: () => void
-    intervalMs: number
 }

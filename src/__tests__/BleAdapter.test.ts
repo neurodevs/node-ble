@@ -8,7 +8,7 @@ import { Peripheral } from '@abandonware/noble'
 import BleAdapterImpl, { BleAdapterOptions } from '../BleAdapter'
 import FakeCharacteristic from '../testDoubles/noble/FakeCharacteristic'
 import FakePeripheral, {
-    EventAndListener,
+    PeripheralEventAndListener,
 } from '../testDoubles/noble/FakePeripheral'
 import SpyBleAdapter from '../testDoubles/SpyBleAdapter'
 
@@ -357,7 +357,7 @@ export default class BleAdapterTest extends AbstractSpruceTest {
         return {
             event: this.rssiUpdateEvent,
             listener: this.fakedListener,
-        } as EventAndListener
+        } as PeripheralEventAndListener
     }
 
     private static get expectedRssiEvent() {
