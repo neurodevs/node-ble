@@ -1,6 +1,6 @@
 {
   "name": "@neurodevs/node-ble",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "main": "build/index.js",
   "repository": "https://github.com/neurodevs/node-ble.git",
   "scripts": {
