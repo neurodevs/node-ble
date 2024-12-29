@@ -26,6 +26,10 @@ export default class BleDeviceScanner implements BleScanner {
         this.setupOnDiscover()
     }
 
+    public static Create(options?: BleScannerOptions) {
+        return new (this.Class ?? this)(options)
+    }
+
     private setupOnDiscover() {
         this.noble.on('discover', this.handleOnDiscover.bind(this))
     }
@@ -67,10 +71,6 @@ export default class BleDeviceScanner implements BleScanner {
             this.names.length > 0 &&
             this.names.length === this.peripherals.length
         )
-    }
-
-    public static Create(options?: BleScannerOptions) {
-        return new (this.Class ?? this)(options)
     }
 
     public async scanAll(durationMs = this.durationMs) {
