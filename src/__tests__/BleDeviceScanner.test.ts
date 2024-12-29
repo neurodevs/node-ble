@@ -10,9 +10,9 @@ import BleDeviceScanner, {
     BleScannerOptions,
     ScanOptions,
 } from '../components/BleDeviceScanner'
+import SpyBleScanner from '../testDoubles/BleScanner/SpyBleScanner'
 import FakeNoble, { CreateFakePeripheral } from '../testDoubles/noble/FakeNoble'
 import FakePeripheral from '../testDoubles/noble/FakePeripheral'
-import SpyBleScanner from '../testDoubles/SpyBleScanner'
 
 export default class BleDeviceScannerTest extends AbstractSpruceTest {
     private static instance: SpyBleScanner

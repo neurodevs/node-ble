@@ -8,11 +8,11 @@ import { Peripheral } from '@abandonware/noble'
 import BleDeviceAdapter, {
     BleAdapterOptions,
 } from '../components/BleDeviceAdapter'
+import SpyBleAdapter from '../testDoubles/BleAdapter/SpyBleAdapter'
 import FakeCharacteristic from '../testDoubles/noble/FakeCharacteristic'
 import FakePeripheral, {
     PeripheralEventAndListener,
 } from '../testDoubles/noble/FakePeripheral'
-import SpyBleAdapter from '../testDoubles/SpyBleAdapter'
 
 export default class BleDeviceAdapterTest extends AbstractSpruceTest {
     private static instance: SpyBleAdapter
