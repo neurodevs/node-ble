@@ -389,7 +389,7 @@ export default class BleDeviceAdapterTest extends AbstractSpruceTest {
             rssiIntervalMs: this.rssiIntervalMs,
         })
 
-        await this.wait(this.rssiIntervalMs * (numIntervals + 0.2))
+        await this.wait(this.rssiIntervalMs * (numIntervals + 0.3))
 
         return promise
     }
