@@ -51,10 +51,10 @@ export default class BleDeviceScanner implements BleScanner {
         return this.uuids.length === 0 && this.names.length === 0
     }
 
-    private isTargetPeripheral(uuid: string, name: string) {
+    private isTargetPeripheral(uuid: string, localName: string) {
         return (
             this.uuids.includes(uuid) ||
-            this.names.some((targetName) => name.includes(targetName))
+            this.names.some((targetName) => localName?.includes(targetName))
         )
     }
 

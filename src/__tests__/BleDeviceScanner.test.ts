@@ -388,6 +388,23 @@ export default class BleDeviceScannerTest extends AbstractSpruceTest {
         )
     }
 
+    @test()
+    protected static async addingPeripheralWithUndefinedLocalNameDoesNotThrow() {
+        const validPeripheral = new FakePeripheral()
+        const invalidPeripheral = new FakePeripheral()
+
+        // @ts-ignore
+        invalidPeripheral.advertisement.localName = undefined
+
+        this.noble.fakedPeripherals = [validPeripheral, invalidPeripheral]
+
+        const instance = BleDeviceScanner.Create()
+
+        await instance.scanForName(validPeripheral.advertisement.localName, {
+            timeoutMs: 10,
+        })
+    }
+
     private static async mapPeripheralsToAdapters() {
         return await Promise.all(
             this.peripherals.map((peripheral) =>
