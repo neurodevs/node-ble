@@ -1,7 +1,7 @@
 import { assertOptions } from '@sprucelabs/schema'
 import { buildLog } from '@sprucelabs/spruce-skill-utils'
 import { Characteristic, Peripheral, Service } from '@abandonware/noble'
-import SpruceError from './errors/SpruceError'
+import SpruceError from '../errors/SpruceError'
 
 export default class BleAdapterImpl implements BleAdapter {
     public static Class?: BleAdapterConstructor

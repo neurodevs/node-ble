@@ -1,4 +1,4 @@
-import { BleAdapter } from '../BleAdapter'
+import { BleAdapter } from '../components/BleAdapter'
 
 export default class FakeBleAdapter implements BleAdapter {
     public static numCallsToConstructor = 0

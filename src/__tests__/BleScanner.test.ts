@@ -5,8 +5,8 @@ import AbstractSpruceTest, {
     errorAssert,
 } from '@sprucelabs/test-utils'
 import noble, { Peripheral } from '@abandonware/noble'
-import BleAdapterImpl, { BleAdapter } from '../BleAdapter'
-import BleScannerImpl, { BleScannerOptions, ScanOptions } from '../BleScanner'
+import BleAdapterImpl, { BleAdapter } from '../components/BleAdapter'
+import BleScannerImpl, { BleScannerOptions, ScanOptions } from '../components/BleScanner'
 import FakeNoble, { CreateFakePeripheral } from '../testDoubles/noble/FakeNoble'
 import FakePeripheral from '../testDoubles/noble/FakePeripheral'
 import SpyBleScanner from '../testDoubles/SpyBleScanner'

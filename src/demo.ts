@@ -1,5 +1,5 @@
 import { exit } from 'process'
-import BleScannerImpl from './BleScanner'
+import BleScannerImpl from './components/BleScanner'
 
 async function main() {
     const scanner = BleScannerImpl.Create({
