@@ -100,8 +100,11 @@ export default class FakePeripheral implements SimplePeripheral {
     public resetTestDouble() {
         this.callsToConstructor = []
         this.numCallsToConnectAsync = 0
+        this.numCallsToDisconnectAsync = 0
         this.numCallsToDiscoverAllServicesAndCharacteristicsAsync = 0
-        this.resetFakeServicesAndCharacteristics()
+        this.numCallsToUpdateRssiAsync = 0
+        this.callsToOn = []
+        this.callsToOff = []
     }
 }
 
