@@ -119,12 +119,15 @@ export default class BleDeviceAdapter implements BleAdapter {
     }
 
     private handleDisconnect = async () => {
-        clearInterval(this.rssiIntervalPid)
-
+        this.clearRssiInterval()
         this.teardownRssiUpdateHandler()
         this.teardownDisconnectHandler()
 
         await this.handleIntentionForDisconnect()
+    }
+
+    private clearRssiInterval() {
+        clearInterval(this.rssiIntervalPid)
     }
 
     private async handleIntentionForDisconnect() {
