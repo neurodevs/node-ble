@@ -1,12 +1,12 @@
 import { generateId } from '@sprucelabs/test-utils'
 import { Peripheral } from '@abandonware/noble'
-import BleDeviceAdapter from '../components/BleDeviceAdapter'
+import BleDeviceAdapter from '../../components/BleDeviceAdapter'
 import {
     BleScanner,
     BleScannerOptions,
     ScanOptions,
-} from '../components/BleDeviceScanner'
-import FakePeripheral from './noble/FakePeripheral'
+} from '../../components/BleDeviceScanner'
+import FakePeripheral from '../noble/FakePeripheral'
 
 export default class FakeBleScanner implements BleScanner {
     public static fakedPeripherals: FakePeripheral[] = []

@@ -1,6 +1,6 @@
 import { LoggableType } from '@sprucelabs/spruce-skill-utils'
 import { Peripheral } from '@abandonware/noble'
-import BleDeviceAdapter from '../components/BleDeviceAdapter'
+import BleDeviceAdapter from '../../components/BleDeviceAdapter'
 
 export default class SpyBleAdapter extends BleDeviceAdapter {
     public callsToConstructor: CallToConstructor[] = []

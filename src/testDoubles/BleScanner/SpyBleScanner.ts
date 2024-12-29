@@ -1,4 +1,4 @@
-import BleDeviceScanner, { BleScannerOptions } from '../components/BleDeviceScanner'
+import BleDeviceScanner, { BleScannerOptions } from '../../components/BleDeviceScanner'
 
 export default class SpyBleScanner extends BleDeviceScanner {
     public constructor(options?: BleScannerOptions) {
