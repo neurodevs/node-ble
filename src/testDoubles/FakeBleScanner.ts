@@ -150,6 +150,8 @@ export default class FakeBleScanner implements BleScanner {
         this.numCallsToScanAll = 0
         this.callsToScanForPeripheral = []
         this.callsToScanForPeripherals = []
+        this.callsToScanForName = []
+        this.callsToScanForNames = []
         this.numCallsToStopScanning = 0
     }
 }
