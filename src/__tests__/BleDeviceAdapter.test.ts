@@ -350,7 +350,7 @@ export default class BleDeviceAdapterTest extends AbstractSpruceTest {
     protected static async setsTenSecondIntervalDefaultForRssiUpdate() {
         assert.isEqual(
             this.instance.getRssiIntervalMs(),
-            this.rssiIntervalMs,
+            this.defaultRssiIntervalMs,
             'Should set an interval for 10 seconds!'
         )
     }
@@ -359,19 +359,39 @@ export default class BleDeviceAdapterTest extends AbstractSpruceTest {
     @test('sets rssi interval twice', 2)
     @test('sets rssi interval once', 1)
     protected static async setsIntervalForRssi(numIntervals: number) {
-        const rssiIntervalMs = 10
-
-        void BleDeviceAdapter.Create(this.peripheral as any, {
-            rssiIntervalMs,
-        })
-
-        await this.wait(rssiIntervalMs * (numIntervals + 0.2))
+        await this.createAdapterAndRunFor(numIntervals)
 
         assert.isEqual(
             this.peripheral.numCallsToUpdateRssiAsync,
             numIntervals,
             'Should have called updateRssiAsync on peripheral!'
         )
+    }
+
+    @test()
+    protected static async clearsRssiIntervalOnDisconnect() {
+        const adapter = await this.createAdapterAndRunFor(1)
+        await adapter.disconnect()
+
+        await this.wait(this.rssiIntervalMs * 1.2)
+
+        assert.isEqual(
+            this.peripheral.numCallsToUpdateRssiAsync,
+            1,
+            'Should have cleared the rssi interval!'
+        )
+    }
+
+    private static async createAdapterAndRunFor(numIntervals: number) {
+        this.peripheral.resetTestDouble()
+
+        const promise = BleDeviceAdapter.Create(this.peripheral as any, {
+            rssiIntervalMs: this.rssiIntervalMs,
+        })
+
+        await this.wait(this.rssiIntervalMs * (numIntervals + 0.2))
+
+        return promise
     }
 
     private static get expectedRssiOptions() {
@@ -438,7 +458,9 @@ export default class BleDeviceAdapterTest extends AbstractSpruceTest {
 
     private static readonly rssiUpdateEvent = 'rssiUpdate'
 
-    private static readonly rssiIntervalMs = 10000
+    private static readonly defaultRssiIntervalMs = 10000
+
+    private static readonly rssiIntervalMs = 10
 
     private static setFakeCharacteristics(fakes: FakeCharacteristic[]) {
         this.peripheral.setFakeCharacteristics(fakes)
