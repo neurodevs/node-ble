@@ -29,7 +29,7 @@ export default class BleDeviceAdapterTest extends AbstractSpruceTest {
     }
 
     @test()
-    protected static async canCreateBleAdapter() {
+    protected static async canCreateBleDeviceAdapter() {
         assert.isTruthy(this.instance, 'Should have created a BleAdapter!')
     }
 
