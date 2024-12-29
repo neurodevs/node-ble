@@ -3,7 +3,7 @@ import { buildLog } from '@sprucelabs/spruce-skill-utils'
 import { Characteristic, Peripheral, Service } from '@abandonware/noble'
 import SpruceError from '../errors/SpruceError'
 
-export default class BleAdapterImpl implements BleAdapter {
+export default class BleDeviceAdapter implements BleAdapter {
     public static Class?: BleAdapterConstructor
 
     protected peripheral: Peripheral

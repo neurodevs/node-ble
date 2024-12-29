@@ -5,11 +5,11 @@ import AbstractSpruceTest, {
     errorAssert,
 } from '@sprucelabs/test-utils'
 import noble, { Peripheral } from '@abandonware/noble'
-import BleAdapterImpl, { BleAdapter } from '../components/BleAdapter'
-import BleScannerImpl, {
+import BleDeviceAdapter, { BleAdapter } from '../components/BleDeviceAdapter'
+import BleDeviceScanner, {
     BleScannerOptions,
     ScanOptions,
-} from '../components/BleScanner'
+} from '../components/BleDeviceScanner'
 import FakeNoble, { CreateFakePeripheral } from '../testDoubles/noble/FakeNoble'
 import FakePeripheral from '../testDoubles/noble/FakePeripheral'
 import SpyBleScanner from '../testDoubles/SpyBleScanner'
@@ -22,7 +22,7 @@ export default class BleScannerTest extends AbstractSpruceTest {
     protected static async beforeEach() {
         await super.beforeEach()
 
-        BleScannerImpl.Class = SpyBleScanner
+        BleDeviceScanner.Class = SpyBleScanner
 
         this.uuid = generateId()
         this.setupFakeNoble()
@@ -197,7 +197,7 @@ export default class BleScannerTest extends AbstractSpruceTest {
 
         assert.isEqual(
             adapter.constructor.name,
-            'BleAdapterImpl',
+            'BleDeviceAdapter',
             'scan should return the faked peripherals!'
         )
     }
@@ -326,7 +326,7 @@ export default class BleScannerTest extends AbstractSpruceTest {
 
         assert.isEqual(
             result[0].constructor.name,
-            'BleAdapterImpl',
+            'BleDeviceAdapter',
             'Create should return a BleAdapter instance!'
         )
     }
@@ -337,7 +337,7 @@ export default class BleScannerTest extends AbstractSpruceTest {
 
         assert.isEqual(
             adapter.constructor.name,
-            'BleAdapterImpl',
+            'BleDeviceAdapter',
             'scanForUuid should return a BleAdapter instance!'
         )
     }
@@ -416,7 +416,7 @@ export default class BleScannerTest extends AbstractSpruceTest {
     private static setupFakeNoble() {
         this.noble = this.FakeNoble()
         this.fakePeripherals()
-        BleScannerImpl.noble = this.noble as unknown as typeof noble
+        BleDeviceScanner.noble = this.noble as unknown as typeof noble
     }
 
     private static fakePeripherals(fakes?: CreateFakePeripheral[]) {
@@ -481,11 +481,11 @@ export default class BleScannerTest extends AbstractSpruceTest {
     }
 
     private static async BleAdapter(peripheral = this.firstPeripheral) {
-        return await BleAdapterImpl.Create(peripheral)
+        return await BleDeviceAdapter.Create(peripheral)
     }
 
     private static BleScanner(options?: BleScannerOptions) {
-        return BleScannerImpl.Create({
+        return BleDeviceScanner.Create({
             defaultDurationMs: this.durationMs,
             defaultTimeoutMs: this.timeoutMs,
             ...options,

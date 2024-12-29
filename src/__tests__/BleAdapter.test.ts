@@ -5,14 +5,16 @@ import AbstractSpruceTest, {
     generateId,
 } from '@sprucelabs/test-utils'
 import { Peripheral } from '@abandonware/noble'
-import BleAdapterImpl, { BleAdapterOptions } from '../components/BleAdapter'
+import BleDeviceAdapter, {
+    BleAdapterOptions,
+} from '../components/BleDeviceAdapter'
 import FakeCharacteristic from '../testDoubles/noble/FakeCharacteristic'
 import FakePeripheral, {
     PeripheralEventAndListener,
 } from '../testDoubles/noble/FakePeripheral'
 import SpyBleAdapter from '../testDoubles/SpyBleAdapter'
 
-export default class BleAdapterTest extends AbstractSpruceTest {
+export default class BleDeviceAdapterTest extends AbstractSpruceTest {
     private static instance: SpyBleAdapter
     private static uuid: string
 
@@ -21,7 +23,7 @@ export default class BleAdapterTest extends AbstractSpruceTest {
 
         this.uuid = generateId()
 
-        BleAdapterImpl.Class = SpyBleAdapter
+        BleDeviceAdapter.Class = SpyBleAdapter
 
         this.instance = await this.BleAdapter(this.uuid)
     }
@@ -35,7 +37,7 @@ export default class BleAdapterTest extends AbstractSpruceTest {
     protected static async throwsWithMissingRequiredOptions() {
         const err = await assert.doesThrowAsync(async () => {
             // @ts-ignore
-            await BleAdapterImpl.Create()
+            await BleDeviceAdapter.Create()
         })
         errorAssert.assertError(err, 'MISSING_PARAMETERS', {
             parameters: ['peripheral'],
@@ -338,7 +340,7 @@ export default class BleAdapterTest extends AbstractSpruceTest {
         this.peripheral.emit('disconnect')
 
         assert.isEqual(
-            BleAdapterTest.callsToOff.length,
+            BleDeviceAdapterTest.callsToOff.length,
             2,
             'Should have called peripheral.off(...) twice!'
         )
@@ -431,7 +433,7 @@ export default class BleAdapterTest extends AbstractSpruceTest {
 
     private static async BleAdapter(uuid: string, options?: BleAdapterOptions) {
         const peripheral = this.FakePeripheral(uuid)
-        const instance = await BleAdapterImpl.Create(peripheral, options)
+        const instance = await BleDeviceAdapter.Create(peripheral, options)
         return instance as SpyBleAdapter
     }
 }

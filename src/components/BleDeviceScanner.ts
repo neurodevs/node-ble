@@ -1,8 +1,8 @@
 import noble, { Peripheral } from '@abandonware/noble'
 import SpruceError from '../errors/SpruceError'
-import BleAdapterImpl, { BleAdapter } from './BleAdapter'
+import BleDeviceAdapter, { BleAdapter } from './BleDeviceAdapter'
 
-export default class BleScannerImpl implements BleScanner {
+export default class BleDeviceScanner implements BleScanner {
     public static Class?: BleScannerConstructor
     public static noble = noble
 
@@ -147,7 +147,7 @@ export default class BleScannerImpl implements BleScanner {
     private async createAdapters() {
         return await Promise.all(
             this.peripherals.map((peripheral) =>
-                BleAdapterImpl.Create(peripheral)
+                BleDeviceAdapter.Create(peripheral)
             )
         )
     }
@@ -198,7 +198,7 @@ export default class BleScannerImpl implements BleScanner {
     }
 
     private get noble() {
-        return BleScannerImpl.noble
+        return BleDeviceScanner.noble
     }
 }
 
