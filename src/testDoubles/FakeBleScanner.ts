@@ -1,13 +1,17 @@
 import { generateId } from '@sprucelabs/test-utils'
 import { Peripheral } from '@abandonware/noble'
 import BleAdapterImpl from '../components/BleAdapter'
-import { BleScanner, ScanOptions } from '../components/BleScanner'
+import {
+    BleScanner,
+    BleScannerOptions,
+    ScanOptions,
+} from '../components/BleScanner'
 import FakePeripheral from './noble/FakePeripheral'
 
 export default class FakeBleScanner implements BleScanner {
     public static fakedPeripherals: FakePeripheral[] = []
 
-    public static numCallsToConstructor = 0
+    public static callsToConstructor: (BleScannerOptions | undefined)[] = []
     public static numCallsToScanAll = 0
     public static callsToScanForPeripheral: FakeScanForPeripheralCall[] = []
     public static callsToScanForPeripherals: FakeScanForPeripheralsCall[] = []
@@ -15,8 +19,8 @@ export default class FakeBleScanner implements BleScanner {
     public static callsToScanForNames: string[][] = []
     public static numCallsToStopScanning = 0
 
-    public constructor() {
-        FakeBleScanner.numCallsToConstructor++
+    public constructor(options?: BleScannerOptions) {
+        FakeBleScanner.callsToConstructor.push(options)
     }
 
     public static setFakedPeripherals(uuids = this.generateRandomUuids()) {
@@ -142,7 +146,8 @@ export default class FakeBleScanner implements BleScanner {
 
     public static resetTestDouble() {
         this.fakedPeripherals = []
-        this.numCallsToConstructor = 0
+        this.callsToConstructor = []
+        this.numCallsToScanAll = 0
         this.callsToScanForPeripheral = []
         this.callsToScanForPeripherals = []
         this.numCallsToStopScanning = 0
