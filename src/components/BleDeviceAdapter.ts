@@ -42,7 +42,7 @@ export default class BleDeviceAdapter implements BleAdapter {
         await this.discoverAllServicesAndCharacteristics()
         await this.subscribeToNotifiableCharacteristics()
 
-        this.setupRssiUpdateHandler()
+        this.setupRssi()
         this.setupDisconnectHandler()
     }
 
@@ -89,12 +89,19 @@ export default class BleDeviceAdapter implements BleAdapter {
         })
     }
 
-    private setupRssiUpdateHandler() {
+    private setupRssi() {
+        this.setIntervalForRssi()
+        this.setupRssiUpdateHandler()
+    }
+
+    private setIntervalForRssi() {
         this.setInterval(
             this.peripheral.updateRssiAsync.bind(this.peripheral),
             this.rssiIntervalMs
         )
+    }
 
+    private setupRssiUpdateHandler() {
         this.peripheral.on('rssiUpdate', this.handleRssiUpdate)
     }
 
