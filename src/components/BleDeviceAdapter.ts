@@ -13,6 +13,7 @@ export default class BleDeviceAdapter implements BleAdapter {
     protected rssiIntervalMs: number
     protected isIntentionalDisconnect = false
     protected log = buildLog('BleAdapter')
+    private rssiIntervalPid: any
 
     protected constructor(peripheral: Peripheral, rssiIntervalMs: number) {
         this.peripheral = peripheral
@@ -95,7 +96,7 @@ export default class BleDeviceAdapter implements BleAdapter {
     }
 
     private setIntervalForRssi() {
-        this.setInterval(
+        this.rssiIntervalPid = this.setInterval(
             this.peripheral.updateRssiAsync.bind(this.peripheral),
             this.rssiIntervalMs
         )
@@ -118,8 +119,11 @@ export default class BleDeviceAdapter implements BleAdapter {
     }
 
     private handleDisconnect = async () => {
+        clearInterval(this.rssiIntervalPid)
+
         this.teardownRssiUpdateHandler()
         this.teardownDisconnectHandler()
+
         await this.handleIntentionForDisconnect()
     }
 
