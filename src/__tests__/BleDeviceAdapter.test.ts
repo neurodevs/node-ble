@@ -382,11 +382,28 @@ export default class BleDeviceAdapterTest extends AbstractSpruceTest {
         )
     }
 
-    private static async createAdapterAndRunFor(numIntervals: number) {
+    @test()
+    protected static async hasOptionToDisableRssiUpdate() {
+        await this.createAdapterAndRunFor(1, {
+            shouldUpdateRssi: false,
+        })
+
+        assert.isEqual(
+            this.peripheral.numCallsToUpdateRssiAsync,
+            0,
+            'Should not have called updateRssiAsync on peripheral!'
+        )
+    }
+
+    private static async createAdapterAndRunFor(
+        numIntervals: number,
+        options?: BleAdapterOptions
+    ) {
         this.peripheral.resetTestDouble()
 
         const promise = BleDeviceAdapter.Create(this.peripheral as any, {
             rssiIntervalMs: this.rssiIntervalMs,
+            ...options,
         })
 
         await this.wait(this.rssiIntervalMs * (numIntervals + 0.3))

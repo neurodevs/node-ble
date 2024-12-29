@@ -13,10 +13,16 @@ export default class BleDeviceAdapter implements BleAdapter {
     protected rssiIntervalMs: number
     protected isIntentionalDisconnect = false
     protected log = buildLog('BleAdapter')
+    private shouldUpdateRssi: boolean
     private rssiIntervalPid: any
 
-    protected constructor(peripheral: Peripheral, rssiIntervalMs: number) {
+    protected constructor(
+        peripheral: Peripheral,
+        shouldUpdateRssi: boolean,
+        rssiIntervalMs: number
+    ) {
         this.peripheral = peripheral
+        this.shouldUpdateRssi = shouldUpdateRssi
         this.rssiIntervalMs = rssiIntervalMs
     }
 
@@ -25,9 +31,18 @@ export default class BleDeviceAdapter implements BleAdapter {
         options?: BleAdapterOptions
     ) {
         assertOptions({ peripheral }, ['peripheral'])
-        const { shouldConnect = true, rssiIntervalMs = 10000 } = options ?? {}
 
-        const adapter = new (this.Class ?? this)(peripheral, rssiIntervalMs)
+        const {
+            shouldConnect = true,
+            shouldUpdateRssi = true,
+            rssiIntervalMs = 10000,
+        } = options ?? {}
+
+        const adapter = new (this.Class ?? this)(
+            peripheral,
+            shouldUpdateRssi,
+            rssiIntervalMs
+        )
 
         if (shouldConnect) {
             await adapter.connect()
@@ -43,7 +58,7 @@ export default class BleDeviceAdapter implements BleAdapter {
         await this.discoverAllServicesAndCharacteristics()
         await this.subscribeToNotifiableCharacteristics()
 
-        this.setupRssi()
+        this.setupRssiIfEnabled()
         this.setupDisconnectHandler()
     }
 
@@ -90,8 +105,10 @@ export default class BleDeviceAdapter implements BleAdapter {
         })
     }
 
-    private setupRssi() {
-        this.setIntervalForRssi()
+    private setupRssiIfEnabled() {
+        if (this.shouldUpdateRssi) {
+            this.setIntervalForRssi()
+        }
         this.setupRssiUpdateHandler()
     }
 
@@ -205,10 +222,12 @@ export interface BleAdapter {
 
 export interface BleAdapterOptions {
     shouldConnect?: boolean
+    shouldUpdateRssi?: boolean
     rssiIntervalMs?: number
 }
 
 export type BleAdapterConstructor = new (
     peripheral: Peripheral,
+    shouldUpdateRssi: boolean,
     rssiIntervalMs: number
 ) => BleAdapter

@@ -8,9 +8,18 @@ export default class SpyBleAdapter extends BleDeviceAdapter {
     public warnLogs: string[] = []
     public errorLogs: string[] = []
 
-    public constructor(peripheral: Peripheral, rssiIntervalMs: number) {
-        super(peripheral, rssiIntervalMs)
-        this.callsToConstructor.push({ peripheral, rssiIntervalMs })
+    public constructor(
+        peripheral: Peripheral,
+        shouldUpdateRssi: boolean,
+        rssiIntervalMs: number
+    ) {
+        super(peripheral, shouldUpdateRssi, rssiIntervalMs)
+
+        this.callsToConstructor.push({
+            peripheral,
+            shouldUpdateRssi,
+            rssiIntervalMs,
+        })
     }
 
     public getPeripheral() {
@@ -95,5 +104,6 @@ export default class SpyBleAdapter extends BleDeviceAdapter {
 
 export interface CallToConstructor {
     peripheral: Peripheral
+    shouldUpdateRssi: boolean
     rssiIntervalMs: number
 }
