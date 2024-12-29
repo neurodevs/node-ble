@@ -372,6 +372,22 @@ export default class BleDeviceScannerTest extends AbstractSpruceTest {
         )
     }
 
+    @test()
+    protected static async findsByLocalNameIfPartialProvided() {
+        this.clearNoble()
+
+        const name = generateId()
+        this.fakePeripherals([{ name }])
+
+        const adapter = await this.scanForName(name.slice(0, 3))
+
+        assert.isEqual(
+            adapter.constructor.name,
+            'BleDeviceAdapter',
+            'scanForName should return a BleAdapter instance!'
+        )
+    }
+
     private static async mapPeripheralsToAdapters() {
         return await Promise.all(
             this.peripherals.map((peripheral) =>
