@@ -14,7 +14,7 @@ import FakeNoble, { CreateFakePeripheral } from '../testDoubles/noble/FakeNoble'
 import FakePeripheral from '../testDoubles/noble/FakePeripheral'
 import SpyBleScanner from '../testDoubles/SpyBleScanner'
 
-export default class BleScannerTest extends AbstractSpruceTest {
+export default class BleDeviceScannerTest extends AbstractSpruceTest {
     private static instance: SpyBleScanner
     private static noble: FakeNoble
     private static uuid: string
