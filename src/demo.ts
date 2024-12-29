@@ -1,8 +1,8 @@
 import { exit } from 'process'
-import BleScannerImpl from './components/BleScanner'
+import BleDeviceScanner from './components/BleDeviceScanner'
 
 async function main() {
-    const scanner = BleScannerImpl.Create({
+    const scanner = BleDeviceScanner.Create({
         defaultDurationMs: 5000,
         defaultTimeoutMs: 5000,
     })

@@ -1,11 +1,11 @@
 import { generateId } from '@sprucelabs/test-utils'
 import { Peripheral } from '@abandonware/noble'
-import BleAdapterImpl from '../components/BleAdapter'
+import BleDeviceAdapter from '../components/BleDeviceAdapter'
 import {
     BleScanner,
     BleScannerOptions,
     ScanOptions,
-} from '../components/BleScanner'
+} from '../components/BleDeviceScanner'
 import FakePeripheral from './noble/FakePeripheral'
 
 export default class FakeBleScanner implements BleScanner {
@@ -113,7 +113,7 @@ export default class FakeBleScanner implements BleScanner {
     }
 
     private async createAdapters(peripherals: Peripheral[]) {
-        return Promise.all(peripherals.map((p) => BleAdapterImpl.Create(p)))
+        return Promise.all(peripherals.map((p) => BleDeviceAdapter.Create(p)))
     }
 
     private getLocalName(peripheral: FakePeripheral) {
@@ -141,7 +141,7 @@ export default class FakeBleScanner implements BleScanner {
     }
 
     private BleAdapter(peripheral: Peripheral) {
-        return BleAdapterImpl.Create(peripheral)
+        return BleDeviceAdapter.Create(peripheral)
     }
 
     public static resetTestDouble() {
