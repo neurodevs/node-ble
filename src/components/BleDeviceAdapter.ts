@@ -5,6 +5,7 @@ import SpruceError from '../errors/SpruceError'
 
 export default class BleDeviceAdapter implements BleAdapter {
     public static Class?: BleAdapterConstructor
+    public static setInterval = setInterval
 
     protected peripheral: Peripheral
     protected services!: Service[]
@@ -89,6 +90,11 @@ export default class BleDeviceAdapter implements BleAdapter {
     }
 
     private setupRssiUpdateHandler() {
+        this.setInterval(
+            this.peripheral.updateRssiAsync.bind(this.peripheral),
+            this.rssiIntervalMs
+        )
+
         this.peripheral.on('rssiUpdate', this.handleRssiUpdate)
     }
 
@@ -171,6 +177,10 @@ export default class BleDeviceAdapter implements BleAdapter {
 
     protected get localName() {
         return this.advertisement.localName
+    }
+
+    private get setInterval() {
+        return BleDeviceAdapter.setInterval
     }
 }
 

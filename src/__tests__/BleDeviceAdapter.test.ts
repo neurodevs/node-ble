@@ -350,8 +350,27 @@ export default class BleDeviceAdapterTest extends AbstractSpruceTest {
     protected static async setsTenSecondIntervalDefaultForRssiUpdate() {
         assert.isEqual(
             this.instance.getRssiIntervalMs(),
-            10000,
+            this.rssiIntervalMs,
             'Should set an interval for 10 seconds!'
+        )
+    }
+
+    @test('sets rssi interval thrice', 3)
+    @test('sets rssi interval twice', 2)
+    @test('sets rssi interval once', 1)
+    protected static async setsIntervalForRssi(numIntervals: number) {
+        const rssiIntervalMs = 10
+
+        void BleDeviceAdapter.Create(this.peripheral as any, {
+            rssiIntervalMs,
+        })
+
+        await this.wait(rssiIntervalMs * (numIntervals + 0.2))
+
+        assert.isEqual(
+            this.peripheral.numCallsToUpdateRssiAsync,
+            numIntervals,
+            'Should have called updateRssiAsync on peripheral!'
         )
     }
 
@@ -419,6 +438,8 @@ export default class BleDeviceAdapterTest extends AbstractSpruceTest {
 
     private static readonly rssiUpdateEvent = 'rssiUpdate'
 
+    private static readonly rssiIntervalMs = 10000
+
     private static setFakeCharacteristics(fakes: FakeCharacteristic[]) {
         this.peripheral.setFakeCharacteristics(fakes)
     }
@@ -431,8 +452,11 @@ export default class BleDeviceAdapterTest extends AbstractSpruceTest {
         return new FakePeripheral({ uuid }) as unknown as Peripheral
     }
 
-    private static async BleAdapter(uuid: string, options?: BleAdapterOptions) {
-        const peripheral = this.FakePeripheral(uuid)
+    private static async BleAdapter(
+        uuid?: string,
+        options?: BleAdapterOptions
+    ) {
+        const peripheral = this.FakePeripheral(uuid ?? generateId())
         const instance = await BleDeviceAdapter.Create(peripheral, options)
         return instance as SpyBleAdapter
     }
