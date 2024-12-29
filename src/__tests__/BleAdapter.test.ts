@@ -5,7 +5,7 @@ import AbstractSpruceTest, {
     generateId,
 } from '@sprucelabs/test-utils'
 import { Peripheral } from '@abandonware/noble'
-import BleAdapterImpl, { BleAdapterOptions } from '../BleAdapter'
+import BleAdapterImpl, { BleAdapterOptions } from '../components/BleAdapter'
 import FakeCharacteristic from '../testDoubles/noble/FakeCharacteristic'
 import FakePeripheral, {
     PeripheralEventAndListener,

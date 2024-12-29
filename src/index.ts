@@ -1,5 +1,5 @@
-export { default as BleScannerImpl } from './BleScanner'
-export * from './BleScanner'
+export { default as BleScannerImpl } from './components/BleScanner'
+export * from './components/BleScanner'
 
 export { default as SpyBleScanner } from './testDoubles/SpyBleScanner'
 export * from './testDoubles/SpyBleScanner'
@@ -7,8 +7,8 @@ export * from './testDoubles/SpyBleScanner'
 export { default as FakeBleScanner } from './testDoubles/FakeBleScanner'
 export * from './testDoubles/FakeBleScanner'
 
-export { default as BleAdapterImpl } from './BleAdapter'
-export * from './BleAdapter'
+export { default as BleAdapterImpl } from './components/BleAdapter'
+export * from './components/BleAdapter'
 
 export { default as SpyBleAdapter } from './testDoubles/SpyBleAdapter'
 export * from './testDoubles/SpyBleAdapter'
