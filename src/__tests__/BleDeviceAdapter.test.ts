@@ -395,6 +395,31 @@ export default class BleDeviceAdapterTest extends AbstractSpruceTest {
         )
     }
 
+    @test()
+    protected static async callsProvidedCharacteristicCallbacks() {
+        const characteristicUuid = generateId()
+
+        const characteristic = new FakeCharacteristic({
+            uuid: characteristicUuid,
+        })
+
+        const peripheral = new FakePeripheral()
+        peripheral.setFakeCharacteristics([characteristic])
+
+        const characteristicCallbacks = {
+            [characteristicUuid]: () => {},
+        }
+
+        await BleDeviceAdapter.Create(peripheral as unknown as Peripheral, {
+            characteristicCallbacks,
+        })
+
+        assert.isEqualDeep(characteristic.callsToOn[0], {
+            event: 'data',
+            listener: characteristicCallbacks[characteristicUuid],
+        })
+    }
+
     private static async createAdapterAndRunFor(
         numIntervals: number,
         options?: BleAdapterOptions
