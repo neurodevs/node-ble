@@ -98,12 +98,12 @@ export default class BleDeviceAdapter implements BleAdapter {
     }
 
     private async tryToSubscribeForNotifiable() {
-        if (this.currentCharacteristicIsNotifiable) {
+        if (this.characteristicIsNotifiable) {
             await this.tryToSubscribe()
         }
     }
 
-    private get currentCharacteristicIsNotifiable() {
+    private get characteristicIsNotifiable() {
         return this.characteristic.properties.includes('notify')
     }
 
@@ -117,28 +117,36 @@ export default class BleDeviceAdapter implements BleAdapter {
     }
 
     private setCharacteristicCallbackIfExists() {
-        if (this.currentCharacteristicHasCallback) {
-            this.characteristic.on(
-                'data',
-                this.characteristicCallbacks?.[this.characteristic.uuid]
-            )
+        if (this.characteristicHasCallback) {
+            this.setupCharacteristicOnDataHandler()
         }
     }
 
-    private get currentCharacteristicHasCallback() {
-        return this.characteristicCallbackUuids.includes(
-            this.currentCharacteristicUuid
+    private setupCharacteristicOnDataHandler() {
+        this.characteristic.on(
+            'data',
+            this.characteristicCallbacks?.[this.characteristic.uuid]
         )
     }
 
-    private get currentCharacteristicUuid() {
+    private get characteristicHasCallback() {
+        return this.characteristicCallbackUuids.includes(
+            this.characteristicUuid
+        )
+    }
+
+    private get characteristicCallbackUuids() {
+        return Object.keys(this.characteristicCallbacks)
+    }
+
+    private get characteristicUuid() {
         return this.characteristic.uuid
     }
 
     private throwCharacteristicSubscribeFailed() {
         throw new SpruceError({
             code: 'CHARACTERISTIC_SUBSCRIBE_FAILED',
-            characteristicUuid: this.currentCharacteristicUuid,
+            characteristicUuid: this.characteristicUuid,
         })
     }
 
@@ -249,10 +257,6 @@ export default class BleDeviceAdapter implements BleAdapter {
 
     private get setInterval() {
         return BleDeviceAdapter.setInterval
-    }
-
-    private get characteristicCallbackUuids() {
-        return Object.keys(this.characteristicCallbacks)
     }
 }
 
