@@ -400,18 +400,25 @@ export default class BleDeviceAdapterTest extends AbstractSpruceTest {
         const { peripheral, characteristic } =
             this.createPeripheralWithCharacteristic()
 
+        let wasHit = false
+
         const characteristicCallbacks = {
-            [characteristic.uuid]: () => {},
+            [characteristic.uuid]: () => {
+                wasHit = true
+            },
         }
 
         await BleDeviceAdapter.Create(peripheral as unknown as Peripheral, {
             characteristicCallbacks,
         })
 
-        assert.isEqualDeep(characteristic.callsToOn[0], {
-            event: 'data',
-            listener: characteristicCallbacks[characteristic.uuid],
-        })
+        characteristic.simulateDataReceived(Buffer.from([1, 2, 3]))
+
+        const call = characteristic.callsToOn[0]
+        call.listener()
+
+        assert.isEqual(call.event, 'data', 'Should have called on("data")!')
+        assert.isTrue(wasHit, 'Should have called the characteristic callback!')
     }
 
     @test()
