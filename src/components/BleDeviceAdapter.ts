@@ -16,7 +16,6 @@ export default class BleDeviceAdapter implements BleAdapter {
     protected log = buildLog('BleAdapter')
     private shouldUpdateRssi: boolean
     private rssiIntervalPid?: NodeJS.Timeout
-    private characteristic!: Characteristic
 
     protected constructor(
         peripheral: Peripheral,
@@ -91,65 +90,50 @@ export default class BleDeviceAdapter implements BleAdapter {
     }
 
     private async subscribeToNotifiableCharacteristics() {
-        for (const characteristic of this.characteristics) {
-            this.characteristic = characteristic
-            await this.tryToSubscribeForNotifiable()
+        for (const char of this.characteristics) {
+            await this.tryToSubscribeForNotifiable(char)
         }
     }
 
-    private async tryToSubscribeForNotifiable() {
-        if (this.characteristicIsNotifiable) {
-            await this.tryToSubscribe()
+    private async tryToSubscribeForNotifiable(char: Characteristic) {
+        if (char.properties.includes('notify')) {
+            await this.tryToSubscribe(char)
         }
     }
 
-    private get characteristicIsNotifiable() {
-        return this.characteristic.properties.includes('notify')
-    }
-
-    private async tryToSubscribe() {
+    private async tryToSubscribe(char: Characteristic) {
         try {
-            await this.characteristic.subscribeAsync()
-            this.setCharacteristicCallbackIfExists()
+            await char.subscribeAsync()
+            this.setCharacteristicCallbackIfExists(char)
         } catch {
-            this.throwCharacteristicSubscribeFailed()
+            this.throwCharacteristicSubscribeFailed(char)
         }
     }
 
-    private setCharacteristicCallbackIfExists() {
-        if (this.characteristicHasCallback) {
-            this.setupCharacteristicOnDataHandler()
+    private setCharacteristicCallbackIfExists(char: Characteristic) {
+        const hasCallback = this.characteristicCallbackUuids.includes(char.uuid)
+
+        if (hasCallback) {
+            this.setupCharacteristicOnDataHandler(char)
         }
     }
 
-    private setupCharacteristicOnDataHandler() {
-        this.characteristic.on('data', (data) => {
-            this.callback(data, this.characteristic)
+    private setupCharacteristicOnDataHandler(char: Characteristic) {
+        const callback = this.characteristicCallbacks?.[char.uuid]
+
+        char.on('data', (data) => {
+            callback(data, char)
         })
-    }
-
-    private get callback() {
-        return this.characteristicCallbacks?.[this.characteristic.uuid]
-    }
-
-    private get characteristicHasCallback() {
-        return this.characteristicCallbackUuids.includes(
-            this.characteristicUuid
-        )
     }
 
     private get characteristicCallbackUuids() {
         return Object.keys(this.characteristicCallbacks)
     }
 
-    private get characteristicUuid() {
-        return this.characteristic.uuid
-    }
-
-    private throwCharacteristicSubscribeFailed() {
+    private throwCharacteristicSubscribeFailed(char: Characteristic) {
         throw new SpruceError({
             code: 'CHARACTERISTIC_SUBSCRIBE_FAILED',
-            characteristicUuid: this.characteristicUuid,
+            characteristicUuid: char.uuid,
         })
     }
 
