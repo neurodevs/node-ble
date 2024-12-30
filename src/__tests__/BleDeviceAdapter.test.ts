@@ -4,7 +4,7 @@ import AbstractSpruceTest, {
     errorAssert,
     generateId,
 } from '@sprucelabs/test-utils'
-import { Peripheral } from '@abandonware/noble'
+import { Characteristic, Peripheral } from '@abandonware/noble'
 import BleDeviceAdapter, {
     BleAdapterOptions,
 } from '../components/BleDeviceAdapter'
@@ -397,6 +397,44 @@ export default class BleDeviceAdapterTest extends AbstractSpruceTest {
 
     @test()
     protected static async callsProvidedCharacteristicCallbacks() {
+        const { peripheral, characteristic } =
+            this.createPeripheralWithCharacteristic()
+
+        const characteristicCallbacks = {
+            [characteristic.uuid]: () => {},
+        }
+
+        await BleDeviceAdapter.Create(peripheral as unknown as Peripheral, {
+            characteristicCallbacks,
+        })
+
+        assert.isEqualDeep(characteristic.callsToOn[0], {
+            event: 'data',
+            listener: characteristicCallbacks[characteristic.uuid],
+        })
+    }
+
+    @test()
+    protected static async canGetCharacteristicByUuid() {
+        const { peripheral, characteristic } =
+            this.createPeripheralWithCharacteristic()
+
+        const adapter = await BleDeviceAdapter.Create(peripheral as any, {
+            characteristicCallbacks: {
+                [characteristic.uuid]: () => {},
+            },
+        })
+
+        const actual = adapter.getCharacteristic(characteristic.uuid)
+
+        assert.isEqualDeep(
+            actual,
+            characteristic as unknown as Characteristic,
+            'Should have returned characteristic!'
+        )
+    }
+
+    private static createPeripheralWithCharacteristic() {
         const characteristicUuid = generateId()
 
         const characteristic = new FakeCharacteristic({
@@ -406,18 +444,7 @@ export default class BleDeviceAdapterTest extends AbstractSpruceTest {
         const peripheral = new FakePeripheral()
         peripheral.setFakeCharacteristics([characteristic])
 
-        const characteristicCallbacks = {
-            [characteristicUuid]: () => {},
-        }
-
-        await BleDeviceAdapter.Create(peripheral as unknown as Peripheral, {
-            characteristicCallbacks,
-        })
-
-        assert.isEqualDeep(characteristic.callsToOn[0], {
-            event: 'data',
-            listener: characteristicCallbacks[characteristicUuid],
-        })
+        return { peripheral, characteristic }
     }
 
     private static async createAdapterAndRunFor(

@@ -233,6 +233,10 @@ export default class BleDeviceAdapter implements BleAdapter {
         }
     }
 
+    public getCharacteristic(uuid: string) {
+        return this.characteristics.find((c) => c.uuid === uuid)
+    }
+
     private readonly disconnectStates = ['disconnected', 'disconnecting']
 
     private get unintentionalDisconnectMessage() {
@@ -263,6 +267,7 @@ export default class BleDeviceAdapter implements BleAdapter {
 export interface BleAdapter {
     connect(): Promise<void>
     disconnect(): Promise<void>
+    getCharacteristic(uuid: string): Characteristic | undefined
 }
 
 export type BleAdapterConstructor = new (
