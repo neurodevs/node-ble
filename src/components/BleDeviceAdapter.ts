@@ -15,7 +15,7 @@ export default class BleDeviceAdapter implements BleAdapter {
     protected isIntentionalDisconnect = false
     protected log = buildLog('BleAdapter')
     private shouldUpdateRssi: boolean
-    private rssiIntervalPid: any
+    private rssiIntervalPid?: NodeJS.Timeout
     private characteristic!: Characteristic
 
     protected constructor(
