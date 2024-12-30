@@ -10,12 +10,12 @@ export default class BleDeviceAdapter implements BleAdapter {
     protected peripheral: Peripheral
     protected services!: Service[]
     protected characteristics!: Characteristic[]
+    protected characteristicCallbacks: CharacteristicCallbacks
     protected rssiIntervalMs: number
     protected isIntentionalDisconnect = false
     protected log = buildLog('BleAdapter')
     private shouldUpdateRssi: boolean
     private rssiIntervalPid: any
-    private characteristicCallbacks: CharacteristicCallbacks
     private characteristic!: Characteristic
 
     protected constructor(
