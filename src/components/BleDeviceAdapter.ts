@@ -123,10 +123,13 @@ export default class BleDeviceAdapter implements BleAdapter {
     }
 
     private setupCharacteristicOnDataHandler() {
-        this.characteristic.on(
-            'data',
-            this.characteristicCallbacks?.[this.characteristic.uuid]
-        )
+        this.characteristic.on('data', (data) => {
+            this.callback(data, this.characteristic)
+        })
+    }
+
+    private get callback() {
+        return this.characteristicCallbacks?.[this.characteristic.uuid]
     }
 
     private get characteristicHasCallback() {
@@ -290,7 +293,7 @@ export interface BleAdapterConstructorOptions {
 
 export type CharacteristicCallbacks = Record<
     CharacteristicUuid,
-    (data: Buffer) => void
+    (data: Buffer, characteristic: Characteristic) => void
 >
 
 export type CharacteristicUuid = string
