@@ -1,6 +1,9 @@
 import noble, { Peripheral } from '@abandonware/noble'
 import SpruceError from '../errors/SpruceError'
-import BleDeviceAdapter, { BleAdapter } from './BleDeviceAdapter'
+import BleDeviceAdapter, {
+    BleAdapter,
+    CharacteristicCallbacks,
+} from './BleDeviceAdapter'
 
 export default class BleDeviceScanner implements BleScanner {
     public static Class?: BleScannerConstructor
@@ -16,6 +19,7 @@ export default class BleDeviceScanner implements BleScanner {
     private timeoutPromise!: ScanPromise
     private resolvePromise!: (peripherals: Peripheral[]) => void
     private shouldThrowOnTimeout = true
+    private characteristicCallbacks!: CharacteristicCallbacks
 
     protected constructor(options?: BleScannerOptions) {
         const { defaultTimeoutMs, defaultDurationMs } = options ?? {}
@@ -92,7 +96,7 @@ export default class BleDeviceScanner implements BleScanner {
     }
 
     public async scanForUuids(uuids: string[], options?: ScanOptions) {
-        this.destructureAndSetTimeoutMs(options)
+        this.destructureAndSetOptions(options)
 
         this.uuids = uuids
         this.resetNames()
@@ -106,7 +110,7 @@ export default class BleDeviceScanner implements BleScanner {
     }
 
     public async scanForNames(names: string[], options?: ScanOptions) {
-        this.destructureAndSetTimeoutMs(options)
+        this.destructureAndSetOptions(options)
 
         this.resetUuids()
         this.names = names
@@ -150,14 +154,17 @@ export default class BleDeviceScanner implements BleScanner {
     private async createAdapters() {
         return await Promise.all(
             this.peripherals.map((peripheral) =>
-                BleDeviceAdapter.Create(peripheral)
+                this.BleDeviceAdapter(peripheral)
             )
         )
     }
 
-    private destructureAndSetTimeoutMs(options?: ScanOptions) {
-        const { timeoutMs = this.timeoutMs } = options ?? {}
+    private destructureAndSetOptions(options?: ScanOptions) {
+        const { timeoutMs = this.timeoutMs, characteristicCallbacks } =
+            options ?? {}
+
         this.timeoutMs = timeoutMs
+        this.characteristicCallbacks = characteristicCallbacks ?? {}
     }
 
     private createTimeoutPromise(timeoutMs = this.timeoutMs) {
@@ -203,6 +210,12 @@ export default class BleDeviceScanner implements BleScanner {
     private get noble() {
         return BleDeviceScanner.noble
     }
+
+    private BleDeviceAdapter(peripheral: Peripheral) {
+        return BleDeviceAdapter.Create(peripheral, {
+            characteristicCallbacks: this.characteristicCallbacks,
+        })
+    }
 }
 
 export interface BleScanner {
@@ -225,6 +238,7 @@ export interface BleScannerOptions {
 
 export interface ScanOptions {
     timeoutMs?: number
+    characteristicCallbacks?: CharacteristicCallbacks
 }
 
 export type ScanPromise = Promise<Peripheral[]>

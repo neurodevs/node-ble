@@ -10,7 +10,11 @@ import BleDeviceScanner, {
     BleScannerOptions,
     ScanOptions,
 } from '../components/BleDeviceScanner'
+import SpyBleAdapter from '../testDoubles/BleAdapter/SpyBleAdapter'
 import SpyBleScanner from '../testDoubles/BleScanner/SpyBleScanner'
+import FakeCharacteristic, {
+    CharacteristicOptions,
+} from '../testDoubles/noble/FakeCharacteristic'
 import FakeNoble, { CreateFakePeripheral } from '../testDoubles/noble/FakeNoble'
 import FakePeripheral from '../testDoubles/noble/FakePeripheral'
 
@@ -31,8 +35,8 @@ export default class BleDeviceScannerTest extends AbstractSpruceTest {
     }
 
     @test()
-    protected static async canCreateBleScanner() {
-        assert.isTruthy(this.instance)
+    protected static async canCreateBleDeviceScanner() {
+        assert.isTruthy(this.instance, 'Should have created an instance!')
     }
 
     @test()
@@ -390,8 +394,8 @@ export default class BleDeviceScannerTest extends AbstractSpruceTest {
 
     @test()
     protected static async addingPeripheralWithUndefinedLocalNameDoesNotThrow() {
-        const validPeripheral = new FakePeripheral()
-        const invalidPeripheral = new FakePeripheral()
+        const validPeripheral = this.FakePeripheral()
+        const invalidPeripheral = this.FakePeripheral()
 
         // @ts-ignore
         invalidPeripheral.advertisement.localName = undefined
@@ -403,6 +407,38 @@ export default class BleDeviceScannerTest extends AbstractSpruceTest {
         await instance.scanForName(validPeripheral.advertisement.localName, {
             timeoutMs: 10,
         })
+    }
+
+    @test()
+    protected static async passesCharacteristicCallbacksToAdapter() {
+        BleDeviceAdapter.Class = SpyBleAdapter
+
+        const peripheral = this.FakePeripheral()
+
+        const uuid1 = generateId()
+        const uuid2 = generateId()
+
+        const fake1 = this.FakeCharacteristic({ uuid: uuid1 })
+        const fake2 = this.FakeCharacteristic({ uuid: uuid2 })
+
+        peripheral.setFakeCharacteristics([fake1, fake2])
+
+        this.noble.fakedPeripherals = [peripheral]
+
+        const characteristicCallbacks = {
+            [uuid1]: () => {},
+            [uuid2]: () => {},
+        }
+
+        const adapter = (await this.instance.scanForUuid(peripheral.uuid, {
+            characteristicCallbacks,
+        })) as SpyBleAdapter
+
+        assert.isEqualDeep(
+            adapter.getCharacteristicCallbacks(),
+            characteristicCallbacks,
+            'Should have passed fake1 to adapter!'
+        )
     }
 
     private static async mapPeripheralsToAdapters() {
@@ -511,6 +547,14 @@ export default class BleDeviceScannerTest extends AbstractSpruceTest {
 
     private static FakeNoble() {
         return new FakeNoble()
+    }
+
+    private static FakePeripheral() {
+        return new FakePeripheral()
+    }
+
+    private static FakeCharacteristic(options?: CharacteristicOptions) {
+        return new FakeCharacteristic(options)
     }
 
     private static async BleAdapter(peripheral = this.firstPeripheral) {

@@ -28,6 +28,10 @@ export default class SpyBleAdapter extends BleDeviceAdapter {
         return this.characteristics
     }
 
+    public getCharacteristicCallbacks() {
+        return this.characteristicCallbacks
+    }
+
     public get localName() {
         return this.advertisement.localName
     }
