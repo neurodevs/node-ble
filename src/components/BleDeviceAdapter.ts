@@ -15,15 +15,21 @@ export default class BleDeviceAdapter implements BleAdapter {
     protected log = buildLog('BleAdapter')
     private shouldUpdateRssi: boolean
     private rssiIntervalPid: any
+    private characteristicCallbacks: CharacteristicCallbacks
+    private characteristic!: Characteristic
 
     protected constructor(
         peripheral: Peripheral,
-        shouldUpdateRssi: boolean,
-        rssiIntervalMs: number
+        options: BleAdapterConstructorOptions
     ) {
         this.peripheral = peripheral
+
+        const { shouldUpdateRssi, rssiIntervalMs, characteristicCallbacks } =
+            options
+
         this.shouldUpdateRssi = shouldUpdateRssi
         this.rssiIntervalMs = rssiIntervalMs
+        this.characteristicCallbacks = characteristicCallbacks ?? {}
     }
 
     public static async Create(
@@ -36,13 +42,16 @@ export default class BleDeviceAdapter implements BleAdapter {
             shouldConnect = true,
             shouldUpdateRssi = true,
             rssiIntervalMs = 10000,
+            characteristicCallbacks,
         } = options ?? {}
 
-        const adapter = new (this.Class ?? this)(
-            peripheral,
+        const constructorOptions = {
             shouldUpdateRssi,
-            rssiIntervalMs
-        )
+            rssiIntervalMs,
+            characteristicCallbacks,
+        }
+
+        const adapter = new (this.Class ?? this)(peripheral, constructorOptions)
 
         if (shouldConnect) {
             await adapter.connect()
@@ -83,25 +92,53 @@ export default class BleDeviceAdapter implements BleAdapter {
 
     private async subscribeToNotifiableCharacteristics() {
         for (const characteristic of this.characteristics) {
-            if (characteristic.properties.includes('notify')) {
-                await this.tryToSubscribe(characteristic)
-            }
+            this.characteristic = characteristic
+            await this.tryToSubscribeForNotifiable()
         }
     }
 
-    private async tryToSubscribe(characteristic: Characteristic) {
+    private async tryToSubscribeForNotifiable() {
+        if (this.currentCharacteristicIsNotifiable) {
+            await this.tryToSubscribe()
+        }
+    }
+
+    private get currentCharacteristicIsNotifiable() {
+        return this.characteristic.properties.includes('notify')
+    }
+
+    private async tryToSubscribe() {
         try {
-            await characteristic.subscribeAsync()
+            await this.characteristic.subscribeAsync()
+            this.setCharacteristicCallbackIfExists()
         } catch {
-            const { uuid } = characteristic
-            this.throwCharacteristicSubscribeFailed(uuid)
+            this.throwCharacteristicSubscribeFailed()
         }
     }
 
-    private throwCharacteristicSubscribeFailed(characteristicUuid: string) {
+    private setCharacteristicCallbackIfExists() {
+        if (this.currentCharacteristicHasCallback) {
+            this.characteristic.on(
+                'data',
+                this.characteristicCallbacks?.[this.characteristic.uuid]
+            )
+        }
+    }
+
+    private get currentCharacteristicHasCallback() {
+        return this.characteristicCallbackUuids.includes(
+            this.currentCharacteristicUuid
+        )
+    }
+
+    private get currentCharacteristicUuid() {
+        return this.characteristic.uuid
+    }
+
+    private throwCharacteristicSubscribeFailed() {
         throw new SpruceError({
             code: 'CHARACTERISTIC_SUBSCRIBE_FAILED',
-            characteristicUuid,
+            characteristicUuid: this.currentCharacteristicUuid,
         })
     }
 
@@ -213,6 +250,10 @@ export default class BleDeviceAdapter implements BleAdapter {
     private get setInterval() {
         return BleDeviceAdapter.setInterval
     }
+
+    private get characteristicCallbackUuids() {
+        return Object.keys(this.characteristicCallbacks)
+    }
 }
 
 export interface BleAdapter {
@@ -220,14 +261,27 @@ export interface BleAdapter {
     disconnect(): Promise<void>
 }
 
+export type BleAdapterConstructor = new (
+    peripheral: Peripheral,
+    options: BleAdapterConstructorOptions
+) => BleAdapter
+
 export interface BleAdapterOptions {
     shouldConnect?: boolean
     shouldUpdateRssi?: boolean
     rssiIntervalMs?: number
+    characteristicCallbacks?: CharacteristicCallbacks
 }
 
-export type BleAdapterConstructor = new (
-    peripheral: Peripheral,
-    shouldUpdateRssi: boolean,
+export interface BleAdapterConstructorOptions {
+    shouldUpdateRssi: boolean
     rssiIntervalMs: number
-) => BleAdapter
+    characteristicCallbacks?: CharacteristicCallbacks
+}
+
+export type CharacteristicCallbacks = Record<
+    CharacteristicUuid,
+    (data: Buffer) => void
+>
+
+export type CharacteristicUuid = string

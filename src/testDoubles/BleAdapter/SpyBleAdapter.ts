@@ -1,25 +1,19 @@
 import { LoggableType } from '@sprucelabs/spruce-skill-utils'
 import { Peripheral } from '@abandonware/noble'
-import BleDeviceAdapter from '../../components/BleDeviceAdapter'
+import BleDeviceAdapter, {
+    BleAdapterConstructorOptions,
+} from '../../components/BleDeviceAdapter'
 
 export default class SpyBleAdapter extends BleDeviceAdapter {
-    public callsToConstructor: CallToConstructor[] = []
     public infoLogs: string[] = []
     public warnLogs: string[] = []
     public errorLogs: string[] = []
 
     public constructor(
         peripheral: Peripheral,
-        shouldUpdateRssi: boolean,
-        rssiIntervalMs: number
+        options: BleAdapterConstructorOptions
     ) {
-        super(peripheral, shouldUpdateRssi, rssiIntervalMs)
-
-        this.callsToConstructor.push({
-            peripheral,
-            shouldUpdateRssi,
-            rssiIntervalMs,
-        })
+        super(peripheral, options)
     }
 
     public getPeripheral() {
@@ -104,6 +98,5 @@ export default class SpyBleAdapter extends BleDeviceAdapter {
 
 export interface CallToConstructor {
     peripheral: Peripheral
-    shouldUpdateRssi: boolean
-    rssiIntervalMs: number
+    options: BleAdapterConstructorOptions
 }
