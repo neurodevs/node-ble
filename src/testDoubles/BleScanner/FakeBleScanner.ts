@@ -13,10 +13,10 @@ export default class FakeBleScanner implements BleScanner {
 
     public static callsToConstructor: (BleScannerOptions | undefined)[] = []
     public static numCallsToScanAll = 0
-    public static callsToScanForPeripheral: FakeScanForPeripheralCall[] = []
-    public static callsToScanForPeripherals: FakeScanForPeripheralsCall[] = []
-    public static callsToScanForName: string[] = []
-    public static callsToScanForNames: string[][] = []
+    public static callsToScanForUuid: CallToScanForUuid[] = []
+    public static callsToScanForUuids: CallToScanForUuids[] = []
+    public static callsToScanForName: CallToScanForName[] = []
+    public static callsToScanForNames: CallToScanForNames[] = []
     public static numCallsToStopScanning = 0
 
     public constructor(options?: BleScannerOptions) {
@@ -47,28 +47,28 @@ export default class FakeBleScanner implements BleScanner {
     }
 
     public async scanForUuid(uuid: string, options?: ScanOptions) {
-        this.callsToScanForPeripheral.push({ uuid, options })
+        this.callsToScanForUuid.push({ uuid, options })
 
         const peripheral = this.findByUuid(uuid)
         return this.BleAdapter(peripheral)
     }
 
     public async scanForUuids(uuids: string[], options?: ScanOptions) {
-        this.callsToScanForPeripherals.push({ uuids, options })
+        this.callsToScanForUuids.push({ uuids, options })
 
         const peripherals = this.findByUuids(uuids)
         return await this.createAdapters(peripherals)
     }
 
-    public async scanForName(name: string) {
-        this.callsToScanForName.push(name)
+    public async scanForName(name: string, options?: ScanOptions) {
+        this.callsToScanForName.push({ name, options })
 
         const peripheral = this.findByName(name)
         return this.BleAdapter(peripheral)
     }
 
-    public async scanForNames(names: string[]) {
-        this.callsToScanForNames.push(names)
+    public async scanForNames(names: string[], options?: ScanOptions) {
+        this.callsToScanForNames.push({ names, options })
 
         const peripherals = this.findByNames(names)
         return await this.createAdapters(peripherals)
@@ -120,12 +120,12 @@ export default class FakeBleScanner implements BleScanner {
         return peripheral.advertisement.localName
     }
 
-    private get callsToScanForPeripheral() {
-        return FakeBleScanner.callsToScanForPeripheral
+    private get callsToScanForUuid() {
+        return FakeBleScanner.callsToScanForUuid
     }
 
-    private get callsToScanForPeripherals() {
-        return FakeBleScanner.callsToScanForPeripherals
+    private get callsToScanForUuids() {
+        return FakeBleScanner.callsToScanForUuids
     }
 
     private get callsToScanForName() {
@@ -148,20 +148,30 @@ export default class FakeBleScanner implements BleScanner {
         this.fakedPeripherals = []
         this.callsToConstructor = []
         this.numCallsToScanAll = 0
-        this.callsToScanForPeripheral = []
-        this.callsToScanForPeripherals = []
+        this.callsToScanForUuid = []
+        this.callsToScanForUuids = []
         this.callsToScanForName = []
         this.callsToScanForNames = []
         this.numCallsToStopScanning = 0
     }
 }
 
-export interface FakeScanForPeripheralCall {
+export interface CallToScanForUuid {
     uuid: string
     options?: ScanOptions
 }
 
-export interface FakeScanForPeripheralsCall {
+export interface CallToScanForUuids {
     uuids: string[]
+    options?: ScanOptions
+}
+
+export interface CallToScanForName {
+    name: string
+    options?: ScanOptions
+}
+
+export interface CallToScanForNames {
+    names: string[]
     options?: ScanOptions
 }
