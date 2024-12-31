@@ -38,5 +38,6 @@ export default class FakeBleAdapter implements BleAdapter {
         FakeBleAdapter.numCallsToConstructor = 0
         FakeBleAdapter.numCallsToConnect = 0
         FakeBleAdapter.numCallsToDisconnect = 0
+        FakeBleAdapter.callsToGetCharacteristic = []
     }
 }
