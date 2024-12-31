@@ -415,7 +415,7 @@ export default class BleDeviceAdapterTest extends AbstractSpruceTest {
         characteristic.simulateDataReceived(Buffer.from([1, 2, 3]))
 
         const call = characteristic.callsToOn[0]
-        call.listener()
+        call.listener(Buffer.from([1, 2, 3]))
 
         assert.isEqual(call.event, 'data', 'Should have called on("data")!')
         assert.isTrue(wasHit, 'Should have called the characteristic callback!')
