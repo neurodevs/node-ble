@@ -1,5 +1,5 @@
 import { generateId } from '@sprucelabs/test-utils'
-import { Descriptor } from '@abandonware/noble'
+import { Characteristic, Descriptor } from '@abandonware/noble'
 
 export default class FakeCharacteristic implements SimpleCharacteristic {
     public callsToConstructor: CharacteristicOptions[] = []
@@ -19,7 +19,10 @@ export default class FakeCharacteristic implements SimpleCharacteristic {
     public descriptors: Descriptor[] = []
     private isSubscribed = false
 
-    private eventListeners: Record<string, ((data: Buffer) => void)[]> = {}
+    private eventListeners: Record<
+        string,
+        ((data: Buffer, char: Characteristic) => void)[]
+    > = {}
 
     public constructor(options?: CharacteristicOptions) {
         this.callsToConstructor.push(options ?? {})
@@ -115,7 +118,7 @@ export default class FakeCharacteristic implements SimpleCharacteristic {
         const listeners = this.eventListeners['data'] ?? []
 
         for (const listener of listeners) {
-            listener(data)
+            listener(data, this as unknown as Characteristic)
         }
     }
 
@@ -159,5 +162,7 @@ export interface CallToWriteAsync {
 
 export interface CharacteristicEventAndListener {
     event: string
-    listener: (data: Buffer) => void
+    listener: (data: Buffer, char: Characteristic) => void
 }
+
+export { Characteristic } from '@abandonware/noble'
