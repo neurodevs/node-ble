@@ -19,6 +19,8 @@ export default class FakeCharacteristic implements SimpleCharacteristic {
     public descriptors: Descriptor[] = []
     private isSubscribed = false
 
+    private eventListeners: Record<string, ((data: Buffer) => void)[]> = {}
+
     public constructor(options?: CharacteristicOptions) {
         this.callsToConstructor.push(options ?? {})
 
@@ -28,12 +30,23 @@ export default class FakeCharacteristic implements SimpleCharacteristic {
         this.properties = properties
     }
 
-    public on(event: string, listener: () => void) {
+    public on(event: string, listener: (data: Buffer) => void) {
         this.callsToOn.push({ event, listener })
+
+        if (!this.eventListeners[event]) {
+            this.eventListeners[event] = []
+        }
+        this.eventListeners[event].push(listener)
     }
 
-    public off(event: string, listener: () => void) {
+    public off(event: string, listener: (data: Buffer) => void) {
         this.callsToOff.push({ event, listener })
+
+        if (this.eventListeners[event]) {
+            this.eventListeners[event] = this.eventListeners[event].filter(
+                (l) => l !== listener
+            )
+        }
     }
 
     public async readAsync() {
@@ -99,7 +112,11 @@ export default class FakeCharacteristic implements SimpleCharacteristic {
     }
 
     private emitData(data: Buffer) {
-        console.log(`Fake data received on characteristic ${this.uuid}:`, data)
+        const listeners = this.eventListeners['data'] ?? []
+
+        for (const listener of listeners) {
+            listener(data)
+        }
     }
 
     public resetTestDouble() {
@@ -112,6 +129,7 @@ export default class FakeCharacteristic implements SimpleCharacteristic {
         this.numCallsToSubscribeAsync = 0
         this.numCallsToUnsubscribeAsync = 0
         this.value = null
+        this.eventListeners = {}
     }
 }
 
@@ -141,5 +159,5 @@ export interface CallToWriteAsync {
 
 export interface CharacteristicEventAndListener {
     event: string
-    listener: () => void
+    listener: (data: Buffer) => void
 }
