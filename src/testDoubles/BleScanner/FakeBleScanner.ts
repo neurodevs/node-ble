@@ -50,28 +50,28 @@ export default class FakeBleScanner implements BleScanner {
         this.callsToScanForUuid.push({ uuid, options })
 
         const peripheral = this.findByUuid(uuid)
-        return this.BleAdapter(peripheral)
+        return this.BleAdapter(peripheral, options)
     }
 
     public async scanForUuids(uuids: string[], options?: ScanOptions) {
         this.callsToScanForUuids.push({ uuids, options })
 
         const peripherals = this.findByUuids(uuids)
-        return await this.createAdapters(peripherals)
+        return await this.createAdapters(peripherals, options)
     }
 
     public async scanForName(name: string, options?: ScanOptions) {
         this.callsToScanForName.push({ name, options })
 
         const peripheral = this.findByName(name)
-        return this.BleAdapter(peripheral)
+        return this.BleAdapter(peripheral, options)
     }
 
     public async scanForNames(names: string[], options?: ScanOptions) {
         this.callsToScanForNames.push({ names, options })
 
         const peripherals = this.findByNames(names)
-        return await this.createAdapters(peripherals)
+        return await this.createAdapters(peripherals, options)
     }
 
     public async stopScanning() {
@@ -112,8 +112,15 @@ export default class FakeBleScanner implements BleScanner {
         return this.fakedPeripherals.filter(cb) as unknown as Peripheral[]
     }
 
-    private async createAdapters(peripherals: Peripheral[]) {
-        return Promise.all(peripherals.map((p) => BleDeviceAdapter.Create(p)))
+    private async createAdapters(
+        peripherals: Peripheral[],
+        options?: ScanOptions
+    ) {
+        return Promise.all(
+            peripherals.map((peripheral) =>
+                this.BleAdapter(peripheral, options)
+            )
+        )
     }
 
     private getLocalName(peripheral: FakePeripheral) {
@@ -140,8 +147,8 @@ export default class FakeBleScanner implements BleScanner {
         return FakeBleScanner.fakedPeripherals
     }
 
-    private BleAdapter(peripheral: Peripheral) {
-        return BleDeviceAdapter.Create(peripheral)
+    private BleAdapter(peripheral: Peripheral, options?: ScanOptions) {
+        return BleDeviceAdapter.Create(peripheral, options)
     }
 
     public static resetTestDouble() {
