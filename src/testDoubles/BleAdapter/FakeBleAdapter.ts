@@ -1,16 +1,19 @@
-import { Characteristic } from '@abandonware/noble'
-import { BleAdapter } from '../../components/BleDeviceAdapter'
+import { Characteristic, Peripheral } from '@abandonware/noble'
+import {
+    BleAdapter,
+    BleAdapterOptions,
+} from '../../components/BleDeviceAdapter'
 
 export default class FakeBleAdapter implements BleAdapter {
-    public static numCallsToConstructor = 0
+    public static callsToConstructor: CallToBleAdapterConstructor[] = []
     public static numCallsToConnect = 0
     public static numCallsToDisconnect = 0
     public static callsToGetCharacteristic: string[] = []
 
     public static fakeCharacteristics: Record<string, Characteristic> = {}
 
-    public constructor() {
-        FakeBleAdapter.numCallsToConstructor++
+    public constructor(peripheral?: Peripheral, options?: BleAdapterOptions) {
+        FakeBleAdapter.callsToConstructor.push({ peripheral, options })
     }
 
     public async connect() {
@@ -35,9 +38,14 @@ export default class FakeBleAdapter implements BleAdapter {
     }
 
     public static resetTestDouble() {
-        FakeBleAdapter.numCallsToConstructor = 0
-        FakeBleAdapter.numCallsToConnect = 0
-        FakeBleAdapter.numCallsToDisconnect = 0
-        FakeBleAdapter.callsToGetCharacteristic = []
+        this.callsToConstructor = []
+        this.numCallsToConnect = 0
+        this.numCallsToDisconnect = 0
+        this.callsToGetCharacteristic = []
     }
+}
+
+export interface CallToBleAdapterConstructor {
+    peripheral?: Peripheral
+    options?: BleAdapterOptions
 }
