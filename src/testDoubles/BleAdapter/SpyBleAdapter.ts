@@ -99,8 +99,3 @@ export default class SpyBleAdapter extends BleDeviceAdapter {
         this.errorLogs = []
     }
 }
-
-export interface CallToConstructor {
-    peripheral: Peripheral
-    options: BleAdapterConstructorOptions
-}
