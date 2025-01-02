@@ -11,10 +11,9 @@ export default class BleDeviceAdapter implements BleAdapter {
     protected services!: Service[]
     protected characteristics!: Characteristic[]
     protected characteristicCallbacks: CharacteristicCallbacks
-    protected rssiIntervalMs: number
+    protected rssiIntervalMs?: number
     protected isIntentionalDisconnect = false
     protected log = buildLog('BleAdapter')
-    private shouldUpdateRssi: boolean
     private rssiIntervalPid?: NodeJS.Timeout
 
     protected constructor(
@@ -23,10 +22,8 @@ export default class BleDeviceAdapter implements BleAdapter {
     ) {
         this.peripheral = peripheral
 
-        const { shouldUpdateRssi, rssiIntervalMs, characteristicCallbacks } =
-            options
+        const { rssiIntervalMs, characteristicCallbacks } = options
 
-        this.shouldUpdateRssi = shouldUpdateRssi
         this.rssiIntervalMs = rssiIntervalMs
         this.characteristicCallbacks = characteristicCallbacks ?? {}
     }
@@ -39,13 +36,11 @@ export default class BleDeviceAdapter implements BleAdapter {
 
         const {
             shouldConnect = true,
-            shouldUpdateRssi = true,
-            rssiIntervalMs = 10000,
+            rssiIntervalMs,
             characteristicCallbacks,
         } = options ?? {}
 
         const constructorOptions = {
-            shouldUpdateRssi,
             rssiIntervalMs,
             characteristicCallbacks,
         }
@@ -138,7 +133,7 @@ export default class BleDeviceAdapter implements BleAdapter {
     }
 
     private setupRssiIfEnabled() {
-        if (this.shouldUpdateRssi) {
+        if (this.rssiIntervalMs) {
             this.setIntervalForRssi()
         }
         this.setupRssiUpdateHandler()
@@ -257,21 +252,19 @@ export interface BleAdapter {
     getCharacteristic(uuid: string): Characteristic | undefined
 }
 
+export interface BleAdapterOptions {
+    shouldConnect?: boolean
+    rssiIntervalMs?: number
+    characteristicCallbacks?: CharacteristicCallbacks
+}
+
 export type BleAdapterConstructor = new (
     peripheral: Peripheral,
     options: BleAdapterConstructorOptions
 ) => BleAdapter
 
-export interface BleAdapterOptions {
-    shouldConnect?: boolean
-    shouldUpdateRssi?: boolean
-    rssiIntervalMs?: number
-    characteristicCallbacks?: CharacteristicCallbacks
-}
-
 export interface BleAdapterConstructorOptions {
-    shouldUpdateRssi: boolean
-    rssiIntervalMs: number
+    rssiIntervalMs?: number
     characteristicCallbacks?: CharacteristicCallbacks
 }
 

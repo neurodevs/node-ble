@@ -346,15 +346,6 @@ export default class BleDeviceAdapterTest extends AbstractSpruceTest {
         )
     }
 
-    @test()
-    protected static async setsTenSecondIntervalDefaultForRssiUpdate() {
-        assert.isEqual(
-            this.instance.getRssiIntervalMs(),
-            this.defaultRssiIntervalMs,
-            'Should set an interval for 10 seconds!'
-        )
-    }
-
     @test('sets rssi interval thrice', 3)
     @test('sets rssi interval twice', 2)
     @test('sets rssi interval once', 1)
@@ -383,15 +374,15 @@ export default class BleDeviceAdapterTest extends AbstractSpruceTest {
     }
 
     @test()
-    protected static async hasOptionToDisableRssiUpdate() {
+    protected static async hasOptionToEnableRssi() {
         await this.createAdapterAndRunFor(1, {
-            shouldUpdateRssi: false,
+            rssiIntervalMs: this.rssiIntervalMs,
         })
 
         assert.isEqual(
             this.peripheral.numCallsToUpdateRssiAsync,
-            0,
-            'Should not have called updateRssiAsync on peripheral!'
+            1,
+            'Should have called updateRssiAsync on peripheral!'
         )
     }
 
@@ -533,8 +524,6 @@ export default class BleDeviceAdapterTest extends AbstractSpruceTest {
     private static readonly fakedListener = () => {}
 
     private static readonly rssiUpdateEvent = 'rssiUpdate'
-
-    private static readonly defaultRssiIntervalMs = 10000
 
     private static readonly rssiIntervalMs = 10
 
