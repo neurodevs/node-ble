@@ -20,6 +20,7 @@ export default class BleDeviceScanner implements BleScanner {
     private resolvePromise!: (peripherals: Peripheral[]) => void
     private shouldThrowOnTimeout = true
     private characteristicCallbacks!: CharacteristicCallbacks
+    private rssiIntervalMs?: number
 
     protected constructor(options?: BleScannerOptions) {
         const { defaultTimeoutMs, defaultDurationMs } = options ?? {}
@@ -160,11 +161,15 @@ export default class BleDeviceScanner implements BleScanner {
     }
 
     private destructureAndSetOptions(options?: ScanOptions) {
-        const { timeoutMs = this.timeoutMs, characteristicCallbacks } =
-            options ?? {}
+        const {
+            timeoutMs = this.timeoutMs,
+            characteristicCallbacks,
+            rssiIntervalMs,
+        } = options ?? {}
 
         this.timeoutMs = timeoutMs
         this.characteristicCallbacks = characteristicCallbacks ?? {}
+        this.rssiIntervalMs = rssiIntervalMs
     }
 
     private createTimeoutPromise(timeoutMs = this.timeoutMs) {
@@ -214,6 +219,7 @@ export default class BleDeviceScanner implements BleScanner {
     private BleDeviceAdapter(peripheral: Peripheral) {
         return BleDeviceAdapter.Create(peripheral, {
             characteristicCallbacks: this.characteristicCallbacks,
+            rssiIntervalMs: this.rssiIntervalMs,
         })
     }
 }
@@ -239,6 +245,7 @@ export interface BleScannerOptions {
 export interface ScanOptions {
     timeoutMs?: number
     characteristicCallbacks?: CharacteristicCallbacks
+    rssiIntervalMs?: number
 }
 
 export type ScanPromise = Promise<Peripheral[]>
