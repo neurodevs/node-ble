@@ -145,7 +145,6 @@ export default class FakeBleScanner implements BleScanner {
     }
 
     public static resetTestDouble() {
-        this.fakedPeripherals = []
         this.callsToConstructor = []
         this.numCallsToScanAll = 0
         this.callsToScanForUuid = []
