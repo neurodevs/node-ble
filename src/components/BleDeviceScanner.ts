@@ -154,8 +154,8 @@ export default class BleDeviceScanner implements BleScanner {
 
     private async createAdapters() {
         return await Promise.all(
-            this.peripherals.map((peripheral) =>
-                this.BleDeviceAdapter(peripheral)
+            this.peripherals.map(
+                async (peripheral) => await this.BleDeviceAdapter(peripheral)
             )
         )
     }
@@ -216,7 +216,7 @@ export default class BleDeviceScanner implements BleScanner {
         return BleDeviceScanner.noble
     }
 
-    private BleDeviceAdapter(peripheral: Peripheral) {
+    private async BleDeviceAdapter(peripheral: Peripheral) {
         return BleDeviceAdapter.Create(peripheral, {
             characteristicCallbacks: this.characteristicCallbacks,
             rssiIntervalMs: this.rssiIntervalMs,
