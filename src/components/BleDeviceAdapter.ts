@@ -40,12 +40,10 @@ export default class BleDeviceAdapter implements BleAdapter {
             characteristicCallbacks,
         } = options ?? {}
 
-        const constructorOptions = {
+        const adapter = new (this.Class ?? this)(peripheral, {
             rssiIntervalMs,
             characteristicCallbacks,
-        }
-
-        const adapter = new (this.Class ?? this)(peripheral, constructorOptions)
+        })
 
         if (shouldConnect) {
             await adapter.connect()
