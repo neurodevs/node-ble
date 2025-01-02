@@ -26,6 +26,7 @@ export default class BleDeviceScannerTest extends AbstractSpruceTest {
     protected static async beforeEach() {
         await super.beforeEach()
 
+        BleDeviceAdapter.Class = SpyBleAdapter
         BleDeviceScanner.Class = SpyBleScanner
 
         this.uuid = generateId()
@@ -201,7 +202,7 @@ export default class BleDeviceScannerTest extends AbstractSpruceTest {
 
         assert.isEqual(
             adapter.constructor.name,
-            'BleDeviceAdapter',
+            this.expectedConstructorName,
             'scan should return the faked peripherals!'
         )
     }
@@ -330,7 +331,7 @@ export default class BleDeviceScannerTest extends AbstractSpruceTest {
 
         assert.isEqual(
             result[0].constructor.name,
-            'BleDeviceAdapter',
+            this.expectedConstructorName,
             'Create should return a BleAdapter instance!'
         )
     }
@@ -341,7 +342,7 @@ export default class BleDeviceScannerTest extends AbstractSpruceTest {
 
         assert.isEqual(
             adapter.constructor.name,
-            'BleDeviceAdapter',
+            this.expectedConstructorName,
             'scanForUuid should return a BleAdapter instance!'
         )
     }
@@ -387,7 +388,7 @@ export default class BleDeviceScannerTest extends AbstractSpruceTest {
 
         assert.isEqual(
             adapter.constructor.name,
-            'BleDeviceAdapter',
+            this.expectedConstructorName,
             'scanForName should return a BleAdapter instance!'
         )
     }
@@ -438,6 +439,26 @@ export default class BleDeviceScannerTest extends AbstractSpruceTest {
             adapter.getCharacteristicCallbacks(),
             characteristicCallbacks,
             'Should have passed fake1 to adapter!'
+        )
+    }
+
+    @test()
+    protected static async passesOptionalRssiIntervalMsToBleAdapter() {
+        const peripheral = this.FakePeripheral()
+        this.noble.fakedPeripherals = [peripheral]
+
+        const rssiIntervalMs = 10
+
+        const adapter = (await this.instance.scanForUuid(peripheral.uuid, {
+            rssiIntervalMs,
+        })) as SpyBleAdapter
+
+        const actualRssi = adapter.getRssiIntervalMs()
+
+        assert.isEqual(
+            actualRssi,
+            rssiIntervalMs,
+            'Should have passed rssiIntervalMs to adapter!'
         )
     }
 
@@ -544,6 +565,7 @@ export default class BleDeviceScannerTest extends AbstractSpruceTest {
 
     private static readonly timeoutMs = 10
     private static readonly durationMs = 10
+    private static readonly expectedConstructorName = 'SpyBleAdapter'
 
     private static FakeNoble() {
         return new FakeNoble()
