@@ -15,12 +15,12 @@ export default class BleDeviceScanner implements BleScanner {
     protected isScanning = false
     protected timeoutMs: number
     protected durationMs: number
+    private characteristicCallbacks!: CharacteristicCallbacks
+    private rssiIntervalMs?: number
     private scanPromise!: ScanPromise
     private timeoutPromise!: ScanPromise
     private resolvePromise!: (peripherals: Peripheral[]) => void
     private shouldThrowOnTimeout = true
-    private characteristicCallbacks!: CharacteristicCallbacks
-    private rssiIntervalMs?: number
 
     protected constructor(options?: BleScannerOptions) {
         const { defaultTimeoutMs, defaultDurationMs } = options ?? {}
@@ -96,7 +96,7 @@ export default class BleDeviceScanner implements BleScanner {
         return this.peripherals
     }
 
-    public async scanForUuids(uuids: string[], options?: ScanOptions) {
+    public async scanForUuids(uuids: string[], options: ScanOptions) {
         this.destructureAndSetOptions(options)
 
         this.uuids = uuids
@@ -106,11 +106,11 @@ export default class BleDeviceScanner implements BleScanner {
         return await this.scan()
     }
 
-    public async scanForUuid(uuid: string, options?: ScanOptions) {
+    public async scanForUuid(uuid: string, options: ScanOptions) {
         return (await this.scanForUuids([uuid], options))[0]
     }
 
-    public async scanForNames(names: string[], options?: ScanOptions) {
+    public async scanForNames(names: string[], options: ScanOptions) {
         this.destructureAndSetOptions(options)
 
         this.resetUuids()
@@ -120,7 +120,7 @@ export default class BleDeviceScanner implements BleScanner {
         return await this.scan()
     }
 
-    public async scanForName(name: string, options?: ScanOptions) {
+    public async scanForName(name: string, options: ScanOptions) {
         return (await this.scanForNames([name], options))[0]
     }
 
@@ -160,16 +160,16 @@ export default class BleDeviceScanner implements BleScanner {
         )
     }
 
-    private destructureAndSetOptions(options?: ScanOptions) {
+    private destructureAndSetOptions(options: ScanOptions) {
         const {
-            timeoutMs = this.timeoutMs,
             characteristicCallbacks,
             rssiIntervalMs,
+            timeoutMs = this.timeoutMs,
         } = options ?? {}
 
-        this.timeoutMs = timeoutMs
-        this.characteristicCallbacks = characteristicCallbacks ?? {}
+        this.characteristicCallbacks = characteristicCallbacks
         this.rssiIntervalMs = rssiIntervalMs
+        this.timeoutMs = timeoutMs
     }
 
     private createTimeoutPromise(timeoutMs = this.timeoutMs) {
@@ -217,7 +217,8 @@ export default class BleDeviceScanner implements BleScanner {
     }
 
     private async BleDeviceAdapter(peripheral: Peripheral) {
-        return BleDeviceAdapter.Create(peripheral, {
+        return BleDeviceAdapter.Create({
+            peripheral,
             characteristicCallbacks: this.characteristicCallbacks,
             rssiIntervalMs: this.rssiIntervalMs,
         })
@@ -226,10 +227,10 @@ export default class BleDeviceScanner implements BleScanner {
 
 export interface BleScanner {
     scanAll(durationMs?: number): Promise<Peripheral[]>
-    scanForUuid(uuid: string, options?: ScanOptions): Promise<BleAdapter>
-    scanForUuids(uuids: string[], options?: ScanOptions): Promise<BleAdapter[]>
-    scanForName(name: string, options?: ScanOptions): Promise<BleAdapter>
-    scanForNames(names: string[], options?: ScanOptions): Promise<BleAdapter[]>
+    scanForUuid(uuid: string, options: ScanOptions): Promise<BleAdapter>
+    scanForUuids(uuids: string[], options: ScanOptions): Promise<BleAdapter[]>
+    scanForName(name: string, options: ScanOptions): Promise<BleAdapter>
+    scanForNames(names: string[], options: ScanOptions): Promise<BleAdapter[]>
     stopScanning(): Promise<void>
 }
 
@@ -243,9 +244,9 @@ export interface BleScannerOptions {
 }
 
 export interface ScanOptions {
-    timeoutMs?: number
-    characteristicCallbacks?: CharacteristicCallbacks
+    characteristicCallbacks: CharacteristicCallbacks
     rssiIntervalMs?: number
+    timeoutMs?: number
 }
 
 export type ScanPromise = Promise<Peripheral[]>
