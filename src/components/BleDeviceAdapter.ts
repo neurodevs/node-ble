@@ -8,48 +8,33 @@ export default class BleDeviceAdapter implements BleAdapter {
     public static setInterval = setInterval
 
     protected peripheral: Peripheral
-    protected services!: Service[]
-    protected characteristics!: Characteristic[]
     protected characteristicCallbacks: CharacteristicCallbacks
     protected rssiIntervalMs?: number
+    protected services!: Service[]
+    protected characteristics!: Characteristic[]
     protected isIntentionalDisconnect = false
     protected log = buildLog('BleAdapter')
     private rssiIntervalPid?: NodeJS.Timeout
 
-    protected constructor(
-        peripheral: Peripheral,
-        options: BleAdapterConstructorOptions
-    ) {
+    protected constructor(options: BleAdapterConstructorOptions) {
+        const { peripheral, characteristicCallbacks, rssiIntervalMs } = options
+
         this.peripheral = peripheral
-
-        const { rssiIntervalMs, characteristicCallbacks } = options
-
+        this.characteristicCallbacks = characteristicCallbacks
         this.rssiIntervalMs = rssiIntervalMs
-        this.characteristicCallbacks = characteristicCallbacks ?? {}
     }
 
-    public static async Create(
-        peripheral: Peripheral,
-        options?: BleAdapterOptions
-    ) {
-        assertOptions({ peripheral }, ['peripheral'])
+    public static async Create(options: BleAdapterOptions) {
+        assertOptions(options, ['peripheral', 'characteristicCallbacks'])
 
-        const {
-            shouldConnect = true,
-            rssiIntervalMs,
-            characteristicCallbacks,
-        } = options ?? {}
-
-        const adapter = new (this.Class ?? this)(peripheral, {
-            rssiIntervalMs,
-            characteristicCallbacks,
-        })
+        const { shouldConnect = true, ...constructorOptions } = options ?? {}
+        const instance = new (this.Class ?? this)(constructorOptions)
 
         if (shouldConnect) {
-            await adapter.connect()
+            await instance.connect()
         }
 
-        return adapter
+        return instance
     }
 
     public async connect() {
@@ -251,19 +236,20 @@ export interface BleAdapter {
 }
 
 export interface BleAdapterOptions {
-    shouldConnect?: boolean
+    peripheral: Peripheral
+    characteristicCallbacks: CharacteristicCallbacks
     rssiIntervalMs?: number
-    characteristicCallbacks?: CharacteristicCallbacks
+    shouldConnect?: boolean
 }
 
 export type BleAdapterConstructor = new (
-    peripheral: Peripheral,
     options: BleAdapterConstructorOptions
 ) => BleAdapter
 
 export interface BleAdapterConstructorOptions {
+    peripheral: Peripheral
+    characteristicCallbacks: CharacteristicCallbacks
     rssiIntervalMs?: number
-    characteristicCallbacks?: CharacteristicCallbacks
 }
 
 export type CharacteristicCallbacks = Record<

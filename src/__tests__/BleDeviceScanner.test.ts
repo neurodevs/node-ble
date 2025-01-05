@@ -405,7 +405,9 @@ export default class BleDeviceScannerTest extends AbstractSpruceTest {
 
         const instance = BleDeviceScanner.Create()
 
-        await instance.scanForName(validPeripheral.advertisement.localName, {
+        const validName = validPeripheral.advertisement.localName
+        await instance.scanForName(validName, {
+            ...this.defaultScanOptions,
             timeoutMs: 10,
         })
     }
@@ -450,6 +452,7 @@ export default class BleDeviceScannerTest extends AbstractSpruceTest {
         const rssiIntervalMs = 10
 
         const adapter = (await this.instance.scanForUuid(peripheral.uuid, {
+            ...this.defaultScanOptions,
             rssiIntervalMs,
         })) as SpyBleAdapter
 
@@ -519,24 +522,48 @@ export default class BleDeviceScannerTest extends AbstractSpruceTest {
         )) as unknown as FakePeripheral[]
     }
 
-    private static async scanForUuid(uuid = this.uuid, options?: ScanOptions) {
-        return await this.instance.scanForUuid(uuid, options)
+    private static get defaultScanOptions() {
+        return {
+            characteristicCallbacks: {},
+            timeoutMs: this.timeoutMs,
+        } as ScanOptions
+    }
+
+    private static async scanForUuid(
+        uuid = this.uuid,
+        options?: PartialOptions
+    ) {
+        return await this.instance.scanForUuid(uuid, {
+            ...this.defaultScanOptions,
+            ...options,
+        })
     }
 
     private static async scanForUuids(
         uuids = this.uuids,
-        options?: ScanOptions
+        options?: PartialOptions
     ) {
-        return await this.instance.scanForUuids(uuids, options)
+        return await this.instance.scanForUuids(uuids, {
+            ...this.defaultScanOptions,
+            ...options,
+        })
     }
 
-    private static async scanForName(name: string, options?: ScanOptions) {
-        const { timeoutMs = this.timeoutMs } = options ?? {}
-        return await this.instance.scanForName(name, { timeoutMs })
+    private static async scanForName(name: string, options?: PartialOptions) {
+        return await this.instance.scanForName(name, {
+            ...this.defaultScanOptions,
+            ...options,
+        })
     }
 
-    private static async scanForNames(names: string[], options?: ScanOptions) {
-        return await this.instance.scanForNames(names, options)
+    private static async scanForNames(
+        names: string[],
+        options?: PartialOptions
+    ) {
+        return await this.instance.scanForNames(names, {
+            ...this.defaultScanOptions,
+            ...options,
+        })
     }
 
     private static async stopScanning() {
@@ -580,7 +607,10 @@ export default class BleDeviceScannerTest extends AbstractSpruceTest {
     }
 
     private static async BleAdapter(peripheral = this.firstPeripheral) {
-        return await BleDeviceAdapter.Create(peripheral)
+        return await BleDeviceAdapter.Create({
+            peripheral,
+            characteristicCallbacks: {},
+        })
     }
 
     private static BleScanner(options?: BleScannerOptions) {
@@ -591,3 +621,5 @@ export default class BleDeviceScannerTest extends AbstractSpruceTest {
         }) as SpyBleScanner
     }
 }
+
+type PartialOptions = Partial<ScanOptions>

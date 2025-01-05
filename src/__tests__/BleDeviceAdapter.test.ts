@@ -16,6 +16,7 @@ import FakePeripheral, {
 
 export default class BleDeviceAdapterTest extends AbstractSpruceTest {
     private static instance: SpyBleAdapter
+    private static peripheral: FakePeripheral
     private static uuid: string
 
     protected static async beforeEach() {
@@ -25,7 +26,9 @@ export default class BleDeviceAdapterTest extends AbstractSpruceTest {
 
         BleDeviceAdapter.Class = SpyBleAdapter
 
-        this.instance = await this.BleAdapter(this.uuid)
+        this.peripheral = this.FakePeripheral(this.uuid)
+
+        this.instance = await this.BleAdapter()
     }
 
     @test()
@@ -40,7 +43,7 @@ export default class BleDeviceAdapterTest extends AbstractSpruceTest {
             await BleDeviceAdapter.Create()
         })
         errorAssert.assertError(err, 'MISSING_PARAMETERS', {
-            parameters: ['peripheral'],
+            parameters: ['peripheral', 'characteristicCallbacks'],
         })
     }
 
@@ -298,7 +301,9 @@ export default class BleDeviceAdapterTest extends AbstractSpruceTest {
 
     @test()
     protected static async providesOptionToDisableAutoConnect() {
-        const instance = await this.BleAdapter(this.uuid, {
+        this.peripheral.resetTestDouble()
+
+        const instance = await this.BleAdapter({
             shouldConnect: false,
         })
 
@@ -350,7 +355,7 @@ export default class BleDeviceAdapterTest extends AbstractSpruceTest {
     @test('sets rssi interval twice', 2)
     @test('sets rssi interval once', 1)
     protected static async setsIntervalForRssi(numIntervals: number) {
-        await this.createAdapterAndRunFor(numIntervals)
+        await this.createAdapterAndRunRssiFor(numIntervals)
 
         assert.isEqual(
             this.peripheral.numCallsToUpdateRssiAsync,
@@ -361,7 +366,7 @@ export default class BleDeviceAdapterTest extends AbstractSpruceTest {
 
     @test()
     protected static async clearsRssiIntervalOnDisconnect() {
-        const adapter = await this.createAdapterAndRunFor(1)
+        const adapter = await this.createAdapterAndRunRssiFor(1)
         await adapter.disconnect()
 
         await this.wait(this.rssiIntervalMs * 1.2)
@@ -375,9 +380,7 @@ export default class BleDeviceAdapterTest extends AbstractSpruceTest {
 
     @test()
     protected static async hasOptionToEnableRssi() {
-        await this.createAdapterAndRunFor(1, {
-            rssiIntervalMs: this.rssiIntervalMs,
-        })
+        await this.createAdapterAndRunRssiFor(1)
 
         assert.isEqual(
             this.peripheral.numCallsToUpdateRssiAsync,
@@ -399,7 +402,8 @@ export default class BleDeviceAdapterTest extends AbstractSpruceTest {
             },
         }
 
-        await BleDeviceAdapter.Create(peripheral as unknown as Peripheral, {
+        await BleDeviceAdapter.Create({
+            peripheral: peripheral as any,
             characteristicCallbacks,
         })
 
@@ -417,7 +421,8 @@ export default class BleDeviceAdapterTest extends AbstractSpruceTest {
         const { peripheral, characteristic } =
             this.createPeripheralWithCharacteristic()
 
-        const adapter = await BleDeviceAdapter.Create(peripheral as any, {
+        const adapter = await BleDeviceAdapter.Create({
+            peripheral: peripheral as any,
             characteristicCallbacks: {
                 [characteristic.uuid]: () => {},
             },
@@ -445,15 +450,11 @@ export default class BleDeviceAdapterTest extends AbstractSpruceTest {
         return { peripheral, characteristic }
     }
 
-    private static async createAdapterAndRunFor(
-        numIntervals: number,
-        options?: BleAdapterOptions
-    ) {
+    private static async createAdapterAndRunRssiFor(numIntervals: number) {
         this.peripheral.resetTestDouble()
 
-        const promise = BleDeviceAdapter.Create(this.peripheral as any, {
+        const promise = this.BleAdapter({
             rssiIntervalMs: this.rssiIntervalMs,
-            ...options,
         })
 
         await this.wait(this.rssiIntervalMs * (numIntervals + 0.3))
@@ -488,10 +489,6 @@ export default class BleDeviceAdapterTest extends AbstractSpruceTest {
         await this.instance.connect()
     }
 
-    private static get peripheral() {
-        return this.instance.getPeripheral() as unknown as FakePeripheral
-    }
-
     private static get numCallsToDiscoverAllServicesAndCharacteristicsAsync() {
         return this.peripheral
             .numCallsToDiscoverAllServicesAndCharacteristicsAsync
@@ -522,9 +519,7 @@ export default class BleDeviceAdapterTest extends AbstractSpruceTest {
     }
 
     private static readonly fakedListener = () => {}
-
     private static readonly rssiUpdateEvent = 'rssiUpdate'
-
     private static readonly rssiIntervalMs = 10
 
     private static setFakeCharacteristics(fakes: FakeCharacteristic[]) {
@@ -536,15 +531,14 @@ export default class BleDeviceAdapterTest extends AbstractSpruceTest {
     }
 
     private static FakePeripheral(uuid: string) {
-        return new FakePeripheral({ uuid }) as unknown as Peripheral
+        return new FakePeripheral({ uuid })
     }
 
-    private static async BleAdapter(
-        uuid?: string,
-        options?: BleAdapterOptions
-    ) {
-        const peripheral = this.FakePeripheral(uuid ?? generateId())
-        const instance = await BleDeviceAdapter.Create(peripheral, options)
-        return instance as SpyBleAdapter
+    private static async BleAdapter(options?: Partial<BleAdapterOptions>) {
+        return (await BleDeviceAdapter.Create({
+            peripheral: this.peripheral as unknown as Peripheral,
+            characteristicCallbacks: {},
+            ...options,
+        })) as SpyBleAdapter
     }
 }

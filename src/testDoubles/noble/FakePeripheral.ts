@@ -37,6 +37,7 @@ export default class FakePeripheral implements SimplePeripheral {
     }
 
     public async connectAsync() {
+        debugger
         this.numCallsToConnectAsync++
     }
 
