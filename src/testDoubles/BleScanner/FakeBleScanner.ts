@@ -164,20 +164,20 @@ export default class FakeBleScanner implements BleScanner {
 
 export interface CallToScanForUuid {
     uuid: string
-    options?: ScanOptions
+    options: ScanOptions
 }
 
 export interface CallToScanForUuids {
     uuids: string[]
-    options?: ScanOptions
+    options: ScanOptions
 }
 
 export interface CallToScanForName {
     name: string
-    options?: ScanOptions
+    options: ScanOptions
 }
 
 export interface CallToScanForNames {
     names: string[]
-    options?: ScanOptions
+    options: ScanOptions
 }
