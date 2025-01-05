@@ -1,3 +1,8 @@
+// BleConnector
+
+export { default as BleDeviceConnector } from './components/BleDeviceConnector'
+export * from './components/BleDeviceConnector'
+
 // BleAdapter
 
 export { default as BleDeviceAdapter } from './components/BleDeviceAdapter'
