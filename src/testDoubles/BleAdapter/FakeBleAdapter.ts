@@ -12,7 +12,17 @@ export default class FakeBleAdapter implements BleAdapter {
 
     public static fakeCharacteristics: Record<string, Characteristic> = {}
 
+    private _uuid: string
+    private _name: string
+
     public constructor(options: BleAdapterConstructorOptions) {
+        const { peripheral } = options
+        const { uuid, advertisement } = peripheral
+        const { localName } = advertisement
+
+        this._uuid = uuid
+        this._name = localName
+
         FakeBleAdapter.callsToConstructor.push(options)
     }
 
@@ -27,6 +37,14 @@ export default class FakeBleAdapter implements BleAdapter {
     public getCharacteristic(uuid: string) {
         this.callsToGetCharacteristic.push(uuid)
         return this.fakeCharacteristics?.[uuid]
+    }
+
+    public get uuid() {
+        return this._uuid
+    }
+
+    public get name() {
+        return this._name
     }
 
     private get callsToGetCharacteristic() {

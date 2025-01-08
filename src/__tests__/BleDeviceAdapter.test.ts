@@ -437,6 +437,24 @@ export default class BleDeviceAdapterTest extends AbstractSpruceTest {
         )
     }
 
+    @test()
+    protected static async exposesPeripheralUuidField() {
+        assert.isEqual(
+            this.instance.uuid,
+            this.uuid,
+            'Should have exposed peripheral uuid!'
+        )
+    }
+
+    @test()
+    protected static async exposesPeripheralNameField() {
+        assert.isEqual(
+            this.instance.name,
+            this.localName,
+            'Should have exposed peripheral name!'
+        )
+    }
+
     private static createPeripheralWithCharacteristic() {
         const characteristicUuid = generateId()
 
