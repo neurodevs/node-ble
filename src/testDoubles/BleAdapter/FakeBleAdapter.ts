@@ -1,3 +1,4 @@
+import { generateId } from '@sprucelabs/test-utils'
 import { Characteristic } from '@abandonware/noble'
 import {
     BleAdapter,
@@ -18,10 +19,10 @@ export default class FakeBleAdapter implements BleAdapter {
     public constructor(options: BleAdapterConstructorOptions) {
         const { peripheral } = options
         const { uuid, advertisement } = peripheral
-        const { localName } = advertisement
+        const { localName } = advertisement ?? {}
 
-        this._uuid = uuid
-        this._name = localName
+        this._uuid = uuid ?? generateId()
+        this._name = localName ?? generateId()
 
         FakeBleAdapter.callsToConstructor.push(options)
     }
