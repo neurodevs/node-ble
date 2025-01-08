@@ -198,8 +198,8 @@ export default class BleDeviceAdapter implements BleAdapter {
         }
     }
 
-    public getCharacteristic(uuid: string) {
-        return this.characteristics.find((c) => c.uuid === uuid)
+    public getCharacteristic(charUuid: string) {
+        return this.characteristics.find((c) => c.uuid === charUuid)
     }
 
     public get uuid() {
@@ -240,7 +240,7 @@ export default class BleDeviceAdapter implements BleAdapter {
 export interface BleAdapter {
     connect(): Promise<void>
     disconnect(): Promise<void>
-    getCharacteristic(uuid: string): Characteristic | undefined
+    getCharacteristic(charUuid: string): Characteristic | undefined
     uuid: string
     name: string
 }
