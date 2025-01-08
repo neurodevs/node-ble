@@ -202,6 +202,14 @@ export default class BleDeviceAdapter implements BleAdapter {
         return this.characteristics.find((c) => c.uuid === uuid)
     }
 
+    public get uuid() {
+        return this.peripheral.uuid
+    }
+
+    public get name() {
+        return this.localName
+    }
+
     private readonly disconnectStates = ['disconnected', 'disconnecting']
 
     private get unintentionalDisconnectMessage() {
@@ -233,6 +241,8 @@ export interface BleAdapter {
     connect(): Promise<void>
     disconnect(): Promise<void>
     getCharacteristic(uuid: string): Characteristic | undefined
+    uuid: string
+    name: string
 }
 
 export interface BleAdapterOptions {
