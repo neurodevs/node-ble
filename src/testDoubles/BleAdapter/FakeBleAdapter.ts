@@ -6,7 +6,11 @@ import {
 } from '../../components/BleDeviceAdapter'
 
 export default class FakeBleAdapter implements BleAdapter {
-    public static callsToConstructor: BleAdapterConstructorOptions[] = []
+    public static callsToConstructor: (
+        | BleAdapterConstructorOptions
+        | undefined
+    )[] = []
+
     public static numCallsToConnect = 0
     public static numCallsToDisconnect = 0
     public static callsToGetCharacteristic: string[] = []
@@ -16,9 +20,9 @@ export default class FakeBleAdapter implements BleAdapter {
     private _uuid: string
     private _name: string
 
-    public constructor(options: BleAdapterConstructorOptions) {
-        const { peripheral } = options
-        const { uuid, advertisement } = peripheral
+    public constructor(options?: BleAdapterConstructorOptions) {
+        const { peripheral } = options ?? {}
+        const { uuid, advertisement } = peripheral ?? {}
         const { localName } = advertisement ?? {}
 
         this._uuid = uuid ?? generateId()
