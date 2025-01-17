@@ -3,8 +3,8 @@ import FakeBleAdapter from '../BleAdapter/FakeBleAdapter'
 
 export default class FakeBleConnector implements BleConnector {
     public static numCallsToConstructor = 0
-    public static numCallsToConnect = 0
-    public static numCallsToDisconnect = 0
+    public static numCallsToConnectBle = 0
+    public static numCallsToDisconnectBle = 0
     public static numCallsToGetBleAdapter = 0
 
     public static fakeBleAdapter = new FakeBleAdapter()
@@ -14,12 +14,12 @@ export default class FakeBleConnector implements BleConnector {
     }
 
     public async connectBle() {
-        FakeBleConnector.numCallsToConnect++
+        FakeBleConnector.numCallsToConnectBle++
         return this.fakeBleAdapter
     }
 
     public async disconnectBle() {
-        FakeBleConnector.numCallsToDisconnect++
+        FakeBleConnector.numCallsToDisconnectBle++
     }
 
     public getBleAdapter() {
@@ -33,8 +33,8 @@ export default class FakeBleConnector implements BleConnector {
 
     public static resetTestDouble() {
         FakeBleConnector.numCallsToConstructor = 0
-        FakeBleConnector.numCallsToConnect = 0
-        FakeBleConnector.numCallsToDisconnect = 0
+        FakeBleConnector.numCallsToConnectBle = 0
+        FakeBleConnector.numCallsToDisconnectBle = 0
         FakeBleConnector.numCallsToGetBleAdapter = 0
     }
 }
