@@ -3,6 +3,9 @@
 export { default as BleDeviceConnector } from './components/BleDeviceConnector'
 export * from './components/BleDeviceConnector'
 
+export { default as FakeBleConnector } from './testDoubles/BleConnector/FakeBleConnector'
+export * from './testDoubles/BleConnector/FakeBleConnector'
+
 // BleAdapter
 
 export { default as BleDeviceAdapter } from './components/BleDeviceAdapter'
