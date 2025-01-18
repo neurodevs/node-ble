@@ -1,10 +1,10 @@
-import { BleAdapter } from './BleDeviceAdapter'
+import { BleController } from './BleDeviceController'
 import BleDeviceScanner, { BleScanner, ScanOptions } from './BleDeviceScanner'
 
 export default class BleDeviceConnector implements BleConnector {
     public static Class?: BleConnectorConstructor
 
-    protected ble!: BleAdapter
+    protected ble!: BleController
     private scanner: BleScanner
     private scanOptions: ScanOptions
     private deviceLocalName: string
@@ -66,7 +66,7 @@ export default class BleDeviceConnector implements BleConnector {
         await this.ble.disconnect()
     }
 
-    public getBleAdapter() {
+    public getBleController() {
         return this.ble
     }
 
@@ -76,9 +76,9 @@ export default class BleDeviceConnector implements BleConnector {
 }
 
 export interface BleConnector {
-    connectBle(): Promise<BleAdapter>
+    connectBle(): Promise<BleController>
     disconnectBle(): Promise<void>
-    getBleAdapter(): BleAdapter
+    getBleController(): BleController
 }
 
 export interface BleConnectorOptions {

@@ -5,12 +5,14 @@ import AbstractSpruceTest, {
     errorAssert,
 } from '@sprucelabs/test-utils'
 import noble, { Peripheral } from '@abandonware/noble'
-import BleDeviceAdapter, { BleAdapter } from '../components/BleDeviceAdapter'
+import BleDeviceController, {
+    BleController,
+} from '../components/BleDeviceController'
 import BleDeviceScanner, {
     BleScannerOptions,
     ScanOptions,
 } from '../components/BleDeviceScanner'
-import SpyBleAdapter from '../testDoubles/BleAdapter/SpyBleAdapter'
+import SpyBleController from '../testDoubles/BleController/SpyBleController'
 import SpyBleScanner from '../testDoubles/BleScanner/SpyBleScanner'
 import FakeCharacteristic, {
     CharacteristicOptions,
@@ -26,7 +28,7 @@ export default class BleDeviceScannerTest extends AbstractSpruceTest {
     protected static async beforeEach() {
         await super.beforeEach()
 
-        BleDeviceAdapter.Class = SpyBleAdapter
+        BleDeviceController.Class = SpyBleController
         BleDeviceScanner.Class = SpyBleScanner
 
         this.uuid = generateId()
@@ -105,13 +107,13 @@ export default class BleDeviceScannerTest extends AbstractSpruceTest {
     }
 
     @test()
-    protected static async scanForUuidsReturnsAdapters() {
-        const adapters = await this.scanForUuids()
-        const mapped = await this.mapPeripheralsToAdapters()
+    protected static async scanForUuidsReturnsControllers() {
+        const controllers = await this.scanForUuids()
+        const mapped = await this.mapPeripheralsToControllers()
 
         assert.isEqualDeep(
-            this.removeLogFromEachAdapter(adapters),
-            this.removeLogFromEachAdapter(mapped),
+            this.removeLogFromEachController(controllers),
+            this.removeLogFromEachController(mapped),
             'scan should return the faked peripherals!\n'
         )
     }
@@ -187,8 +189,8 @@ export default class BleDeviceScannerTest extends AbstractSpruceTest {
     @test()
     protected static async callingTwiceClearsPeripherals() {
         await this.scanForUuids()
-        const adapters = await this.scanForUuids()
-        assert.isEqual(adapters.length, 1, 'Should have found 1 adapter!')
+        const controllers = await this.scanForUuids()
+        assert.isEqual(controllers.length, 1, 'Should have found 1 controller!')
     }
 
     @test()
@@ -198,10 +200,10 @@ export default class BleDeviceScannerTest extends AbstractSpruceTest {
         const name = generateId()
         this.fakePeripherals([{ name }])
 
-        const adapter = await this.scanForName(name)
+        const controller = await this.scanForName(name)
 
         assert.isEqual(
-            adapter.constructor.name,
+            controller.constructor.name,
             this.expectedConstructorName,
             'scan should return the faked peripherals!'
         )
@@ -214,9 +216,9 @@ export default class BleDeviceScannerTest extends AbstractSpruceTest {
         const name = generateId()
         this.fakePeripherals([{ name }])
 
-        const adapters = await this.scanForNames([name])
+        const controllers = await this.scanForNames([name])
 
-        assert.isLength(adapters, 1, 'Should return one adapter!')
+        assert.isLength(controllers, 1, 'Should return one controller!')
     }
 
     @test()
@@ -227,9 +229,9 @@ export default class BleDeviceScannerTest extends AbstractSpruceTest {
         const name2 = generateId()
         this.fakePeripherals([{ name: name1 }, { name: name2 }])
 
-        const adapters = await this.scanForNames([name1, name2])
+        const controllers = await this.scanForNames([name1, name2])
 
-        assert.isLength(adapters, 2)
+        assert.isLength(controllers, 2)
     }
 
     @test()
@@ -326,24 +328,24 @@ export default class BleDeviceScannerTest extends AbstractSpruceTest {
     }
 
     @test()
-    protected static async returnsBleAdapterWithPeripheral() {
+    protected static async returnsBleControllerWithPeripheral() {
         const result = await this.clearFakeOneScanForUuids()
 
         assert.isEqual(
             result[0].constructor.name,
             this.expectedConstructorName,
-            'Create should return a BleAdapter instance!'
+            'Create should return a BleController instance!'
         )
     }
 
     @test()
-    protected static async scanForUuidReturnsBleAdapter() {
-        const adapter = await this.scanForUuid()
+    protected static async scanForUuidReturnsBleController() {
+        const controller = await this.scanForUuid()
 
         assert.isEqual(
-            adapter.constructor.name,
+            controller.constructor.name,
             this.expectedConstructorName,
-            'scanForUuid should return a BleAdapter instance!'
+            'scanForUuid should return a BleController instance!'
         )
     }
 
@@ -384,12 +386,12 @@ export default class BleDeviceScannerTest extends AbstractSpruceTest {
         const name = generateId()
         this.fakePeripherals([{ name }])
 
-        const adapter = await this.scanForName(name.slice(0, 3))
+        const controller = await this.scanForName(name.slice(0, 3))
 
         assert.isEqual(
-            adapter.constructor.name,
+            controller.constructor.name,
             this.expectedConstructorName,
-            'scanForName should return a BleAdapter instance!'
+            'scanForName should return a BleController instance!'
         )
     }
 
@@ -413,8 +415,8 @@ export default class BleDeviceScannerTest extends AbstractSpruceTest {
     }
 
     @test()
-    protected static async passesCharacteristicCallbacksToAdapter() {
-        BleDeviceAdapter.Class = SpyBleAdapter
+    protected static async passesCharacteristicCallbacksToController() {
+        BleDeviceController.Class = SpyBleController
 
         const peripheral = this.FakePeripheral()
 
@@ -433,42 +435,42 @@ export default class BleDeviceScannerTest extends AbstractSpruceTest {
             [uuid2]: () => {},
         }
 
-        const adapter = (await this.instance.scanForUuid(peripheral.uuid, {
+        const controller = (await this.instance.scanForUuid(peripheral.uuid, {
             characteristicCallbacks,
-        })) as SpyBleAdapter
+        })) as SpyBleController
 
         assert.isEqualDeep(
-            adapter.getCharacteristicCallbacks(),
+            controller.getCharacteristicCallbacks(),
             characteristicCallbacks,
-            'Should have passed fake1 to adapter!'
+            'Should have passed fake1 to controller!'
         )
     }
 
     @test()
-    protected static async passesOptionalRssiIntervalMsToBleAdapter() {
+    protected static async passesOptionalRssiIntervalMsToBleController() {
         const peripheral = this.FakePeripheral()
         this.noble.fakedPeripherals = [peripheral]
 
         const rssiIntervalMs = 10
 
-        const adapter = (await this.instance.scanForUuid(peripheral.uuid, {
+        const controller = (await this.instance.scanForUuid(peripheral.uuid, {
             ...this.defaultScanOptions,
             rssiIntervalMs,
-        })) as SpyBleAdapter
+        })) as SpyBleController
 
-        const actualRssi = adapter.getRssiIntervalMs()
+        const actualRssi = controller.getRssiIntervalMs()
 
         assert.isEqual(
             actualRssi,
             rssiIntervalMs,
-            'Should have passed rssiIntervalMs to adapter!'
+            'Should have passed rssiIntervalMs to controller!'
         )
     }
 
-    private static async mapPeripheralsToAdapters() {
+    private static async mapPeripheralsToControllers() {
         return await Promise.all(
             this.peripherals.map((peripheral) =>
-                this.BleAdapter(peripheral as unknown as Peripheral)
+                this.BleController(peripheral as unknown as Peripheral)
             )
         )
     }
@@ -570,8 +572,8 @@ export default class BleDeviceScannerTest extends AbstractSpruceTest {
         await this.instance.stopScanning()
     }
 
-    private static removeLogFromEachAdapter(adapters: BleAdapter[]) {
-        return adapters.map((adapter: any) => delete adapter.log)
+    private static removeLogFromEachController(controllers: BleController[]) {
+        return controllers.map((controller: any) => delete controller.log)
     }
 
     private static get peripherals() {
@@ -592,7 +594,7 @@ export default class BleDeviceScannerTest extends AbstractSpruceTest {
 
     private static readonly timeoutMs = 10
     private static readonly durationMs = 10
-    private static readonly expectedConstructorName = 'SpyBleAdapter'
+    private static readonly expectedConstructorName = 'SpyBleController'
 
     private static FakeNoble() {
         return new FakeNoble()
@@ -606,8 +608,8 @@ export default class BleDeviceScannerTest extends AbstractSpruceTest {
         return new FakeCharacteristic(options)
     }
 
-    private static async BleAdapter(peripheral = this.firstPeripheral) {
-        return await BleDeviceAdapter.Create({
+    private static async BleController(peripheral = this.firstPeripheral) {
+        return await BleDeviceController.Create({
             peripheral,
             characteristicCallbacks: {},
         })

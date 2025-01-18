@@ -3,8 +3,8 @@ import { buildLog } from '@sprucelabs/spruce-skill-utils'
 import { Characteristic, Peripheral, Service } from '@abandonware/noble'
 import SpruceError from '../errors/SpruceError'
 
-export default class BleDeviceAdapter implements BleAdapter {
-    public static Class?: BleAdapterConstructor
+export default class BleDeviceController implements BleController {
+    public static Class?: BleControllerConstructor
     public static setInterval = setInterval
 
     protected peripheral: Peripheral
@@ -13,10 +13,10 @@ export default class BleDeviceAdapter implements BleAdapter {
     protected services!: Service[]
     protected characteristics!: Characteristic[]
     protected isIntentionalDisconnect = false
-    protected log = buildLog('BleAdapter')
+    protected log = buildLog('BleDeviceController')
     private rssiIntervalPid?: NodeJS.Timeout
 
-    protected constructor(options: BleAdapterConstructorOptions) {
+    protected constructor(options: BleControllerConstructorOptions) {
         const { peripheral, characteristicCallbacks, rssiIntervalMs } = options
 
         this.peripheral = peripheral
@@ -24,7 +24,7 @@ export default class BleDeviceAdapter implements BleAdapter {
         this.rssiIntervalMs = rssiIntervalMs
     }
 
-    public static async Create(options: BleAdapterOptions) {
+    public static async Create(options: BleControllerOptions) {
         assertOptions(options, ['peripheral', 'characteristicCallbacks'])
 
         const { shouldConnect = true, ...constructorOptions } = options ?? {}
@@ -233,11 +233,11 @@ export default class BleDeviceAdapter implements BleAdapter {
     }
 
     private get setInterval() {
-        return BleDeviceAdapter.setInterval
+        return BleDeviceController.setInterval
     }
 }
 
-export interface BleAdapter {
+export interface BleController {
     connect(): Promise<void>
     disconnect(): Promise<void>
     getCharacteristic(charUuid: string): Characteristic | undefined
@@ -245,18 +245,18 @@ export interface BleAdapter {
     name: string
 }
 
-export interface BleAdapterOptions {
+export interface BleControllerOptions {
     peripheral: Peripheral
     characteristicCallbacks: CharacteristicCallbacks
     rssiIntervalMs?: number
     shouldConnect?: boolean
 }
 
-export type BleAdapterConstructor = new (
-    options: BleAdapterConstructorOptions
-) => BleAdapter
+export type BleControllerConstructor = new (
+    options: BleControllerConstructorOptions
+) => BleController
 
-export interface BleAdapterConstructorOptions {
+export interface BleControllerConstructorOptions {
     peripheral: Peripheral
     characteristicCallbacks: CharacteristicCallbacks
     rssiIntervalMs?: number
