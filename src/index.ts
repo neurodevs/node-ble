@@ -6,16 +6,16 @@ export * from './components/BleDeviceConnector'
 export { default as FakeBleConnector } from './testDoubles/BleConnector/FakeBleConnector'
 export * from './testDoubles/BleConnector/FakeBleConnector'
 
-// BleAdapter
+// BleController
 
-export { default as BleDeviceAdapter } from './components/BleDeviceAdapter'
-export * from './components/BleDeviceAdapter'
+export { default as BleDeviceController } from './components/BleDeviceController'
+export * from './components/BleDeviceController'
 
-export { default as SpyBleAdapter } from './testDoubles/BleAdapter/SpyBleAdapter'
-export * from './testDoubles/BleAdapter/SpyBleAdapter'
+export { default as SpyBleController } from './testDoubles/BleController/SpyBleController'
+export * from './testDoubles/BleController/SpyBleController'
 
-export { default as FakeBleAdapter } from './testDoubles/BleAdapter/FakeBleAdapter'
-export * from './testDoubles/BleAdapter/FakeBleAdapter'
+export { default as FakeBleController } from './testDoubles/BleController/FakeBleController'
+export * from './testDoubles/BleController/FakeBleController'
 
 // BleScanner
 

@@ -3,13 +3,13 @@ import AbstractSpruceTest, {
     generateId,
     test,
 } from '@sprucelabs/test-utils'
-import BleDeviceAdapter from '../components/BleDeviceAdapter'
 import BleDeviceConnector, {
     BleConnector,
     BleConnectorOptions,
 } from '../components/BleDeviceConnector'
+import BleDeviceController from '../components/BleDeviceController'
 import BleDeviceScanner from '../components/BleDeviceScanner'
-import FakeBleAdapter from '../testDoubles/BleAdapter/FakeBleAdapter'
+import FakeBleController from '../testDoubles/BleController/FakeBleController'
 import FakeBleScanner from '../testDoubles/BleScanner/FakeBleScanner'
 import FakePeripheral from '../testDoubles/noble/FakePeripheral'
 
@@ -26,8 +26,8 @@ export default class BleDeviceConnectorTest extends AbstractSpruceTest {
         this.peripheral = this.FakePeripheral()
         FakeBleScanner.fakedPeripherals = [this.peripheral]
 
-        BleDeviceAdapter.Class = FakeBleAdapter
-        FakeBleAdapter.resetTestDouble()
+        BleDeviceController.Class = FakeBleController
+        FakeBleController.resetTestDouble()
 
         this.instance = await this.BleDeviceConnector()
     }
@@ -90,16 +90,16 @@ export default class BleDeviceConnectorTest extends AbstractSpruceTest {
 
     @test()
     protected static async canDisableConnectBleOnCreate() {
-        FakeBleAdapter.resetTestDouble()
+        FakeBleController.resetTestDouble()
 
         await this.BleDeviceConnector({
             connectBleOnCreate: false,
         })
 
         assert.isEqual(
-            FakeBleAdapter.numCallsToConnect,
+            FakeBleController.numCallsToConnect,
             0,
-            'Should not connect to BleAdapter!'
+            'Should not connect to BleController!'
         )
     }
 
@@ -108,9 +108,9 @@ export default class BleDeviceConnectorTest extends AbstractSpruceTest {
         await this.disconnectBle()
 
         assert.isEqual(
-            FakeBleAdapter.numCallsToDisconnect,
+            FakeBleController.numCallsToDisconnect,
             1,
-            'Should call disconnect on BleAdapter!'
+            'Should call disconnect on BleController!'
         )
     }
 

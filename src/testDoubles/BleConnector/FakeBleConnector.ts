@@ -1,13 +1,13 @@
 import { BleConnector } from '../../components/BleDeviceConnector'
-import FakeBleAdapter from '../BleAdapter/FakeBleAdapter'
+import FakeBleController from '../BleController/FakeBleController'
 
 export default class FakeBleConnector implements BleConnector {
     public static numCallsToConstructor = 0
     public static numCallsToConnectBle = 0
     public static numCallsToDisconnectBle = 0
-    public static numCallsToGetBleAdapter = 0
+    public static numCallsToGetBleController = 0
 
-    public static fakeBleAdapter = new FakeBleAdapter()
+    public static fakeBleController = new FakeBleController()
 
     public constructor() {
         FakeBleConnector.numCallsToConstructor++
@@ -15,26 +15,26 @@ export default class FakeBleConnector implements BleConnector {
 
     public async connectBle() {
         FakeBleConnector.numCallsToConnectBle++
-        return this.fakeBleAdapter
+        return this.fakeBleController
     }
 
     public async disconnectBle() {
         FakeBleConnector.numCallsToDisconnectBle++
     }
 
-    public getBleAdapter() {
-        FakeBleConnector.numCallsToGetBleAdapter++
-        return this.fakeBleAdapter
+    public getBleController() {
+        FakeBleConnector.numCallsToGetBleController++
+        return this.fakeBleController
     }
 
-    public get fakeBleAdapter() {
-        return FakeBleConnector.fakeBleAdapter
+    public get fakeBleController() {
+        return FakeBleConnector.fakeBleController
     }
 
     public static resetTestDouble() {
         FakeBleConnector.numCallsToConstructor = 0
         FakeBleConnector.numCallsToConnectBle = 0
         FakeBleConnector.numCallsToDisconnectBle = 0
-        FakeBleConnector.numCallsToGetBleAdapter = 0
+        FakeBleConnector.numCallsToGetBleController = 0
     }
 }

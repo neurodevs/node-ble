@@ -1,9 +1,9 @@
 import noble, { Peripheral } from '@abandonware/noble'
 import SpruceError from '../errors/SpruceError'
-import BleDeviceAdapter, {
-    BleAdapter,
+import BleDeviceController, {
+    BleController,
     CharacteristicCallbacks,
-} from './BleDeviceAdapter'
+} from './BleDeviceController'
 
 export default class BleDeviceScanner implements BleScanner {
     public static Class?: BleScannerConstructor
@@ -133,7 +133,7 @@ export default class BleDeviceScanner implements BleScanner {
     private async scan() {
         this.scanPromise = this.createScanPromise()
         await this.setTimeout()
-        return this.createAdapters()
+        return this.createControllers()
     }
 
     private createScanPromise() {
@@ -152,10 +152,10 @@ export default class BleDeviceScanner implements BleScanner {
         return this.startPromiseRace()
     }
 
-    private async createAdapters() {
+    private async createControllers() {
         return await Promise.all(
             this.peripherals.map(
-                async (peripheral) => await this.BleDeviceAdapter(peripheral)
+                async (peripheral) => await this.BleDeviceController(peripheral)
             )
         )
     }
@@ -216,8 +216,8 @@ export default class BleDeviceScanner implements BleScanner {
         return BleDeviceScanner.noble
     }
 
-    private async BleDeviceAdapter(peripheral: Peripheral) {
-        return BleDeviceAdapter.Create({
+    private async BleDeviceController(peripheral: Peripheral) {
+        return BleDeviceController.Create({
             peripheral,
             characteristicCallbacks: this.characteristicCallbacks,
             rssiIntervalMs: this.rssiIntervalMs,
@@ -227,10 +227,21 @@ export default class BleDeviceScanner implements BleScanner {
 
 export interface BleScanner {
     scanAll(durationMs?: number): Promise<Peripheral[]>
-    scanForUuid(uuid: string, options: ScanOptions): Promise<BleAdapter>
-    scanForUuids(uuids: string[], options: ScanOptions): Promise<BleAdapter[]>
-    scanForName(name: string, options: ScanOptions): Promise<BleAdapter>
-    scanForNames(names: string[], options: ScanOptions): Promise<BleAdapter[]>
+
+    scanForUuid(uuid: string, options: ScanOptions): Promise<BleController>
+
+    scanForUuids(
+        uuids: string[],
+        options: ScanOptions
+    ): Promise<BleController[]>
+
+    scanForName(name: string, options: ScanOptions): Promise<BleController>
+
+    scanForNames(
+        names: string[],
+        options: ScanOptions
+    ): Promise<BleController[]>
+
     stopScanning(): Promise<void>
 }
 

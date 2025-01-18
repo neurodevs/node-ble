@@ -1,14 +1,14 @@
 import { LoggableType } from '@sprucelabs/spruce-skill-utils'
-import BleDeviceAdapter, {
-    BleAdapterConstructorOptions,
-} from '../../components/BleDeviceAdapter'
+import BleDeviceController, {
+    BleControllerConstructorOptions,
+} from '../../components/BleDeviceController'
 
-export default class SpyBleAdapter extends BleDeviceAdapter {
+export default class SpyBleController extends BleDeviceController {
     public infoLogs: string[] = []
     public warnLogs: string[] = []
     public errorLogs: string[] = []
 
-    public constructor(options: BleAdapterConstructorOptions) {
+    public constructor(options: BleControllerConstructorOptions) {
         super(options)
     }
 

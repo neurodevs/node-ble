@@ -1,13 +1,13 @@
 import { generateId } from '@sprucelabs/test-utils'
 import { Characteristic } from '@abandonware/noble'
 import {
-    BleAdapter,
-    BleAdapterConstructorOptions,
-} from '../../components/BleDeviceAdapter'
+    BleController,
+    BleControllerConstructorOptions,
+} from '../../components/BleDeviceController'
 
-export default class FakeBleAdapter implements BleAdapter {
+export default class FakeBleController implements BleController {
     public static callsToConstructor: (
-        | BleAdapterConstructorOptions
+        | BleControllerConstructorOptions
         | undefined
     )[] = []
 
@@ -20,7 +20,7 @@ export default class FakeBleAdapter implements BleAdapter {
     private _uuid: string
     private _name: string
 
-    public constructor(options?: BleAdapterConstructorOptions) {
+    public constructor(options?: BleControllerConstructorOptions) {
         const { peripheral } = options ?? {}
         const { uuid, advertisement } = peripheral ?? {}
         const { localName } = advertisement ?? {}
@@ -28,15 +28,15 @@ export default class FakeBleAdapter implements BleAdapter {
         this._uuid = uuid ?? generateId()
         this._name = localName ?? generateId()
 
-        FakeBleAdapter.callsToConstructor.push(options)
+        FakeBleController.callsToConstructor.push(options)
     }
 
     public async connect() {
-        FakeBleAdapter.numCallsToConnect++
+        FakeBleController.numCallsToConnect++
     }
 
     public async disconnect() {
-        FakeBleAdapter.numCallsToDisconnect++
+        FakeBleController.numCallsToDisconnect++
     }
 
     public getCharacteristic(uuid: string) {
@@ -53,11 +53,11 @@ export default class FakeBleAdapter implements BleAdapter {
     }
 
     private get callsToGetCharacteristic() {
-        return FakeBleAdapter.callsToGetCharacteristic
+        return FakeBleController.callsToGetCharacteristic
     }
 
     private get fakeCharacteristics() {
-        return FakeBleAdapter.fakeCharacteristics
+        return FakeBleController.fakeCharacteristics
     }
 
     public static resetTestDouble() {
@@ -68,6 +68,6 @@ export default class FakeBleAdapter implements BleAdapter {
     }
 }
 
-export interface CallToBleAdapterConstructor {
-    options: BleAdapterConstructorOptions
+export interface CallToBleControllerConstructor {
+    options: BleControllerConstructorOptions
 }

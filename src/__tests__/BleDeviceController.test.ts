@@ -5,17 +5,17 @@ import AbstractSpruceTest, {
     generateId,
 } from '@sprucelabs/test-utils'
 import { Characteristic, Peripheral } from '@abandonware/noble'
-import BleDeviceAdapter, {
-    BleAdapterOptions,
-} from '../components/BleDeviceAdapter'
-import SpyBleAdapter from '../testDoubles/BleAdapter/SpyBleAdapter'
+import BleDeviceController, {
+    BleControllerOptions,
+} from '../components/BleDeviceController'
+import SpyBleController from '../testDoubles/BleController/SpyBleController'
 import FakeCharacteristic from '../testDoubles/noble/FakeCharacteristic'
 import FakePeripheral, {
     PeripheralEventAndListener,
 } from '../testDoubles/noble/FakePeripheral'
 
-export default class BleDeviceAdapterTest extends AbstractSpruceTest {
-    private static instance: SpyBleAdapter
+export default class BleDeviceControllerTest extends AbstractSpruceTest {
+    private static instance: SpyBleController
     private static peripheral: FakePeripheral
     private static uuid: string
 
@@ -24,23 +24,23 @@ export default class BleDeviceAdapterTest extends AbstractSpruceTest {
 
         this.uuid = generateId()
 
-        BleDeviceAdapter.Class = SpyBleAdapter
+        BleDeviceController.Class = SpyBleController
 
         this.peripheral = this.FakePeripheral(this.uuid)
 
-        this.instance = await this.BleAdapter()
+        this.instance = await this.BleController()
     }
 
     @test()
-    protected static async canCreateBleDeviceAdapter() {
-        assert.isTruthy(this.instance, 'Should have created a BleAdapter!')
+    protected static async canCreateBleDeviceController() {
+        assert.isTruthy(this.instance, 'Should have created a BleController!')
     }
 
     @test()
     protected static async throwsWithMissingRequiredOptions() {
         const err = await assert.doesThrowAsync(async () => {
             // @ts-ignore
-            await BleDeviceAdapter.Create()
+            await BleDeviceController.Create()
         })
         errorAssert.assertError(err, 'MISSING_PARAMETERS', {
             parameters: ['peripheral', 'characteristicCallbacks'],
@@ -303,7 +303,7 @@ export default class BleDeviceAdapterTest extends AbstractSpruceTest {
     protected static async providesOptionToDisableAutoConnect() {
         this.peripheral.resetTestDouble()
 
-        const instance = await this.BleAdapter({
+        const instance = await this.BleController({
             shouldConnect: false,
         })
 
@@ -345,7 +345,7 @@ export default class BleDeviceAdapterTest extends AbstractSpruceTest {
         this.peripheral.emit('disconnect')
 
         assert.isEqual(
-            BleDeviceAdapterTest.callsToOff.length,
+            this.callsToOff.length,
             2,
             'Should have called peripheral.off(...) twice!'
         )
@@ -355,7 +355,7 @@ export default class BleDeviceAdapterTest extends AbstractSpruceTest {
     @test('sets rssi interval twice', 2)
     @test('sets rssi interval once', 1)
     protected static async setsIntervalForRssi(numIntervals: number) {
-        await this.createAdapterAndRunRssiFor(numIntervals)
+        await this.createControllerAndRunRssiFor(numIntervals)
 
         assert.isEqual(
             this.peripheral.numCallsToUpdateRssiAsync,
@@ -366,8 +366,8 @@ export default class BleDeviceAdapterTest extends AbstractSpruceTest {
 
     @test()
     protected static async clearsRssiIntervalOnDisconnect() {
-        const adapter = await this.createAdapterAndRunRssiFor(1)
-        await adapter.disconnect()
+        const controller = await this.createControllerAndRunRssiFor(1)
+        await controller.disconnect()
 
         await this.wait(this.rssiIntervalMs * 1.2)
 
@@ -380,7 +380,7 @@ export default class BleDeviceAdapterTest extends AbstractSpruceTest {
 
     @test()
     protected static async hasOptionToEnableRssi() {
-        await this.createAdapterAndRunRssiFor(1)
+        await this.createControllerAndRunRssiFor(1)
 
         assert.isEqual(
             this.peripheral.numCallsToUpdateRssiAsync,
@@ -402,7 +402,7 @@ export default class BleDeviceAdapterTest extends AbstractSpruceTest {
             },
         }
 
-        await BleDeviceAdapter.Create({
+        await BleDeviceController.Create({
             peripheral: peripheral as any,
             characteristicCallbacks,
         })
@@ -421,14 +421,14 @@ export default class BleDeviceAdapterTest extends AbstractSpruceTest {
         const { peripheral, characteristic } =
             this.createPeripheralWithCharacteristic()
 
-        const adapter = await BleDeviceAdapter.Create({
+        const controller = await BleDeviceController.Create({
             peripheral: peripheral as any,
             characteristicCallbacks: {
                 [characteristic.uuid]: () => {},
             },
         })
 
-        const actual = adapter.getCharacteristic(characteristic.uuid)
+        const actual = controller.getCharacteristic(characteristic.uuid)
 
         assert.isEqualDeep(
             actual,
@@ -468,10 +468,10 @@ export default class BleDeviceAdapterTest extends AbstractSpruceTest {
         return { peripheral, characteristic }
     }
 
-    private static async createAdapterAndRunRssiFor(numIntervals: number) {
+    private static async createControllerAndRunRssiFor(numIntervals: number) {
         this.peripheral.resetTestDouble()
 
-        const promise = this.BleAdapter({
+        const promise = this.BleController({
             rssiIntervalMs: this.rssiIntervalMs,
         })
 
@@ -552,11 +552,13 @@ export default class BleDeviceAdapterTest extends AbstractSpruceTest {
         return new FakePeripheral({ uuid })
     }
 
-    private static async BleAdapter(options?: Partial<BleAdapterOptions>) {
-        return (await BleDeviceAdapter.Create({
+    private static async BleController(
+        options?: Partial<BleControllerOptions>
+    ) {
+        return (await BleDeviceController.Create({
             peripheral: this.peripheral as unknown as Peripheral,
             characteristicCallbacks: {},
             ...options,
-        })) as SpyBleAdapter
+        })) as SpyBleController
     }
 }
