@@ -36,7 +36,7 @@ export default class BleDeviceConnector implements BleConnector {
     }
 
     public async connectBle() {
-        if (this.hasUuidForSpeedOptimization) {
+        if (!this.ble && this.hasUuidForSpeedOptimization) {
             await this.fastScanForUuid()
         } else {
             await this.slowScanForName()

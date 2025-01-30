@@ -114,6 +114,19 @@ export default class BleDeviceConnectorTest extends AbstractSpruceTest {
         )
     }
 
+    @test()
+    protected static async doesNotScanAgainIfConnected() {
+        FakeBleScanner.resetTestDouble()
+
+        await this.instance.connectBle()
+
+        assert.isEqual(
+            FakeBleScanner.callsToScanForUuid.length,
+            0,
+            'Should not scan again if already connected!'
+        )
+    }
+
     protected static async disconnectBle() {
         await this.instance.disconnectBle()
     }

@@ -184,7 +184,7 @@ export default class BleDeviceScanner implements BleScanner {
         }) as ScanPromise
     }
 
-    private startPromiseRace() {
+    private async startPromiseRace() {
         return Promise.race([
             this.scanPromise,
             this.timeoutPromise,
