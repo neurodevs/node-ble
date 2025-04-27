@@ -28,11 +28,21 @@ export default class BleDeviceScanner implements BleScanner {
         this.timeoutMs = defaultTimeoutMs ?? 10000
         this.durationMs = defaultDurationMs ?? 10000
 
+        this.setupOnStateChange()
         this.setupOnDiscover()
     }
 
     public static Create(options?: BleScannerOptions) {
         return new (this.Class ?? this)(options)
+    }
+
+    private setupOnStateChange() {
+        this.noble.on('stateChange', async (state) => {
+            if (state === 'poweredOn') {
+                this.isScanning &&
+                    (await this.noble.startScanningAsync([], false))
+            }
+        })
     }
 
     private setupOnDiscover() {

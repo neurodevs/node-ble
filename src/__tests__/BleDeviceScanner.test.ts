@@ -43,8 +43,27 @@ export default class BleDeviceScannerTest extends AbstractSpruceTest {
     }
 
     @test()
-    protected static async createSetsUpOnDiscoverForNoble() {
+    protected static async createSetsUpOnStateChangeForNoble() {
         const { eventName, listener } = this.noble.callsToOn[0]
+
+        const expectedCb = () => {}
+
+        assert.isEqual(
+            eventName,
+            'stateChange',
+            'BleScanner should have called noble.on("stateChange", ...)!'
+        )
+
+        assert.isEqualDeep(
+            listener,
+            expectedCb,
+            'BleScanner should have passed a callback to noble.on(...)!'
+        )
+    }
+
+    @test()
+    protected static async createSetsUpOnDiscoverForNoble() {
+        const { eventName, listener } = this.noble.callsToOn[1]
 
         assert.isEqual(
             eventName,
