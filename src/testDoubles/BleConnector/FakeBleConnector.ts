@@ -1,4 +1,4 @@
-import { BleConnector } from '../../components/BleDeviceConnector'
+import { BleConnector } from '../../modules/BleDeviceConnector'
 import FakeBleController from '../BleController/FakeBleController'
 
 export default class FakeBleConnector implements BleConnector {

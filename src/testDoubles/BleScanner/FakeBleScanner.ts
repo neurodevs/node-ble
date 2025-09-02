@@ -1,11 +1,11 @@
 import { generateId } from '@sprucelabs/test-utils'
 import { Peripheral } from '@abandonware/noble'
-import BleDeviceController from '../../components/BleDeviceController'
+import BleDeviceController from '../../modules/BleDeviceController'
 import {
     BleScanner,
     BleScannerOptions,
     ScanOptions,
-} from '../../components/BleDeviceScanner'
+} from '../../modules/BleDeviceScanner'
 import FakePeripheral from '../noble/FakePeripheral'
 
 export default class FakeBleScanner implements BleScanner {

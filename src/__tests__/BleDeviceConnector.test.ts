@@ -6,9 +6,9 @@ import AbstractSpruceTest, {
 import BleDeviceConnector, {
     BleConnector,
     BleConnectorOptions,
-} from '../components/BleDeviceConnector'
-import BleDeviceController from '../components/BleDeviceController'
-import BleDeviceScanner from '../components/BleDeviceScanner'
+} from '../modules/BleDeviceConnector'
+import BleDeviceController from '../modules/BleDeviceController'
+import BleDeviceScanner from '../modules/BleDeviceScanner'
 import FakeBleController from '../testDoubles/BleController/FakeBleController'
 import FakeBleScanner from '../testDoubles/BleScanner/FakeBleScanner'
 import FakePeripheral from '../testDoubles/noble/FakePeripheral'

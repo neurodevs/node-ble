@@ -7,7 +7,7 @@ import AbstractSpruceTest, {
 import { Characteristic, Peripheral } from '@abandonware/noble'
 import BleDeviceController, {
     BleControllerOptions,
-} from '../components/BleDeviceController'
+} from '../modules/BleDeviceController'
 import SpyBleController from '../testDoubles/BleController/SpyBleController'
 import FakeCharacteristic from '../testDoubles/noble/FakeCharacteristic'
 import FakePeripheral, {

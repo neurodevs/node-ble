@@ -1,7 +1,7 @@
 import { LoggableType } from '@sprucelabs/spruce-skill-utils'
 import BleDeviceController, {
     BleControllerConstructorOptions,
-} from '../../components/BleDeviceController'
+} from '../../modules/BleDeviceController'
 
 export default class SpyBleController extends BleDeviceController {
     public infoLogs: string[] = []

@@ -3,7 +3,7 @@ import { Characteristic } from '@abandonware/noble'
 import {
     BleController,
     BleControllerConstructorOptions,
-} from '../../components/BleDeviceController'
+} from '../../modules/BleDeviceController'
 
 export default class FakeBleController implements BleController {
     public static callsToConstructor: (
