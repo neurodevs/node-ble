@@ -1,5 +1,4 @@
 import noble, { Peripheral } from '@abandonware/noble'
-import SpruceError from '../errors/SpruceError'
 import BleDeviceController, {
     BleController,
     CharacteristicCallbacks,
@@ -192,12 +191,27 @@ export default class BleDeviceScanner implements BleScanner {
     }
 
     private throwScanTimedOut() {
-        return new SpruceError({
-            code: 'SCAN_TIMED_OUT',
-            timeoutMs: this.timeoutMs!,
-            uuids: this.uuids,
-            names: this.names,
-        })
+        return new Error(this.timedOutMessage)
+    }
+
+    private get timedOutMessage() {
+        return `
+            \n Scan timed out after ${this.timeoutMs} ms!
+            ${this.missingUuidsMessage}
+            ${this.missingNamesMessage}
+        `
+    }
+
+    private get missingUuidsMessage() {
+        return this.uuids && this.uuids.length > 0
+            ? '\n Failed to discover all uuids: ' + this.uuids.join(', ')
+            : ''
+    }
+
+    private get missingNamesMessage() {
+        return this.names && this.names.length > 0
+            ? '\n Failed to discover all names: ' + this.names.join(', ')
+            : ''
     }
 
     private resetUuids() {

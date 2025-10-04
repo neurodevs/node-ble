@@ -1,4 +1,3 @@
-import { LoggableType } from '@sprucelabs/spruce-skill-utils'
 import BleDeviceController, {
     BleControllerConstructorOptions,
 } from '../../modules/BleDeviceController'
@@ -51,7 +50,7 @@ export default class SpyBleController extends BleDeviceController {
     public setLogInfoSpy() {
         this.infoLogs = []
 
-        this.log.info = (...args: LoggableType[]) => {
+        this.log.info = (...args: unknown[]) => {
             const message = args.join(' ')
             this.infoLogs.push(message)
             return message
@@ -61,7 +60,7 @@ export default class SpyBleController extends BleDeviceController {
     public setLogWarnSpy() {
         this.warnLogs = []
 
-        this.log.warn = (...args: LoggableType[]) => {
+        this.log.warn = (...args: unknown[]) => {
             const message = args.join(' ')
             this.warnLogs.push(message)
             return message
@@ -71,7 +70,7 @@ export default class SpyBleController extends BleDeviceController {
     public setLogErrorSpy() {
         this.errorLogs = []
 
-        this.log.error = (...args: LoggableType[]) => {
+        this.log.error = (...args: unknown[]) => {
             const message = args.join(' ')
             this.errorLogs.push(message)
             return message

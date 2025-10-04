@@ -2,7 +2,6 @@ import AbstractSpruceTest, {
     test,
     assert,
     generateId,
-    errorAssert,
 } from '@sprucelabs/test-utils'
 import noble, { Peripheral } from '@abandonware/noble'
 import BleDeviceController, {
@@ -147,10 +146,11 @@ export default class BleDeviceScannerTest extends AbstractSpruceTest {
             async () => await this.scanForUuid(invalidUuid)
         )
 
-        errorAssert.assertError(err, 'SCAN_TIMED_OUT', {
-            uuids: [invalidUuid],
-            timeoutMs: this.timeoutMs,
-        })
+        assert.isEqual(
+            this.normalize(err.message),
+            this.normalize(this.generateUuidTimedOut(invalidUuid)),
+            'Did not receive the expected error!'
+        )
     }
 
     @test()
@@ -161,9 +161,11 @@ export default class BleDeviceScannerTest extends AbstractSpruceTest {
             async () => await this.scanForName(invalidName)
         )
 
-        errorAssert.assertError(err, 'SCAN_TIMED_OUT', {
-            names: [invalidName],
-        })
+        assert.isEqual(
+            this.normalize(err.message),
+            this.normalize(this.generateNameTimedOut(invalidName)),
+            'Did not receive the expected error!'
+        )
     }
 
     @test()
@@ -570,6 +572,24 @@ export default class BleDeviceScannerTest extends AbstractSpruceTest {
 
     private static async stopScanning() {
         await this.instance.stopScanning()
+    }
+
+    private static generateUuidTimedOut(invalidUuid: string) {
+        return `
+                \n Scan timed out after ${this.timeoutMs} ms!
+                \n Failed to discover all uuids: ${invalidUuid}
+            `
+    }
+
+    private static generateNameTimedOut(invalidName: string) {
+        return `
+                \n Scan timed out after ${this.timeoutMs} ms!
+                \n Failed to discover all names: ${invalidName}
+            `
+    }
+
+    private static normalize(s: string) {
+        return s.replace(/\s+/g, ' ').trim()
     }
 
     private static removeLogFromEachController(controllers: BleController[]) {

@@ -1,7 +1,6 @@
 import AbstractSpruceTest, {
     test,
     assert,
-    errorAssert,
     generateId,
 } from '@sprucelabs/test-utils'
 import { Characteristic, Peripheral } from '@abandonware/noble'
@@ -34,17 +33,6 @@ export default class BleDeviceControllerTest extends AbstractSpruceTest {
     @test()
     protected static async canCreateBleDeviceController() {
         assert.isTruthy(this.instance, 'Should have created a BleController!')
-    }
-
-    @test()
-    protected static async throwsWithMissingRequiredOptions() {
-        const err = await assert.doesThrowAsync(async () => {
-            // @ts-ignore
-            await BleDeviceController.Create()
-        })
-        errorAssert.assertError(err, 'MISSING_PARAMETERS', {
-            parameters: ['peripheral', 'characteristicCallbacks'],
-        })
     }
 
     @test()
@@ -116,17 +104,19 @@ export default class BleDeviceControllerTest extends AbstractSpruceTest {
 
     @test()
     protected static async throwsIfFailsToSubscribeToCharacteristic() {
-        const uuid = generateId()
+        const charUuid = generateId()
 
-        this.createAndFakeThrowCharacteristic(uuid)
+        this.createAndFakeThrowCharacteristic(charUuid)
 
         const err = await assert.doesThrowAsync(async () => {
             await this.connect()
         })
 
-        errorAssert.assertError(err, 'CHARACTERISTIC_SUBSCRIBE_FAILED', {
-            characteristicUuid: uuid,
-        })
+        assert.isEqual(
+            err.message,
+            this.generateSubscribeFailedMessage(charUuid),
+            'Did not receive the expected error!'
+        )
     }
 
     @test()
@@ -251,20 +241,19 @@ export default class BleDeviceControllerTest extends AbstractSpruceTest {
 
     @test()
     protected static async throwsIfDisconnectAsyncFails() {
-        const originalError = 'Failed to disconnect!'
-
         this.peripheral.disconnectAsync = async () => {
-            throw new Error(originalError)
+            throw new Error(this.fakeErrorMessage)
         }
 
         const err = await assert.doesThrowAsync(async () => {
             await this.instance.disconnect()
         })
 
-        errorAssert.assertError(err, 'DEVICE_DISCONNECT_FAILED', {
-            localName: this.localName,
-            originalError,
-        })
+        assert.isEqual(
+            err.message,
+            this.disconnectFailedMessage,
+            'Did not receive the expected error!'
+        )
     }
 
     @test()
@@ -495,7 +484,7 @@ export default class BleDeviceControllerTest extends AbstractSpruceTest {
         const characteristic = this.FakeCharacteristic(uuid)
 
         characteristic.subscribeAsync = async () => {
-            throw new Error('Failed to subscribe!')
+            throw new Error(this.fakeErrorMessage)
         }
 
         this.setFakeCharacteristics([characteristic])
@@ -505,6 +494,20 @@ export default class BleDeviceControllerTest extends AbstractSpruceTest {
 
     private static async connect() {
         await this.instance.connect()
+    }
+
+    private static generateSubscribeFailedMessage(charUuid: string) {
+        return `
+            \n Failed to subscribe to characteristicUuid: ${charUuid}!
+            \n Error: ${this.fakeErrorMessage}
+        `
+    }
+
+    private static get disconnectFailedMessage() {
+        return `
+            \n Failed to disconnect from peripheral: ${this.localName}!
+            \n Error: ${this.fakeErrorMessage}
+        `
     }
 
     private static get numCallsToDiscoverAllServicesAndCharacteristicsAsync() {
@@ -539,6 +542,7 @@ export default class BleDeviceControllerTest extends AbstractSpruceTest {
     private static readonly fakedListener = () => {}
     private static readonly rssiUpdateEvent = 'rssiUpdate'
     private static readonly rssiIntervalMs = 10
+    private static readonly fakeErrorMessage = 'Failed to subscribe!'
 
     private static setFakeCharacteristics(fakes: FakeCharacteristic[]) {
         this.peripheral.setFakeCharacteristics(fakes)

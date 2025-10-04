@@ -1,6 +1,7 @@
 {
   "name": "@neurodevs/node-ble",
-  "version": "1.0.0",
+  "version": "1.0.1",
+  "description": "Connect and stream data from Bluetooth Low Energy (BLE) devices",
   "main": "build/index.js",
   "repository": "https://github.com/neurodevs/node-ble.git",
   "scripts": {
@@ -25,6 +26,9 @@
     "watch.rebuild": "yarn run clean.all && yarn install && yarn run watch.build.dev",
     "watch.tsc": "tsc -w"
   },
+  "dependencies": {
+    "@abandonware/noble": "^1.9.2-22"
+  },
   "devDependencies": {
     "@sprucelabs/jest-json-reporter": "^8.0.521",
     "@sprucelabs/resolve-path-aliases": "^2.0.499",
@@ -41,15 +45,11 @@
     "tsc-watch": "^6.2.0",
     "typescript": "^5.6.3"
   },
-  "description": "Connect and stream data from Bluetooth Low Energy (BLE) devices",
-  "skill": {
-    "namespace": "node-ble"
-  },
   "jest": {
     "testRunner": "jest-circus/runner",
-    "maxWorkers": 4,
-    "testTimeout": 120000,
     "testEnvironment": "node",
+    "testTimeout": 120000,
+    "maxWorkers": 4,
     "testPathIgnorePatterns": [
       "<rootDir>/tmp/",
       "<rootDir>/src/",
@@ -63,11 +63,7 @@
       "^#spruce/(.*)$": "<rootDir>/build/.spruce/$1"
     }
   },
-  "dependencies": {
-    "@abandonware/noble": "^1.9.2-22",
-    "@sprucelabs/error": "^6.0.520",
-    "@sprucelabs/schema": "^30.0.531",
-    "@sprucelabs/spruce-core-schemas": "^40.1.516",
-    "@sprucelabs/spruce-skill-utils": "^31.0.590"
+    "skill": {
+    "namespace": "node-ble"
   }
 }

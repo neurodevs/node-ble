@@ -1,7 +1,4 @@
-import { assertOptions } from '@sprucelabs/schema'
-import { buildLog } from '@sprucelabs/spruce-skill-utils'
 import { Characteristic, Peripheral, Service } from '@abandonware/noble'
-import SpruceError from '../errors/SpruceError'
 
 export default class BleDeviceController implements BleController {
     public static Class?: BleControllerConstructor
@@ -13,7 +10,7 @@ export default class BleDeviceController implements BleController {
     protected services!: Service[]
     protected characteristics!: Characteristic[]
     protected isIntentionalDisconnect = false
-    protected log = buildLog('BleDeviceController')
+    protected log = console
     private rssiIntervalPid?: NodeJS.Timeout
 
     protected constructor(options: BleControllerConstructorOptions) {
@@ -25,8 +22,6 @@ export default class BleDeviceController implements BleController {
     }
 
     public static async Create(options: BleControllerOptions) {
-        assertOptions(options, ['peripheral', 'characteristicCallbacks'])
-
         const { shouldConnect = true, ...constructorOptions } = options ?? {}
         const instance = new (this.Class ?? this)(constructorOptions)
 
@@ -83,8 +78,8 @@ export default class BleDeviceController implements BleController {
         try {
             await char.subscribeAsync()
             this.setCharacteristicCallbackIfExists(char)
-        } catch {
-            this.throwCharacteristicSubscribeFailed(char)
+        } catch (err) {
+            this.throwCharacteristicSubscribeFailed(char.uuid, err)
         }
     }
 
@@ -96,6 +91,10 @@ export default class BleDeviceController implements BleController {
         }
     }
 
+    private get characteristicCallbackUuids() {
+        return Object.keys(this.characteristicCallbacks)
+    }
+
     private setupCharacteristicOnDataHandler(char: Characteristic) {
         const callback = this.characteristicCallbacks?.[char.uuid]
 
@@ -104,15 +103,11 @@ export default class BleDeviceController implements BleController {
         })
     }
 
-    private get characteristicCallbackUuids() {
-        return Object.keys(this.characteristicCallbacks)
-    }
-
-    private throwCharacteristicSubscribeFailed(char: Characteristic) {
-        throw new SpruceError({
-            code: 'CHARACTERISTIC_SUBSCRIBE_FAILED',
-            characteristicUuid: char.uuid,
-        })
+    private throwCharacteristicSubscribeFailed(charUuid: string, err: unknown) {
+        throw new Error(`
+            \n Failed to subscribe to characteristicUuid: ${charUuid}!
+            \n ${err}
+        `)
     }
 
     private setupRssiIfEnabled() {
@@ -134,7 +129,7 @@ export default class BleDeviceController implements BleController {
     }
 
     private handleRssiUpdate = (rssi: number) => {
-        this.log.info(`RSSI (${this.localName}): ${rssi}`)
+        console.info(`RSSI (${this.localName}): ${rssi}`)
     }
 
     private teardownRssiUpdateHandler() {
@@ -159,7 +154,7 @@ export default class BleDeviceController implements BleController {
 
     private async handleIntentionForDisconnect() {
         if (!this.isIntentionalDisconnect) {
-            this.log.warn(this.unintentionalDisconnectMessage)
+            console.warn(this.unintentionalDisconnectMessage)
             await this.reconnect()
         }
     }
@@ -169,9 +164,9 @@ export default class BleDeviceController implements BleController {
     }
 
     private async reconnect() {
-        this.log.info(this.reconnectingMessage)
+        console.info(this.reconnectingMessage)
         await this.connect()
-        this.log.info(this.reconnectedMessage)
+        console.info(this.reconnectedMessage)
     }
 
     public async disconnect() {
@@ -189,13 +184,16 @@ export default class BleDeviceController implements BleController {
     private async tryToDisconnect() {
         try {
             await this.peripheral.disconnectAsync()
-        } catch (err: any) {
-            throw new SpruceError({
-                code: 'DEVICE_DISCONNECT_FAILED',
-                localName: this.localName,
-                originalError: err.message,
-            })
+        } catch (err: unknown) {
+            this.throwDisconnectFailed(err)
         }
+    }
+
+    private throwDisconnectFailed(err: unknown) {
+        throw new Error(`
+            \n Failed to disconnect from peripheral: ${this.localName}!
+            \n ${err}
+        `)
     }
 
     public getCharacteristic(charUuid: string) {
