@@ -1,5 +1,6 @@
 import { test, assert } from '@sprucelabs/test-utils'
 import { Characteristic, Peripheral } from '@abandonware/noble'
+import generateId from '@neurodevs/generate-id'
 import BleDeviceController, {
     BleControllerOptions,
 } from '../../modules/BleDeviceController'
@@ -18,7 +19,7 @@ export default class BleDeviceControllerTest extends AbstractPackageTest {
     protected static async beforeEach() {
         await super.beforeEach()
 
-        this.uuid = this.generateId()
+        this.uuid = generateId()
 
         BleDeviceController.Class = SpyBleController
 
@@ -57,8 +58,8 @@ export default class BleDeviceControllerTest extends AbstractPackageTest {
             'Should not have any characteristics yet!'
         )
 
-        const uuid1 = this.generateId()
-        const uuid2 = this.generateId()
+        const uuid1 = generateId()
+        const uuid2 = generateId()
 
         const c1 = this.FakeCharacteristic(uuid1)
         const c2 = this.FakeCharacteristic(uuid2)
@@ -81,7 +82,7 @@ export default class BleDeviceControllerTest extends AbstractPackageTest {
 
     @test()
     protected static async doesNotSubscribeToCharacteristicWithoutNotifyProperty() {
-        const uuid = this.generateId()
+        const uuid = generateId()
 
         const characteristic = this.FakeCharacteristic(uuid, [])
         this.setFakeCharacteristics([characteristic])
@@ -101,7 +102,7 @@ export default class BleDeviceControllerTest extends AbstractPackageTest {
 
     @test()
     protected static async throwsIfFailsToSubscribeToCharacteristic() {
-        const charUuid = this.generateId()
+        const charUuid = generateId()
 
         this.createAndFakeThrowCharacteristic(charUuid)
 
@@ -442,7 +443,7 @@ export default class BleDeviceControllerTest extends AbstractPackageTest {
     }
 
     private static createPeripheralWithCharacteristic() {
-        const characteristicUuid = this.generateId()
+        const characteristicUuid = generateId()
 
         const characteristic = new FakeCharacteristic({
             uuid: characteristicUuid,

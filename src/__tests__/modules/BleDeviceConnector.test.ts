@@ -1,4 +1,5 @@
 import { assert, test } from '@sprucelabs/test-utils'
+import generateId from '@neurodevs/generate-id'
 import BleDeviceConnector, {
     BleConnector,
     BleConnectorOptions,
@@ -132,8 +133,8 @@ export default class BleDeviceConnectorTest extends AbstractPackageTest {
         return FakeBleScanner.callsToScanForName
     }
 
-    private static readonly deviceUuid = this.generateId()
-    private static readonly deviceLocalName = this.generateId()
+    private static readonly deviceUuid = generateId()
+    private static readonly deviceLocalName = generateId()
     private static readonly rssiIntervalMs = 10
 
     private static readonly scanOptions = {
