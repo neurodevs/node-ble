@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { EventEmitter } from 'events'
-import { generateId } from '@sprucelabs/test-utils'
 import { Descriptor } from '@abandonware/noble'
+import generateId from '@neurodevs/generate-id'
 
 export default class SpyCharacteristic extends EventEmitter {
     public uuid: string

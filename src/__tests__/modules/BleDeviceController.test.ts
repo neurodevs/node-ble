@@ -1,19 +1,16 @@
-import AbstractSpruceTest, {
-    test,
-    assert,
-    generateId,
-} from '@sprucelabs/test-utils'
+import { test, assert } from '@sprucelabs/test-utils'
 import { Characteristic, Peripheral } from '@abandonware/noble'
 import BleDeviceController, {
     BleControllerOptions,
-} from '../modules/BleDeviceController'
-import SpyBleController from '../testDoubles/BleController/SpyBleController'
-import FakeCharacteristic from '../testDoubles/noble/FakeCharacteristic'
+} from '../../modules/BleDeviceController'
+import SpyBleController from '../../testDoubles/BleController/SpyBleController'
+import FakeCharacteristic from '../../testDoubles/noble/FakeCharacteristic'
 import FakePeripheral, {
     PeripheralEventAndListener,
-} from '../testDoubles/noble/FakePeripheral'
+} from '../../testDoubles/noble/FakePeripheral'
+import AbstractPackageTest from '../AbstractPackageTest'
 
-export default class BleDeviceControllerTest extends AbstractSpruceTest {
+export default class BleDeviceControllerTest extends AbstractPackageTest {
     private static instance: SpyBleController
     private static peripheral: FakePeripheral
     private static uuid: string
@@ -21,7 +18,7 @@ export default class BleDeviceControllerTest extends AbstractSpruceTest {
     protected static async beforeEach() {
         await super.beforeEach()
 
-        this.uuid = generateId()
+        this.uuid = this.generateId()
 
         BleDeviceController.Class = SpyBleController
 
@@ -60,8 +57,8 @@ export default class BleDeviceControllerTest extends AbstractSpruceTest {
             'Should not have any characteristics yet!'
         )
 
-        const uuid1 = generateId()
-        const uuid2 = generateId()
+        const uuid1 = this.generateId()
+        const uuid2 = this.generateId()
 
         const c1 = this.FakeCharacteristic(uuid1)
         const c2 = this.FakeCharacteristic(uuid2)
@@ -84,7 +81,7 @@ export default class BleDeviceControllerTest extends AbstractSpruceTest {
 
     @test()
     protected static async doesNotSubscribeToCharacteristicWithoutNotifyProperty() {
-        const uuid = generateId()
+        const uuid = this.generateId()
 
         const characteristic = this.FakeCharacteristic(uuid, [])
         this.setFakeCharacteristics([characteristic])
@@ -104,7 +101,7 @@ export default class BleDeviceControllerTest extends AbstractSpruceTest {
 
     @test()
     protected static async throwsIfFailsToSubscribeToCharacteristic() {
-        const charUuid = generateId()
+        const charUuid = this.generateId()
 
         this.createAndFakeThrowCharacteristic(charUuid)
 
@@ -445,7 +442,7 @@ export default class BleDeviceControllerTest extends AbstractSpruceTest {
     }
 
     private static createPeripheralWithCharacteristic() {
-        const characteristicUuid = generateId()
+        const characteristicUuid = this.generateId()
 
         const characteristic = new FakeCharacteristic({
             uuid: characteristicUuid,

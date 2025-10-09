@@ -1,5 +1,5 @@
-import { generateId } from '@sprucelabs/test-utils'
 import { Peripheral } from '@abandonware/noble'
+import generateId from '@neurodevs/generate-id'
 import BleDeviceController from '../../modules/BleDeviceController'
 import {
     BleScanner,

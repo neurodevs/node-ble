@@ -1,5 +1,5 @@
-import { generateId } from '@sprucelabs/test-utils'
 import { Characteristic, Descriptor } from '@abandonware/noble'
+import generateId from '@neurodevs/generate-id'
 
 export default class FakeCharacteristic implements SimpleCharacteristic {
     public callsToConstructor: CharacteristicOptions[] = []

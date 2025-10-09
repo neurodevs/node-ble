@@ -1,19 +1,16 @@
-import AbstractSpruceTest, {
-    assert,
-    generateId,
-    test,
-} from '@sprucelabs/test-utils'
+import { assert, test } from '@sprucelabs/test-utils'
 import BleDeviceConnector, {
     BleConnector,
     BleConnectorOptions,
-} from '../modules/BleDeviceConnector'
-import BleDeviceController from '../modules/BleDeviceController'
-import BleDeviceScanner from '../modules/BleDeviceScanner'
-import FakeBleController from '../testDoubles/BleController/FakeBleController'
-import FakeBleScanner from '../testDoubles/BleScanner/FakeBleScanner'
-import FakePeripheral from '../testDoubles/noble/FakePeripheral'
+} from '../../modules/BleDeviceConnector'
+import BleDeviceController from '../../modules/BleDeviceController'
+import BleDeviceScanner from '../../modules/BleDeviceScanner'
+import FakeBleController from '../../testDoubles/BleController/FakeBleController'
+import FakeBleScanner from '../../testDoubles/BleScanner/FakeBleScanner'
+import FakePeripheral from '../../testDoubles/noble/FakePeripheral'
+import AbstractPackageTest from '../AbstractPackageTest'
 
-export default class BleDeviceConnectorTest extends AbstractSpruceTest {
+export default class BleDeviceConnectorTest extends AbstractPackageTest {
     private static instance: BleConnector
     private static peripheral: FakePeripheral
 
@@ -135,8 +132,8 @@ export default class BleDeviceConnectorTest extends AbstractSpruceTest {
         return FakeBleScanner.callsToScanForName
     }
 
-    private static readonly deviceUuid = generateId()
-    private static readonly deviceLocalName = generateId()
+    private static readonly deviceUuid = this.generateId()
+    private static readonly deviceLocalName = this.generateId()
     private static readonly rssiIntervalMs = 10
 
     private static readonly scanOptions = {

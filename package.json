@@ -30,6 +30,7 @@
     "@abandonware/noble": "^1.9.2-22"
   },
   "devDependencies": {
+    "@neurodevs/generate-id": "^1.0.0",
     "@sprucelabs/jest-json-reporter": "^8.0.521",
     "@sprucelabs/resolve-path-aliases": "^2.0.499",
     "@sprucelabs/test": "^9.0.55",
@@ -63,7 +64,7 @@
       "^#spruce/(.*)$": "<rootDir>/build/.spruce/$1"
     }
   },
-    "skill": {
+  "skill": {
     "namespace": "node-ble"
   }
 }

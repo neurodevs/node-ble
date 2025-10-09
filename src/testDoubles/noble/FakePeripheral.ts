@@ -1,9 +1,9 @@
-import { generateId } from '@sprucelabs/test-utils'
 import {
     Characteristic,
     Service,
     ServicesAndCharacteristics,
 } from '@abandonware/noble'
+import generateId from '@neurodevs/generate-id'
 import FakeCharacteristic from './FakeCharacteristic'
 
 export default class FakePeripheral implements SimplePeripheral {

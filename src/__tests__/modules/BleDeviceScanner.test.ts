@@ -1,25 +1,24 @@
-import AbstractSpruceTest, {
-    test,
-    assert,
-    generateId,
-} from '@sprucelabs/test-utils'
+import { test, assert } from '@sprucelabs/test-utils'
 import noble, { Peripheral } from '@abandonware/noble'
 import BleDeviceController, {
     BleController,
-} from '../modules/BleDeviceController'
+} from '../../modules/BleDeviceController'
 import BleDeviceScanner, {
     BleScannerOptions,
     ScanOptions,
-} from '../modules/BleDeviceScanner'
-import SpyBleController from '../testDoubles/BleController/SpyBleController'
-import SpyBleScanner from '../testDoubles/BleScanner/SpyBleScanner'
+} from '../../modules/BleDeviceScanner'
+import SpyBleController from '../../testDoubles/BleController/SpyBleController'
+import SpyBleScanner from '../../testDoubles/BleScanner/SpyBleScanner'
 import FakeCharacteristic, {
     CharacteristicOptions,
-} from '../testDoubles/noble/FakeCharacteristic'
-import FakeNoble, { CreateFakePeripheral } from '../testDoubles/noble/FakeNoble'
-import FakePeripheral from '../testDoubles/noble/FakePeripheral'
+} from '../../testDoubles/noble/FakeCharacteristic'
+import FakeNoble, {
+    CreateFakePeripheral,
+} from '../../testDoubles/noble/FakeNoble'
+import FakePeripheral from '../../testDoubles/noble/FakePeripheral'
+import AbstractPackageTest from '../AbstractPackageTest'
 
-export default class BleDeviceScannerTest extends AbstractSpruceTest {
+export default class BleDeviceScannerTest extends AbstractPackageTest {
     private static instance: SpyBleScanner
     private static noble: FakeNoble
     private static uuid: string
@@ -30,7 +29,7 @@ export default class BleDeviceScannerTest extends AbstractSpruceTest {
         BleDeviceController.Class = SpyBleController
         BleDeviceScanner.Class = SpyBleScanner
 
-        this.uuid = generateId()
+        this.uuid = this.generateId()
         this.setupFakeNoble()
 
         this.instance = this.BleScanner()
@@ -140,7 +139,7 @@ export default class BleDeviceScannerTest extends AbstractSpruceTest {
 
     @test()
     protected static async throwsIfScanTimesOut() {
-        const invalidUuid = generateId()
+        const invalidUuid = this.generateId()
 
         const err = await assert.doesThrowAsync(
             async () => await this.scanForUuid(invalidUuid)
@@ -155,7 +154,7 @@ export default class BleDeviceScannerTest extends AbstractSpruceTest {
 
     @test()
     protected static async throwsIfScanTimesOutWithName() {
-        const invalidName = generateId()
+        const invalidName = this.generateId()
 
         const err = await assert.doesThrowAsync(
             async () => await this.scanForName(invalidName)
@@ -199,7 +198,7 @@ export default class BleDeviceScannerTest extends AbstractSpruceTest {
     protected static async canScanForPeripheralByName() {
         this.clearNoble()
 
-        const name = generateId()
+        const name = this.generateId()
         this.fakePeripherals([{ name }])
 
         const controller = await this.scanForName(name)
@@ -215,7 +214,7 @@ export default class BleDeviceScannerTest extends AbstractSpruceTest {
     protected static async canScanByNames() {
         this.clearNoble()
 
-        const name = generateId()
+        const name = this.generateId()
         this.fakePeripherals([{ name }])
 
         const controllers = await this.scanForNames([name])
@@ -227,8 +226,8 @@ export default class BleDeviceScannerTest extends AbstractSpruceTest {
     protected static async scanForNamesWorksWithTwoPeripherals() {
         this.noble.clearTestDouble()
 
-        const name1 = generateId()
-        const name2 = generateId()
+        const name1 = this.generateId()
+        const name2 = this.generateId()
         this.fakePeripherals([{ name: name1 }, { name: name2 }])
 
         const controllers = await this.scanForNames([name1, name2])
@@ -251,8 +250,8 @@ export default class BleDeviceScannerTest extends AbstractSpruceTest {
     protected static async scanAllReturnsTwoPeripherals() {
         this.noble.clearTestDouble()
 
-        const uuid1 = generateId()
-        const uuid2 = generateId()
+        const uuid1 = this.generateId()
+        const uuid2 = this.generateId()
         this.fakePeripherals([{ uuid: uuid1 }, { uuid: uuid2 }])
 
         const peripherals = await this.scanAll()
@@ -354,7 +353,7 @@ export default class BleDeviceScannerTest extends AbstractSpruceTest {
     @test()
     protected static async scanForNamesReturnsOnceAllNamesFound() {
         this.clearNoble()
-        const name = generateId()
+        const name = this.generateId()
         this.fakePeripherals([{ name }])
 
         const timeoutMs = 10
@@ -385,7 +384,7 @@ export default class BleDeviceScannerTest extends AbstractSpruceTest {
     protected static async findsByLocalNameIfPartialProvided() {
         this.clearNoble()
 
-        const name = generateId()
+        const name = this.generateId()
         this.fakePeripherals([{ name }])
 
         const controller = await this.scanForName(name.slice(0, 3))
@@ -422,8 +421,8 @@ export default class BleDeviceScannerTest extends AbstractSpruceTest {
 
         const peripheral = this.FakePeripheral()
 
-        const uuid1 = generateId()
-        const uuid2 = generateId()
+        const uuid1 = this.generateId()
+        const uuid2 = this.generateId()
 
         const fake1 = this.FakeCharacteristic({ uuid: uuid1 })
         const fake2 = this.FakeCharacteristic({ uuid: uuid2 })
@@ -501,7 +500,7 @@ export default class BleDeviceScannerTest extends AbstractSpruceTest {
 
     private static clearNobleAndFakeOnePeripheral() {
         this.clearNoble()
-        const uuid = generateId()
+        const uuid = this.generateId()
         this.fakePeripherals([{ uuid }])
         return [uuid]
     }

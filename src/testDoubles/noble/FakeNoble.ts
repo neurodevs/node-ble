@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events'
-import { generateId } from '@sprucelabs/test-utils'
+import generateId from '@neurodevs/generate-id'
 import FakePeripheral from './FakePeripheral'
 
 export default class FakeNoble extends EventEmitter {

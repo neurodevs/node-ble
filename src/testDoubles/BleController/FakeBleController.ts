@@ -1,5 +1,5 @@
-import { generateId } from '@sprucelabs/test-utils'
 import { Characteristic } from '@abandonware/noble'
+import generateId from '@neurodevs/generate-id'
 import {
     BleController,
     BleControllerConstructorOptions,
