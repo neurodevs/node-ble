@@ -2,8 +2,22 @@
   "name": "@neurodevs/node-ble",
   "version": "1.0.1",
   "description": "Connect and stream data from Bluetooth Low Energy (BLE) devices",
+  "keywords": [
+    "nodejs",
+    "typescript",
+    "tdd"
+  ],
+  "license": "MIT",
+  "author": "Eric Yates <hello@ericthecurious.com>",
+  "homepage": "https://github.com/neurodevs/node-ble",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/neurodevs/node-ble.git"
+  },
+  "bugs": {
+    "url": "https://github.com/neurodevs/node-ble/issues"
+  },
   "main": "build/index.js",
-  "repository": "https://github.com/neurodevs/node-ble.git",
   "scripts": {
     "build.ci": "yarn run build.tsc && yarn run build.resolve-paths && yarn run lint",
     "build.dev": "yarn run build.tsc --sourceMap ; yarn run resolve-paths.lint",
