@@ -1,5 +1,5 @@
-import { BleConnector } from '../../modules/BleDeviceConnector'
-import FakeBleController from '../BleController/FakeBleController'
+import { BleConnector } from '../../modules/BleDeviceConnector.js'
+import FakeBleController from '../BleController/FakeBleController.js'
 
 export default class FakeBleConnector implements BleConnector {
     public static numCallsToConstructor = 0

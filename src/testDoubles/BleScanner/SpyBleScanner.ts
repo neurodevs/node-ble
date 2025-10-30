@@ -1,6 +1,6 @@
 import BleDeviceScanner, {
     BleScannerOptions,
-} from '../../modules/BleDeviceScanner'
+} from '../../modules/BleDeviceScanner.js'
 
 export default class SpyBleScanner extends BleDeviceScanner {
     public constructor(options?: BleScannerOptions) {

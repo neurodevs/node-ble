@@ -1,10 +1,7 @@
-import {
-    Characteristic,
-    Service,
-    ServicesAndCharacteristics,
-} from '@abandonware/noble'
 import generateId from '@neurodevs/generate-id'
-import FakeCharacteristic from './FakeCharacteristic'
+
+import { Characteristic, Service } from '../../noble/importNobleCjs.js'
+import FakeCharacteristic from './FakeCharacteristic.js'
 
 export default class FakePeripheral implements SimplePeripheral {
     public callsToConstructor: PeripheralOptions[] = []
@@ -134,3 +131,8 @@ export interface PeripheralEventAndListener {
 }
 
 export type PeripheralEvent = 'rssiUpdate' | 'disconnect'
+
+export interface ServicesAndCharacteristics {
+    services: Service[]
+    characteristics: Characteristic[]
+}

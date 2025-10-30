@@ -1,7 +1,8 @@
 {
   "name": "@neurodevs/node-ble",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Connect and stream data from Bluetooth Low Energy (BLE) devices",
+  "type": "module",
   "keywords": [
     "nodejs",
     "typescript",
@@ -44,11 +45,8 @@
     "@abandonware/noble": "^1.9.2-22"
   },
   "devDependencies": {
-    "@neurodevs/generate-id": "^1.0.0",
-    "@sprucelabs/jest-json-reporter": "^8.0.521",
-    "@sprucelabs/resolve-path-aliases": "^2.0.499",
-    "@sprucelabs/test": "^9.0.55",
-    "@sprucelabs/test-utils": "^5.1.475",
+    "@neurodevs/generate-id": "^1.0.9",
+    "@neurodevs/node-tdd": "^0.2.2",
     "@types/node": "^22.8.1",
     "chokidar-cli": "^3.0.0",
     "eslint": "^9.13.0",

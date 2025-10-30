@@ -1,9 +1,10 @@
-import { Characteristic } from '@abandonware/noble'
 import generateId from '@neurodevs/generate-id'
+
 import {
     BleController,
     BleControllerConstructorOptions,
-} from '../../modules/BleDeviceController'
+} from '../../modules/BleDeviceController.js'
+import { Characteristic } from '../../noble/importNobleCjs.js'
 
 export default class FakeBleController implements BleController {
     public static callsToConstructor: (

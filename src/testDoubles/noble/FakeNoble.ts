@@ -1,6 +1,7 @@
 import { EventEmitter } from 'events'
 import generateId from '@neurodevs/generate-id'
-import FakePeripheral from './FakePeripheral'
+
+import FakePeripheral from './FakePeripheral.js'
 
 export default class FakeNoble extends EventEmitter {
     public numCallsToConstructor = 0

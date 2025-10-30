@@ -1,5 +1,6 @@
-import { Characteristic, Descriptor } from '@abandonware/noble'
 import generateId from '@neurodevs/generate-id'
+
+import { Characteristic, Descriptor } from '../../noble/importNobleCjs.js'
 
 export default class FakeCharacteristic implements SimpleCharacteristic {
     public callsToConstructor: CharacteristicOptions[] = []
@@ -164,5 +165,3 @@ export interface CharacteristicEventAndListener {
     event: string
     listener: (data: Buffer, char: Characteristic) => void
 }
-
-export { Characteristic } from '@abandonware/noble'

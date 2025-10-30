@@ -1,8 +1,9 @@
-import noble, { Peripheral } from '@abandonware/noble'
+import noble, { Peripheral } from '../noble/importNobleCjs.js'
+
 import BleDeviceController, {
     BleController,
     CharacteristicCallbacks,
-} from './BleDeviceController'
+} from './BleDeviceController.js'
 
 export default class BleDeviceScanner implements BleScanner {
     public static Class?: BleScannerConstructor

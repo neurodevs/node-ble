@@ -1,15 +1,16 @@
-import { test, assert } from '@sprucelabs/test-utils'
-import { Characteristic, Peripheral } from '@abandonware/noble'
 import generateId from '@neurodevs/generate-id'
+import { test, assert } from '@neurodevs/node-tdd'
+
 import BleDeviceController, {
     BleControllerOptions,
-} from '../../modules/BleDeviceController'
-import SpyBleController from '../../testDoubles/BleController/SpyBleController'
-import FakeCharacteristic from '../../testDoubles/noble/FakeCharacteristic'
+} from '../../modules/BleDeviceController.js'
+import { Characteristic, Peripheral } from '../../noble/importNobleCjs.js'
+import SpyBleController from '../../testDoubles/BleController/SpyBleController.js'
+import FakeCharacteristic from '../../testDoubles/noble/FakeCharacteristic.js'
 import FakePeripheral, {
     PeripheralEventAndListener,
-} from '../../testDoubles/noble/FakePeripheral'
-import AbstractPackageTest from '../AbstractPackageTest'
+} from '../../testDoubles/noble/FakePeripheral.js'
+import AbstractPackageTest from '../AbstractPackageTest.js'
 
 export default class BleDeviceControllerTest extends AbstractPackageTest {
     private static instance: SpyBleController

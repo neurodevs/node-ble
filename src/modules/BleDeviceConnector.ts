@@ -1,5 +1,8 @@
-import { BleController } from './BleDeviceController'
-import BleDeviceScanner, { BleScanner, ScanOptions } from './BleDeviceScanner'
+import { BleController } from './BleDeviceController.js'
+import BleDeviceScanner, {
+    BleScanner,
+    ScanOptions,
+} from './BleDeviceScanner.js'
 
 export default class BleDeviceConnector implements BleConnector {
     public static Class?: BleConnectorConstructor

@@ -1,12 +1,13 @@
-import { Peripheral } from '@abandonware/noble'
 import generateId from '@neurodevs/generate-id'
-import BleDeviceController from '../../modules/BleDeviceController'
+
+import BleDeviceController from '../../modules/BleDeviceController.js'
 import {
     BleScanner,
     BleScannerOptions,
     ScanOptions,
-} from '../../modules/BleDeviceScanner'
-import FakePeripheral from '../noble/FakePeripheral'
+} from '../../modules/BleDeviceScanner.js'
+import { Peripheral } from '../../noble/importNobleCjs.js'
+import FakePeripheral from '../noble/FakePeripheral.js'
 
 export default class FakeBleScanner implements BleScanner {
     public static fakedPeripherals: FakePeripheral[] = []

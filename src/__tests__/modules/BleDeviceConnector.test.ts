@@ -1,15 +1,16 @@
-import { assert, test } from '@sprucelabs/test-utils'
 import generateId from '@neurodevs/generate-id'
+import { assert, test } from '@neurodevs/node-tdd'
+
 import BleDeviceConnector, {
     BleConnector,
     BleConnectorOptions,
-} from '../../modules/BleDeviceConnector'
-import BleDeviceController from '../../modules/BleDeviceController'
-import BleDeviceScanner from '../../modules/BleDeviceScanner'
-import FakeBleController from '../../testDoubles/BleController/FakeBleController'
-import FakeBleScanner from '../../testDoubles/BleScanner/FakeBleScanner'
-import FakePeripheral from '../../testDoubles/noble/FakePeripheral'
-import AbstractPackageTest from '../AbstractPackageTest'
+} from '../../modules/BleDeviceConnector.js'
+import BleDeviceController from '../../modules/BleDeviceController.js'
+import BleDeviceScanner from '../../modules/BleDeviceScanner.js'
+import FakeBleController from '../../testDoubles/BleController/FakeBleController.js'
+import FakeBleScanner from '../../testDoubles/BleScanner/FakeBleScanner.js'
+import FakePeripheral from '../../testDoubles/noble/FakePeripheral.js'
+import AbstractPackageTest from '../AbstractPackageTest.js'
 
 export default class BleDeviceConnectorTest extends AbstractPackageTest {
     private static instance: BleConnector

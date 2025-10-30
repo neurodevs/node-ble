@@ -1,4 +1,4 @@
-import { Characteristic, Peripheral, Service } from '@abandonware/noble'
+import { Characteristic, Peripheral, Service } from '../noble/importNobleCjs.js'
 
 export default class BleDeviceController implements BleController {
     public static Class?: BleControllerConstructor
