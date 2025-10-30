@@ -1,6 +1,6 @@
 {
   "name": "@neurodevs/node-ble",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Connect and stream data from Bluetooth Low Energy (BLE) devices",
   "type": "module",
   "keywords": [

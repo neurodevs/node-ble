@@ -165,3 +165,5 @@ export interface CharacteristicEventAndListener {
     event: string
     listener: (data: Buffer, char: Characteristic) => void
 }
+
+export { Characteristic } from '../../noble/importNobleCjs.js'
