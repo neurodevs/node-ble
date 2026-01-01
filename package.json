@@ -45,7 +45,7 @@
     "@abandonware/noble": "^1.9.2-22"
   },
   "devDependencies": {
-    "@neurodevs/generate-id": "^1.0.9",
+    "@neurodevs/generate-id": "1.1.1",
     "@neurodevs/node-tdd": "0.2.3",
     "@types/node": "^22.8.1",
     "chokidar-cli": "^3.0.0",
