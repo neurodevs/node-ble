@@ -47,6 +47,8 @@
   "devDependencies": {
     "@neurodevs/generate-id": "1.1.2",
     "@neurodevs/node-tdd": "0.2.5",
+    "@regressionproof/cli": "^0.8.0",
+    "@regressionproof/jest-reporter": "^0.8.0",
     "@types/node": "^22.8.1",
     "chokidar-cli": "^3.0.0",
     "eslint": "^9.13.0",
@@ -74,7 +76,11 @@
     ],
     "moduleNameMapper": {
       "^#spruce/(.*)$": "<rootDir>/build/.spruce/$1"
-    }
+    },
+    "reporters": [
+      "default",
+      "@regressionproof/jest-reporter"
+    ]
   },
   "skill": {
     "namespace": "node-ble"
