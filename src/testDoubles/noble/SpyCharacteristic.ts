@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-types */
 import { EventEmitter } from 'events'
 import { Descriptor } from '@abandonware/noble'
 import generateId from '@neurodevs/generate-id'
@@ -104,10 +103,12 @@ export default class SpyCharacteristic extends EventEmitter {
         return 0
     }
 
+    //@ts-ignore
     public listeners(_eventName: string | symbol): Function[] {
         return []
     }
 
+    //@ts-ignore
     public rawListeners(_eventName: string | symbol): Function[] {
         return []
     }
