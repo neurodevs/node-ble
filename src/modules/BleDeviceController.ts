@@ -71,30 +71,17 @@ export default class BleDeviceController implements BleController {
 
     private async subscribeToNotifiableCharacteristics() {
         for (const char of this.characteristics) {
-            await this.tryToSubscribeForNotifiable(char)
-        }
-    }
+            if (char.properties.includes('notify')) {
+                try {
+                    await char.subscribeAsync()
 
-    private async tryToSubscribeForNotifiable(char: Characteristic) {
-        if (char.properties.includes('notify')) {
-            await this.tryToSubscribe(char)
-        }
-    }
-
-    private async tryToSubscribe(char: Characteristic) {
-        try {
-            await char.subscribeAsync()
-            this.setCharacteristicCallbackIfExists(char)
-        } catch (err) {
-            this.throwCharacteristicSubscribeFailed(char.uuid, err)
-        }
-    }
-
-    private setCharacteristicCallbackIfExists(char: Characteristic) {
-        const hasCallback = this.characteristicCallbackUuids.includes(char.uuid)
-
-        if (hasCallback) {
-            this.setupCharacteristicOnDataHandler(char)
+                    if (this.characteristicCallbackUuids.includes(char.uuid)) {
+                        this.setupCharacteristicOnDataHandler(char)
+                    }
+                } catch (err) {
+                    this.throwCharacteristicSubscribeFailed(char.uuid, err)
+                }
+            }
         }
     }
 
