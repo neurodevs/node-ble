@@ -36,7 +36,8 @@
     "watch.build.dev": "tsc-watch --sourceMap --onCompilationComplete 'yarn run build.copy-files'"
   },
   "dependencies": {
-    "@abandonware/noble": "^1.9.2-22"
+    "@abandonware/noble": "^1.9.2-22",
+    "@neurodevs/ndx-native": "^1.0.1"
   },
   "devDependencies": {
     "@neurodevs/eslint-config-ndx": "^1.0.1",

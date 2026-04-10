@@ -1,8 +1,10 @@
+import { LibndxAdapter } from '@neurodevs/ndx-native'
 import { Characteristic, Peripheral, Service } from '../noble/importNobleCjs.js'
 
 export default class BleDeviceController implements BleController {
     public static Class?: BleControllerConstructor
     public static setInterval = setInterval
+    public static ndx = LibndxAdapter.getInstance()
 
     protected peripheral: Peripheral
     protected characteristicCallbacks: CharacteristicCallbacks
@@ -34,6 +36,8 @@ export default class BleDeviceController implements BleController {
 
     public async connect() {
         this.resetIsIntentionalDisconnectFlag()
+
+        this.ndx.createBleBackend({ deviceUuid: this.uuid })
 
         await this.connectToPeripheral()
         await this.discoverAllServicesAndCharacteristics()
@@ -232,6 +236,10 @@ export default class BleDeviceController implements BleController {
 
     private get setInterval() {
         return BleDeviceController.setInterval
+    }
+
+    private get ndx() {
+        return BleDeviceController.ndx
     }
 }
 

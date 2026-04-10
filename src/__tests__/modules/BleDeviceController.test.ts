@@ -11,16 +11,20 @@ import FakePeripheral, {
     PeripheralEventAndListener,
 } from '../../testDoubles/noble/FakePeripheral.js'
 import AbstractPackageTest from '../AbstractPackageTest.js'
+import { FakeLibndx } from '@neurodevs/ndx-native'
 
 export default class BleDeviceControllerTest extends AbstractPackageTest {
     private static instance: SpyBleController
     private static peripheral: FakePeripheral
-    private static uuid: string
+
+    private static readonly uuid = this.generateId()
+    private static readonly fakedListener = () => {}
+    private static readonly rssiUpdateEvent = 'rssiUpdate'
+    private static readonly rssiIntervalMs = 10
+    private static readonly fakeErrorMessage = 'Failed to subscribe!'
 
     protected static async beforeEach() {
         await super.beforeEach()
-
-        this.uuid = generateId()
 
         BleDeviceController.Class = SpyBleController
 
@@ -30,8 +34,19 @@ export default class BleDeviceControllerTest extends AbstractPackageTest {
     }
 
     @test()
-    protected static async canCreateBleDeviceController() {
-        assert.isTruthy(this.instance, 'Should have created a BleController!')
+    protected static async createsInstance() {
+        assert.isTruthy(this.instance, 'Failed to create instance!')
+    }
+
+    @test()
+    protected static async callsLibndxCreateBleBackend() {
+        assert.isEqualDeep(
+            FakeLibndx.callsToCreateBleBackend[0],
+            {
+                deviceUuid: this.uuid,
+            },
+            'Did not call createBleBackend!'
+        )
     }
 
     @test()
@@ -537,11 +552,6 @@ export default class BleDeviceControllerTest extends AbstractPackageTest {
     private static get localName() {
         return this.advertisement.localName
     }
-
-    private static readonly fakedListener = () => {}
-    private static readonly rssiUpdateEvent = 'rssiUpdate'
-    private static readonly rssiIntervalMs = 10
-    private static readonly fakeErrorMessage = 'Failed to subscribe!'
 
     private static setFakeCharacteristics(fakes: FakeCharacteristic[]) {
         this.peripheral.setFakeCharacteristics(fakes)
