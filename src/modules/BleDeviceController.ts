@@ -15,6 +15,8 @@ export default class BleDeviceController implements BleController {
     protected log = console
     private rssiIntervalPid?: NodeJS.Timeout
 
+    private readonly disconnectStates = ['disconnected', 'disconnecting']
+
     protected constructor(options: BleControllerConstructorOptions) {
         const { peripheral, characteristicCallbacks, rssiIntervalMs } = options
 
@@ -177,6 +179,8 @@ export default class BleDeviceController implements BleController {
     public async disconnect() {
         this.isIntentionalDisconnect = true
 
+        this.ndx.destroyBleBackend({ deviceUuid: this.uuid })
+
         if (this.isConnected) {
             await this.tryToDisconnect()
         }
@@ -212,8 +216,6 @@ export default class BleDeviceController implements BleController {
     public get name() {
         return this.localName
     }
-
-    private readonly disconnectStates = ['disconnected', 'disconnecting']
 
     private get unintentionalDisconnectMessage() {
         return `Unexpectedly disconnected from ${this.localName}!`
