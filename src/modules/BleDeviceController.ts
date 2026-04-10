@@ -38,6 +38,7 @@ export default class BleDeviceController implements BleController {
         this.resetIsIntentionalDisconnectFlag()
 
         this.ndx.createBleBackend({ deviceUuid: this.uuid })
+        this.ndx.startBleBackend({ deviceUuid: this.uuid })
 
         await this.connectToPeripheral()
         await this.discoverAllServicesAndCharacteristics()

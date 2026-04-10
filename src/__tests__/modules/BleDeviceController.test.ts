@@ -50,6 +50,17 @@ export default class BleDeviceControllerTest extends AbstractPackageTest {
     }
 
     @test()
+    protected static async callsLibndxStartBleBackend() {
+        assert.isEqualDeep(
+            FakeLibndx.callsToStartBleBackend[0],
+            {
+                deviceUuid: this.uuid,
+            },
+            'Did not call startBleBackend!'
+        )
+    }
+
+    @test()
     protected static async connectsToPeripheralDuringCreate() {
         assert.isTruthy(
             this.didCallConnectAsync,
