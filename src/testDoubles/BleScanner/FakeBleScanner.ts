@@ -149,7 +149,10 @@ export default class FakeBleScanner implements BleScanner {
     }
 
     private BleController(peripheral: Peripheral, options: ScanOptions) {
-        return BleDeviceController.Create({ peripheral, ...options })
+        return BleDeviceController.Create({
+            deviceUuid: peripheral.uuid,
+            ...options,
+        })
     }
 
     public static resetTestDouble() {

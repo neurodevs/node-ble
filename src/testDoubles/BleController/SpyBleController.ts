@@ -11,36 +11,8 @@ export default class SpyBleController extends BleDeviceController {
         super(options)
     }
 
-    public getPeripheral() {
-        return this.peripheral
-    }
-
-    public getServices() {
-        return this.services
-    }
-
-    public getCharacteristics() {
-        return this.characteristics
-    }
-
     public getCharacteristicCallbacks() {
         return this.characteristicCallbacks
-    }
-
-    public get localName() {
-        return this.advertisement.localName
-    }
-
-    public get peripheralRssi() {
-        return this.peripheral.rssi
-    }
-
-    public get advertisement() {
-        return this.peripheral.advertisement
-    }
-
-    public getIsIntentionalDisconnect() {
-        return this.isIntentionalDisconnect
     }
 
     public getRssiIntervalMs() {
@@ -75,17 +47,6 @@ export default class SpyBleController extends BleDeviceController {
             this.errorLogs.push(message)
             return message
         }
-    }
-
-    public setState(
-        state:
-            | 'error'
-            | 'connecting'
-            | 'connected'
-            | 'disconnecting'
-            | 'disconnected'
-    ) {
-        this.peripheral.state = state
     }
 
     public resetTestDouble() {

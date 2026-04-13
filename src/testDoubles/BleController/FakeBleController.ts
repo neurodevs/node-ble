@@ -22,12 +22,10 @@ export default class FakeBleController implements BleController {
     private _name: string
 
     public constructor(options?: BleControllerConstructorOptions) {
-        const { peripheral } = options ?? {}
-        const { uuid, advertisement } = peripheral ?? {}
-        const { localName } = advertisement ?? {}
+        const { deviceUuid } = options ?? {}
 
-        this._uuid = uuid ?? generateId()
-        this._name = localName ?? generateId()
+        this._uuid = deviceUuid ?? generateId()
+        this._name = `fake-${generateId()}`
 
         FakeBleController.callsToConstructor.push(options)
     }
@@ -40,25 +38,12 @@ export default class FakeBleController implements BleController {
         FakeBleController.numCallsToDisconnect++
     }
 
-    public getCharacteristic(uuid: string) {
-        this.callsToGetCharacteristic.push(uuid)
-        return this.fakeCharacteristics?.[uuid]
-    }
-
     public get uuid() {
         return this._uuid
     }
 
     public get name() {
         return this._name
-    }
-
-    private get callsToGetCharacteristic() {
-        return FakeBleController.callsToGetCharacteristic
-    }
-
-    private get fakeCharacteristics() {
-        return FakeBleController.fakeCharacteristics
     }
 
     public static resetTestDouble() {

@@ -631,7 +631,7 @@ export default class BleDeviceScannerTest extends AbstractPackageTest {
 
     private static async BleController(peripheral = this.firstPeripheral) {
         return await BleDeviceController.Create({
-            peripheral,
+            deviceUuid: peripheral.uuid,
             characteristicCallbacks: {},
         })
     }

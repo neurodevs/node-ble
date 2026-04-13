@@ -233,7 +233,7 @@ export default class BleDeviceScanner implements BleScanner {
 
     private async BleDeviceController(peripheral: Peripheral) {
         return BleDeviceController.Create({
-            peripheral,
+            deviceUuid: peripheral.uuid,
             characteristicCallbacks: this.characteristicCallbacks,
             rssiIntervalMs: this.rssiIntervalMs,
         })
