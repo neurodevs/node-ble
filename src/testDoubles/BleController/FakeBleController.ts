@@ -44,7 +44,10 @@ export default class FakeBleController implements BleController {
         characteristicUuid: string,
         value: string
     ) {
-        FakeBleController.callsToWriteCharacteristic.push({ characteristicUuid, value })
+        FakeBleController.callsToWriteCharacteristic.push({
+            characteristicUuid,
+            value,
+        })
     }
 
     public async disconnect() {
