@@ -13,6 +13,12 @@ export default class FakeBleController implements BleController {
     )[] = []
 
     public static numCallsToConnect = 0
+
+    public static callsToWriteCharacteristic: {
+        characteristicUuid: string
+        value: string
+    }[] = []
+
     public static numCallsToDisconnect = 0
     public static callsToGetCharacteristic: string[] = []
 
@@ -32,6 +38,13 @@ export default class FakeBleController implements BleController {
 
     public async connect() {
         FakeBleController.numCallsToConnect++
+    }
+
+    public async writeCharacteristic(
+        characteristicUuid: string,
+        value: string
+    ) {
+        FakeBleController.callsToWriteCharacteristic.push({ characteristicUuid, value })
     }
 
     public async disconnect() {

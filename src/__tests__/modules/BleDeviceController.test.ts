@@ -52,6 +52,24 @@ export default class BleDeviceControllerTest extends AbstractPackageTest {
     }
 
     @test()
+    protected static async writeCharacteristicCallsLibndxBinding() {
+        const characteristicUuid = this.generateId()
+        const value = this.generateId()
+
+        await this.instance.writeCharacteristic(characteristicUuid, value)
+
+        assert.isEqualDeep(
+            FakeLibndx.callsToWriteBle[0],
+            {
+                deviceUuid: this.uuid,
+                characteristicUuid,
+                value,
+            },
+            'Did not call writeBleCharacteristic!'
+        )
+    }
+
+    @test()
     protected static async disconnectCallsLibndxDestroyBleBackend() {
         await this.disconnect()
 

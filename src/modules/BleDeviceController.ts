@@ -29,6 +29,17 @@ export default class BleDeviceController implements BleController {
         this.ndx.startBleBackend({ deviceUuid: this.uuid })
     }
 
+    public async writeCharacteristic(
+        characteristicUuid: CharacteristicUuid,
+        value: string
+    ) {
+        this.ndx.writeBleCharacteristic({
+            deviceUuid: this.uuid,
+            characteristicUuid,
+            value,
+        })
+    }
+
     public async disconnect() {
         this.ndx.destroyBleBackend({ deviceUuid: this.uuid })
     }
@@ -47,10 +58,17 @@ export default class BleDeviceController implements BleController {
 }
 
 export interface BleController {
-    connect(): Promise<void>
-    disconnect(): Promise<void>
     uuid: string
     name: string
+
+    connect(): Promise<void>
+
+    writeCharacteristic(
+        characteristicUuid: CharacteristicUuid,
+        value: string
+    ): Promise<void>
+
+    disconnect(): Promise<void>
 }
 
 export interface BleControllerOptions {
