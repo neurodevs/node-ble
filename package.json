@@ -44,6 +44,7 @@
     "@neurodevs/generate-id": "^1.1.2",
     "@neurodevs/node-tdd": "^1.1.2",
     "@neurodevs/prettier-config-ndx": "^1.0.2",
+    "@types/node": "^25.9.0",
     "typescript": "^5.6.3"
   },
   "jest": {
