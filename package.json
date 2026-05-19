@@ -42,14 +42,8 @@
   "devDependencies": {
     "@neurodevs/eslint-config-ndx": "^1.0.1",
     "@neurodevs/generate-id": "^1.1.2",
-    "@neurodevs/node-tdd": "^0.2.5",
+    "@neurodevs/node-tdd": "^1.1.2",
     "@neurodevs/prettier-config-ndx": "^1.0.2",
-    "@regressionproof/cli": "^0.8.0",
-    "@regressionproof/jest-reporter": "^0.8.0",
-    "jest": "^29.7.0",
-    "jest-circus": "^29.7.0",
-    "prettier": "^3.8.1",
-    "tsc-watch": "^6.2.0",
     "typescript": "^5.6.3"
   },
   "jest": {
@@ -59,10 +53,6 @@
     "maxWorkers": 4,
     "testMatch": [
       "<rootDir>/build/__tests__/**/*.test.js?(x)"
-    ],
-    "reporters": [
-      "default",
-      "@regressionproof/jest-reporter"
     ]
   }
 }
